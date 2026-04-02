@@ -1,0 +1,2 @@
+/api/*  https://healthy-salmon-darling.ngrok-free.app/:splat  200!
+/*  /index.html  200
