@@ -5,12 +5,12 @@ import {
     Maximize, Navigation, CheckCircle2, ShieldCheck,
     ArrowRight, Loader2, AlertCircle, Phone, Clock, CreditCard, ChevronLeft, Map, Info, Lock
 } from 'lucide-react';
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import {
     Dialog, DialogContent, DialogDescription,
     DialogFooter, DialogHeader, DialogTitle
-} from "@/components/ui/dialog";
+} from "@/components/ui/Dialog";
 import { useAuthStore } from '@/store/useAuthStore';
 import { useNotificationStore } from '@/store/useNotificationStore';
 import { useOfferStore } from '@/store/useOfferStore';
