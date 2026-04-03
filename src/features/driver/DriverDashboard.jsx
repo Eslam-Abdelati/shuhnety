@@ -218,7 +218,7 @@ export const DriverDashboard = () => {
                                     {/* Right Action/Price */}
                                     <div className="text-left shrink-0">
                                         <p className="text-[10px] font-black text-slate-400 mb-0.5 uppercase tracking-tighter">
-                                            {hasBid ? 'عرضك / الوقت' : 'الوزن'}
+                                            {hasBid ? (apiBid?.negotiatedAmount ? 'عرض السعر الجديد' : 'عرضك / الوقت') : 'الوزن'}
                                         </p>
                                         <p className={cn(
                                             "text-xs font-black",
@@ -226,9 +226,16 @@ export const DriverDashboard = () => {
                                         )}>
                                             {hasBid ? (
                                                 <>
-                                                    {displayPrice} ج.م
-                                                    <span className="mx-1 text-[8px] opacity-50">/</span>
-                                                    {formatEstimatedTime(displayTime)}
+                                                    {apiBid?.negotiatedAmount ? (
+                                                        <span className="flex flex-col items-end">
+                                                            <span className="text-[10px] line-through opacity-40 -mb-1">{apiBid.amount}</span>
+                                                            <span>{apiBid.negotiatedAmount} ج.م</span>
+                                                        </span>
+                                                    ) : (
+                                                        <>{displayPrice} ج.م</>
+                                                    )}
+                                                    <span className="mx-1 text-[8px] opacity-20">/</span>
+                                                    <span className="opacity-70 text-[9px]">{formatEstimatedTime(displayTime)}</span>
                                                 </>
                                             ) : `${s.weight} كجم`}
                                         </p>
@@ -296,7 +303,18 @@ export const DriverDashboard = () => {
                                         </div>
                                         <div>
                                             <h4 className="font-black text-slate-900 dark:text-white text-lg">{getGoodsTypeLabel(activeTrip.goodsType)}</h4>
-                                            <p className="text-xs text-slate-500 font-bold">{activeTrip.weight} كجم • {activeTrip.bids?.[0]?.negotiatedAmount || activeTrip.bids?.[0]?.amount || activeTrip.price || '---'} EGP</p>
+                                            <p className="text-xs text-slate-500 font-bold flex items-center gap-1.5 flex-wrap">
+                                                <span>{activeTrip.weight} كجم</span>
+                                                <span className="opacity-20 text-[10px]">•</span>
+                                                {activeTrip.bids?.[0]?.negotiatedAmount ? (
+                                                    <span className="flex items-center gap-1">
+                                                        <span className="line-through text-slate-300 text-[11px]">{activeTrip.bids[0].amount}</span>
+                                                        <span className="text-brand-primary bg-brand-primary/5 px-2 py-0.5 rounded-lg text-[11px]">سعر معدل: {activeTrip.bids[0].negotiatedAmount} ج.م</span>
+                                                    </span>
+                                                ) : (
+                                                    <span>{activeTrip.bids?.[0]?.amount || activeTrip.price || '---'} EGP</span>
+                                                )}
+                                            </p>
                                         </div>
                                     </div>
                                     <Button size="sm" variant="ghost" className="h-10 w-10 p-0 rounded-xl text-slate-400 hover:bg-slate-50 underline text-[10px] font-bold" onClick={() => navigate(`/driver/available/${activeTrip.id}`)}>التفاصيل</Button>
@@ -355,7 +373,7 @@ export const DriverDashboard = () => {
                                         <MessageSquare className="h-5 w-5 text-blue-500" />
                                         محادثة
                                     </Button>
-                                    {activeTrip.status === 'delivery_in_progress' || activeTrip.status?.includes('في الطريق') ? (
+                                    {(activeTrip.status === 'delivery_in_progress' || activeTrip.status?.includes('في الطريق') || activeTrip.status?.includes('تم الاستلام') || activeTrip.status?.includes('جاري التوصيل')) ? (
                                         <Button
                                             onClick={() => handleCompleteDelivery(activeTrip.id)}
                                             className="h-14 rounded-2xl gap-2 font-black bg-emerald-500 text-white shadow-lg shadow-emerald-200 hover:bg-emerald-600 transition-all animate-in zoom-in-95 duration-300"

@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     MapPin, Truck, Box, Calendar, Weight, Package,
     Maximize, Navigation, CheckCircle2, ShieldCheck,
-    ArrowRight, Loader2, AlertCircle, Phone, Clock, CreditCard, ChevronLeft, Map, Info, Lock
+    ArrowRight, Loader2, AlertCircle, Phone, Clock, CreditCard, ChevronLeft, Map, Info, Lock,
+    TrendingUp, ArrowLeftRight
 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -14,7 +15,7 @@ import {
 import { useAuthStore } from '@/store/useAuthStore';
 import { useNotificationStore } from '@/store/useNotificationStore';
 import { useOfferStore } from '@/store/useOfferStore';
-import { getStatusStyles, getGoodsTypeLabel, mapShipmentData } from '@/utils/shipmentUtils';
+import { getStatusStyles, getGoodsTypeLabel, mapShipmentData, formatEstimatedTime } from '@/utils/shipmentUtils';
 import { shipmentService } from '@/services/shipmentService';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
@@ -83,30 +84,50 @@ export const DriverShipmentDetails = () => {
                 (parseInt(bidForm.hours || 0) * 60) +
                 parseInt(bidForm.minutes || 0);
 
-            const bidData = {
-                shipmentId: parseInt(id),
-                amount: parseFloat(bidForm.amount),
-                estimatedTime: totalMinutes,
-                note: bidForm.note?.trim() || null
-            };
+            if (myBid?.id) {
+                // If a bid already exists, we are negotiating (counter-offer)
+                await shipmentService.negotiateBid(myBid.id, bidForm.amount);
+                addNotification({ title: 'تم الإرسال', desc: 'تم إرسال عرضك التفاوضي الجديد بنجاح', type: 'success' });
+            } else {
+                // Standard initial bid submission
+                const bidData = {
+                    shipmentId: parseInt(id),
+                    amount: parseFloat(bidForm.amount),
+                    estimatedTime: totalMinutes,
+                    note: bidForm.note?.trim() || null
+                };
+                await shipmentService.submitBid(bidData);
+                addNotification({ title: 'نجاح', desc: 'تم تقديم عرضك بنجاح', type: 'success' });
 
-            await shipmentService.submitBid(bidData);
-            addNotification({ title: 'نجاح', desc: 'تم تقديم عرضك بنجاح', type: 'success' });
-
-            addOffer({
-                id: Math.random().toString(36).substr(2, 9),
-                shipmentId: id,
-                driverId: user?.id,
-                status: 'pending',
-                createdAt: new Date().toISOString()
-            });
+                addOffer({
+                    id: Math.random().toString(36).substr(2, 9),
+                    shipmentId: id,
+                    driverId: user?.id,
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                });
+            }
 
             setShowBidModal(false);
             fetchShipmentDetails();
         } catch (err) {
-            addNotification({ title: 'خطأ', desc: 'فشل إرسال العرض', type: 'error' });
+            addNotification({ title: 'خطأ', desc: err.message || 'فشل إرسال العرض', type: 'error' });
         } finally {
             setSubmittingBid(false);
+        }
+    };
+
+    const handleAcceptNegotiatedPrice = async () => {
+        if (!myBid?.id) return;
+        try {
+            setUpdating(true);
+            await shipmentService.updateBidStatus(myBid.id, 'accepted');
+            addNotification({ title: 'تم القبول', desc: 'تم قبول عرض السعر بنجاح وجاري تحديث الشحنة', type: 'success' });
+            fetchShipmentDetails(); // Refresh to show assigned status
+        } catch (err) {
+            addNotification({ title: 'خطأ', desc: err.message || 'فشل قبول العرض', type: 'error' });
+        } finally {
+            setUpdating(false);
         }
     };
 
@@ -141,9 +162,10 @@ export const DriverShipmentDetails = () => {
         (offers?.some(o => String(o.shipmentId) === String(id)));
 
     // Find the specific bid for the current user to handle assignment
-    const myBid = shipment.bids?.find(b =>
-        String(b.driver_id || b.driverId || b.createdBy) === String(user?.id)
-    );
+    const myBid = shipment.bids?.find(b => {
+        const bidDriverId = b.driver_id || b.driverId || b.createdBy || b.user_id || b.driver?.id;
+        return String(bidDriverId) === String(user?.id);
+    }) || (shipment.bids?.length === 1 ? shipment.bids[0] : null);
 
     const isOfferAccepted = myBid?.status === 'accepted' || myBid?.status === 'تم قبول العرض';
     const isAssignedToMe = isOfferAccepted ||
@@ -183,6 +205,7 @@ export const DriverShipmentDetails = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* --- Main Content (Right Column) --- */}
                 <div className="lg:col-span-2 space-y-8">
+
 
                     {/* Path & Map Section */}
                     <Card className="rounded-[2.5rem] border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
@@ -326,7 +349,44 @@ export const DriverShipmentDetails = () => {
                                 <p className="text-[10px] font-black text-slate-400 mt-3 uppercase tracking-widest">جاري التنفيذ...</p>
                             </div>
                         ) : (
-                            <>
+                            <div className="space-y-4">
+                                {/* Persistent Offer Summary once bid exists */}
+                                {hasOffer && (
+                                    <div className={cn(
+                                        "p-5 rounded-3xl border-none transition-all duration-300",
+                                        isOfferAccepted ? "bg-emerald-50" : (myBid?.negotiatedAmount ? "bg-amber-50" : "bg-emerald-50")
+                                    )}>
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-2">
+                                                <div className={cn(
+                                                    "h-7 w-7 rounded-lg flex items-center justify-center",
+                                                    myBid?.negotiatedAmount ? "bg-amber-100 text-amber-600" : "bg-emerald-100 text-emerald-600"
+                                                )}>
+                                                    {myBid?.negotiatedAmount ? <TrendingUp className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                                                </div>
+                                                <h3 className={cn(
+                                                    "text-[9px] font-black uppercase tracking-widest",
+                                                    isOfferAccepted ? "text-emerald-600" : (myBid?.negotiatedAmount ? "text-amber-600" : "text-emerald-600")
+                                                )}>
+                                                    {isOfferAccepted ? 'السعر المتفق عليه' : (myBid?.negotiatedAmount ? 'عرض مقابل' : 'عرضك الحالي')}
+                                                </h3>
+                                            </div>
+                                            <div className="flex items-center gap-1.5 opacity-40">
+                                                <Clock className="h-3 w-3" />
+                                                <span className="text-[9px] font-black">{formatEstimatedTime(myBid?.estimatedTime || myBid?.estimated_time)}</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-2xl font-black text-slate-900">{myBid?.negotiatedAmount || myBid?.amount || '---'}</span>
+                                            <span className="text-xs font-bold text-slate-400">ج.م</span>
+                                            {myBid?.negotiatedAmount && (
+                                                <span className="ml-2 text-[10px] line-through text-slate-300 font-bold">{myBid.amount} ج.م</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Conditional Buttons */}
                                 {rawStatus === 'تم التحميل وفي الطريق' || rawStatus === 'delivery_in_progress' ? (
                                     <Button
                                         onClick={() => handleUpdateStatus('delivered')}
@@ -356,13 +416,29 @@ export const DriverShipmentDetails = () => {
                                     >
                                         تقديم عرض
                                     </Button>
+                                ) : myBid?.negotiatedAmount ? (
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            onClick={handleAcceptNegotiatedPrice}
+                                            className="flex-1 h-11 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-200 transition-all border-none"
+                                        >
+                                            <CheckCircle2 className="ml-1.5 h-3.5 w-3.5" /> قبول عرض السعر
+                                        </Button>
+                                        <Button
+                                            onClick={() => setShowBidModal(true)}
+                                            variant="outline"
+                                            className="flex-1 h-11 text-amber-600 border-amber-100 hover:bg-amber-50 rounded-xl font-bold text-xs transition-all"
+                                        >
+                                            <ArrowLeftRight className="ml-1.5 h-3.5 w-3.5" /> تفاوض
+                                        </Button>
+                                    </div>
                                 ) : (
-                                    <div className="w-full h-14 bg-amber-50 text-amber-600 border border-amber-100 rounded-2xl flex items-center justify-center gap-2 font-black text-sm shadow-sm transition-all duration-300">
+                                    <div className="w-full h-14 bg-emerald-50/50 text-emerald-600 border border-emerald-100/50 rounded-2xl flex items-center justify-center gap-2 font-black text-sm shadow-sm transition-all duration-300">
                                         <CheckCircle2 className="h-5 w-5" />
                                         تم تقديم عرضك
                                     </div>
                                 )}
-                            </>
+                            </div>
                         )}
                     </div>
                 </div>

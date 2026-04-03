@@ -53,8 +53,11 @@ const navigation = {
     admin: [
         { name: 'نظرة عامة', href: '/admin', icon: LayoutDashboard },
         { name: 'المستخدمين', href: '/admin/users', icon: Users },
-        { name: 'النزاعات', href: '/admin/disputes', icon: ShieldCheck },
-        { name: 'العقود', href: '/admin/contracts', icon: Building2 },
+        { name: 'مراجعة السائقين', href: '/admin/verification', icon: ShieldCheck },
+        { name: 'إدارة العمليات', href: '/admin/operations', icon: Truck },
+        { name: 'التقارير', href: '/admin/reports', icon: BarChart3 },
+        { name: 'النزاعات', href: '/admin/disputes', icon: AlertTriangle },
+        { name: 'العقود', href: '/admin/contracts', icon: FileSearch },
         { name: 'الإعدادات', href: '/admin/settings', icon: Settings },
     ],
 }
@@ -64,7 +67,8 @@ export const Sidebar = () => {
     const { isSidebarOpen, closeSidebar } = useUIStore()
     const location = useLocation()
 
-    const links = navigation[role] || []
+    const currentRole = location.pathname.startsWith('/admin') ? 'admin' : role
+    const links = navigation[currentRole] || []
 
     return (
         <aside className={cn(

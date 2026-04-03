@@ -24,6 +24,10 @@ import { ActiveShipments } from './features/driver/ActiveShipments'
 import { FleetManagement } from './features/fleet/FleetManagement'
 import { GovDashboard } from './features/governorate/GovDashboard'
 import { AdminDashboard } from './features/admin/AdminDashboard'
+import { DriverVerification } from './features/admin/DriverVerification'
+import { AdminReports } from './features/admin/AdminReports'
+import { PlatformManagement } from './features/admin/PlatformManagement'
+import { SystemSettings } from './features/admin/SystemSettings'
 import { ShipmentTracking } from './features/tracking/ShipmentTracking'
 import { RoadAlerts } from './features/alerts/RoadAlerts'
 import { DriverManagement } from './features/company/DriverManagement'
@@ -83,13 +87,12 @@ function App() {
                     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="/unauthorized" element={<Unauthorized />} />
 
-                    {/* Roles */}
+                    {/* Roles with Protection */}
                     {[
                         { role: 'customer', path: '/customer' },
                         { role: 'driver', path: '/driver' },
                         { role: 'company', path: '/company' },
-                        { role: 'governorate', path: '/gov' },
-                        { role: 'admin', path: '/admin' }
+                        { role: 'governorate', path: '/gov' }
                     ].map(({ role, path }) => (
                         <Route
                             key={role}
@@ -143,16 +146,6 @@ function App() {
                                                     <Route path="*" element={<Placeholder title="قيد التطوير" />} />
 
                                                 </>
-                                            ) : role === 'admin' ? (
-                                                <>
-                                                    <Route path="/" element={<AdminDashboard />} />
-                                                    <Route path="/users" element={<AdminDashboard />} />
-                                                    <Route path="/disputes" element={<DisputeResolution />} />
-                                                    <Route path="/contracts" element={<DigitalContracts />} />
-                                                    <Route path="/profile" element={<ProfilePage />} />
-                                                    <Route path="*" element={<Placeholder title="قيد التطوير" />} />
-
-                                                </>
                                             ) : (
                                                 <>
                                                     <Route path="/" element={<Placeholder title={`لوحة تحكم ${role}`} />} />
@@ -165,6 +158,27 @@ function App() {
                             }
                         />
                     ))}
+
+                    {/* Temporary Unprotected Admin Route */}
+                    <Route
+                        path="/admin/*"
+                        element={
+                            <DashboardLayout>
+                                <Routes>
+                                    <Route path="/" element={<AdminDashboard />} />
+                                    <Route path="/users" element={<AdminDashboard />} />
+                                    <Route path="/verification" element={<DriverVerification />} />
+                                    <Route path="/operations" element={<PlatformManagement />} />
+                                    <Route path="/reports" element={<AdminReports />} />
+                                    <Route path="/disputes" element={<DisputeResolution />} />
+                                    <Route path="/contracts" element={<DigitalContracts />} />
+                                    <Route path="/settings" element={<SystemSettings />} />
+                                    <Route path="/profile" element={<ProfilePage />} />
+                                    <Route path="*" element={<Placeholder title="قيد التطوير" />} />
+                                </Routes>
+                            </DashboardLayout>
+                        }
+                    />
 
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>

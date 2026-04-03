@@ -70,10 +70,8 @@ export const shipmentService = {
 
             if (result.status && result.data) {
                 result.data = mapShipmentData(result.data);
-                console.log('[shipmentService] Mapped Shipment Data:', result.data);
             } else if (result.id || result._id) {
                 const mapped = mapShipmentData(result);
-                console.log('[shipmentService] Directly mapped result:', mapped);
                 return mapped;
             }
 
@@ -251,6 +249,8 @@ export const shipmentService = {
     getNewBids: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.BIDS.NEW);
+            console.log(response.data);
+
             return response.data;
         } catch (error) {
             console.error('Get new bids error:', error.response?.data || error.message);

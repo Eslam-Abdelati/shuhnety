@@ -2,12 +2,15 @@
 
 منصة لوجستية ذكية ومتكاملة لإدارة الشحنات والخدمات اللوجستية في مصر، مع تحصيل الرسوم إلكترونياً وتتبع جميع الشحنات لحظياً.
 
-![Version](https://img.shields.io/badge/version-1.0.0-orange)
-![React](https://img.shields.io/badge/React-18.2.0-blue)
-![Vite](https://img.shields.io/badge/Vite-7.3.1-purple)
-![Tailwind](https://img.shields.io/badge/Tailwind-4.1.18-cyan)
+![Version](https://img.shields.io/badge/version-1.0.0-orange?style=for-the-badge)
+![React](https://img.shields.io/badge/React-19.2.4-blue?style=for-the-badge)
+![Vite](https://img.shields.io/badge/Vite-7.3.1-purple?style=for-the-badge)
+![Tailwind](https://img.shields.io/badge/Tailwind-4.1.18-cyan?style=for-the-badge)
 
 ---
+
+> [!TIP]
+> **التوثيق الشامل**: يمكنك الاطلاع على التوثيق الفني الكامل باللغة العربية من خلال ملف [DOCUMENTATION_AR.md](./DOCUMENTATION_AR.md).
 
 ## 📋 نظرة عامة
 
@@ -34,13 +37,6 @@
 - **Cairo** - خط عربي احترافي من Google Fonts
 - الأوزان: 400, 500, 600, 700, 800, 900
 
-### المبادئ التصميمية
-- ✨ **Premium SaaS Aesthetics** - تصميم فخم وعصري
-- 🎯 **Mobile-First** - يبدأ من الهاتف ثم الشاشات الأكبر
-- 🌙 **Dark/Light Mode** - دعم الوضع الليلي
-- 🔄 **RTL Support** - دعم كامل للغة العربية من اليمين لليسار
-- 🎭 **Micro-animations** - حركات ناعمة لتجربة مستخدم ممتعة
-
 ---
 
 ## 🏗️ البنية التقنية
@@ -49,11 +45,11 @@
 
 | التقنية | الإصدار | الاستخدام |
 |---------|---------|-----------|
-| React | 18.2.0 | مكتبة واجهة المستخدم |
+| React | 19.2.4 | مكتبة واجهة المستخدم |
 | Vite | 7.3.1 | أداة البناء السريعة |
-| Tailwind CSS | 4.1.18 | إطار عمل CSS |
+| Tailwind CSS | 4.1.18 | إطار عمل CSS (v4) |
 | React Router | 7.13.0 | التنقل بين الصفحات |
-| Zustand | 5.0.11 | إدارة الحالة |
+| Redux Toolkit | 2.11.2 | إدارة الحالة العامة |
 | Lucide React | 0.564.0 | الأيقونات |
 | Framer Motion | 12.34.0 | الحركات والانتقالات |
 
@@ -63,39 +59,15 @@
 src/
 ├── components/          # المكونات القابلة لإعادة الاستخدام
 │   └── ui/             # مكونات واجهة المستخدم الأساسية
-│       ├── Button.jsx
-│       ├── Card.jsx
-│       └── Input.jsx
-├── features/           # الميزات حسب الدور
-│   ├── landing/        # صفحة الهبوط
-│   ├── auth/           # التسجيل والدخول
-│   ├── customer/       # ميزات العميل/التاجر
-│   ├── driver/         # ميزات السائق
-│   ├── company/        # ميزات شركة الشحن
-│   ├── governorate/    # ميزات المحافظة
-│   ├── admin/          # ميزات المسؤول
-│   ├── shipments/      # إدارة الشحنات
-│   ├── bidding/        # نظام المزايدة
-│   ├── tracking/       # تتبع الشحنات
-│   ├── alerts/         # تنبيهات الطريق
-│   └── fleet/          # إدارة الأسطول
-├── layouts/            # التخطيطات الرئيسية
-│   ├── AuthLayout.jsx
-│   ├── DashboardLayout.jsx
-│   ├── Sidebar.jsx
-│   └── Topbar.jsx
-├── routes/             # إدارة المسارات
-│   └── ProtectedRoute.jsx
-├── store/              # إدارة الحالة (Zustand)
-│   ├── useAuthStore.js
-│   └── useThemeStore.js
-├── utils/              # الأدوات المساعدة
-│   └── cn.js
-├── lib/                # المكتبات والخدمات
-│   └── api.js
-├── App.jsx             # المكون الرئيسي
-├── main.jsx            # نقطة الدخول
-└── index.css           # الأنماط العامة
+├── features/           # الميزات حسب الدور (Admin, Driver, Customer, etc.)
+├── layouts/            # التخطيطات الرئيسية (Dashboard, Auth)
+├── routes/             # إدارة المسارات والحماية
+├── store/              # إدارة الحالة (Redux Toolkit & Slices)
+│   ├── slices/         # شرائح الحالة (Auth, Shipments, etc.)
+│   └── useXStore.js    # خطافات مخصصة للوصول للمخزن
+├── utils/              # الأدوات المساعدة (cn, formatters)
+├── lib/                # المكتبات والخدمات (api, helpers)
+└── App.jsx             # المكون الرئيسي
 ```
 
 ---
