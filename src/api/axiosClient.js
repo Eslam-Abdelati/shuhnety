@@ -4,7 +4,8 @@ import Cookies from "js-cookie";
 // في بيئة التطوير نستخدم الرابط المباشر من .env
 // وفي الإنتاج (Netlify) نستخدم /api الذي يتم تحويله عبر _redirects لتجنب الـ CORS
 const isDevelopment = import.meta.env.MODE === 'development';
-const API_BASE_URL = isDevelopment ? import.meta.env.VITE_API_URL : '/api';
+const rawApiUrl = import.meta.env.VITE_API_URL || '/api';
+const API_BASE_URL = rawApiUrl.endsWith('/') ? rawApiUrl.slice(0, -1) : rawApiUrl;
 
 const axiosClient = axios.create({
   baseURL: API_BASE_URL,
