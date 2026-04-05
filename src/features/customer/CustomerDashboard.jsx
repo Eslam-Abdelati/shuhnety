@@ -143,22 +143,27 @@ export const CustomerDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 {/* Recent Shipments Table */}
                 <Card className="lg:col-span-2 overflow-hidden border-none shadow-2xl shadow-slate-200/50 dark:shadow-none dark:ring-1 dark:ring-slate-800 bg-white dark:bg-slate-900 rounded-[2.5rem]">
-                    <div className="p-8 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900">
+                    {/* Section Header */}
+                    <div className="flex items-center justify-between mb-8 px-8 pt-8">
                         <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2 font-black text-[#1c1919] dark:text-white">
-                                <span className="text-xl sm:text-2xl lg:text-[20px] font-bold">أحدث الشحنات</span>
+                            <div className="h-12 w-12 sm:h-14 sm:w-14 bg-brand-primary/10 rounded-2xl sm:rounded-[1.5rem] flex items-center justify-center text-brand-primary relative group overflow-hidden shadow-sm">
+                                <div className="absolute inset-0 bg-brand-primary/10 -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
+                                <Truck className="h-5 w-5 sm:h-6 sm:w-6 relative z-10" />
                             </div>
-                            <Link to="/customer/shipments" className="text-xs font-black text-brand-primary hover:underline underline-offset-4 hidden sm:block">
-                                عرض الكل
-                            </Link>
+                            <div>
+                                <h3 className="text-xl sm:text-2xl font-black text-[#1c1919] dark:text-white mb-0.5 tracking-tight">احدث الشحنات</h3>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none border-r-2 border-brand-primary/30 pr-2">متابعة شحناتك النشطة</p>
+                            </div>
                         </div>
-
+                        <Link to="/customer/shipments" className="text-xs font-black text-brand-primary hover:text-brand-secondary transition-colors px-4 py-2 bg-brand-primary/10 rounded-xl">
+                            عرض الكل
+                        </Link>
                     </div>
 
-                    <div className="p-6 flex flex-col gap-4">
+                    <div className="p-4 sm:p-6 flex flex-col gap-4">
                         {shipments.length > 0 ? (
                             shipments.slice(0, 4).map((shipment, i) => (
-                                <div key={shipment.id} className="group relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-5 hover:shadow-2xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all duration-500 flex flex-col gap-5 overflow-hidden">
+                                <div key={shipment.id} className="group relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-4 sm:p-5 hover:shadow-2xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all duration-500 flex flex-col gap-5 overflow-hidden">
                                     {/* Glassy Background Accent */}
                                     <div className={cn(
                                         "absolute top-0 right-0 w-32 h-32 blur-[60px] opacity-10 pointer-events-none transition-colors duration-500",
@@ -166,24 +171,24 @@ export const CustomerDashboard = () => {
                                     )}></div>
 
                                     {/* Top Row: Icon, ID and Status */}
-                                    <div className="flex justify-between items-center relative z-10">
+                                    <div className="flex justify-between items-start sm:items-center relative z-10">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-brand-primary/10 group-hover:text-brand-primary transition-all rounded-2xl flex items-center justify-center">
-                                                <Package className="h-5 w-5" />
+                                            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-brand-primary/10 group-hover:text-brand-primary transition-all rounded-2xl flex items-center justify-center">
+                                                <Package className="h-4 w-4 sm:h-5 sm:w-5" />
                                             </div>
                                             <div>
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2">
                                                     <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">{shipment.displayId}</span>
-                                                    <span className="h-1 w-1 rounded-full bg-slate-300"></span>
-                                                    <span className="text-[10px] font-bold text-slate-400">
+                                                    <span className="hidden sm:block h-1 w-1 rounded-full bg-slate-300"></span>
+                                                    <span className="text-[9px] sm:text-[10px] font-bold text-slate-400">
                                                         {shipment.createdAt ? new Date(shipment.createdAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' }) : '---'}
                                                     </span>
                                                 </div>
-                                                <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest mt-0.5">{getGoodsTypeLabel(shipment.goodsType)}</p>
+                                                <p className="text-[9px] sm:text-[10px] font-black text-brand-primary uppercase tracking-widest mt-0.5">{getGoodsTypeLabel(shipment.goodsType)}</p>
                                             </div>
                                         </div>
                                         <span className={cn(
-                                            "px-3 py-1.5 rounded-full text-[10px] font-black border tracking-wider",
+                                            "shrink-0 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] font-black border tracking-wider",
                                             getStatusStyles(shipment.status).bg,
                                             getStatusStyles(shipment.status).text,
                                             getStatusStyles(shipment.status).border
@@ -193,39 +198,39 @@ export const CustomerDashboard = () => {
                                     </div>
 
                                     {/* Middle Row: Route */}
-                                    <div className="flex items-center gap-4 bg-slate-50/50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-50 dark:border-slate-800 relative z-10 transition-colors group-hover:bg-white dark:group-hover:bg-slate-800">
+                                    <div className="flex items-center gap-3 sm:gap-4 bg-slate-50/50 dark:bg-slate-800/50 p-3 sm:p-4 rounded-2xl border border-slate-100 dark:border-slate-800 relative z-10 transition-colors group-hover:bg-white dark:group-hover:bg-slate-800">
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">المنشأ</p>
-                                            <p className="text-xs font-black text-slate-700 dark:text-slate-300 truncate">{shipment.pickupGovernorate}، {shipment.pickupCity}</p>
+                                            <p className="text-[8px] sm:text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">المنشأ</p>
+                                            <p className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 truncate">{shipment.pickupGovernorate}، {shipment.pickupCity}</p>
                                         </div>
-                                        <div className="h-8 w-8 rounded-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm">
-                                            <ArrowLeftRight className="h-3 w-3 text-slate-300 group-hover:text-brand-primary transition-colors" />
+                                        <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm">
+                                            <ArrowLeftRight className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-slate-300 group-hover:text-brand-primary transition-colors" />
                                         </div>
                                         <div className="flex-1 min-w-0 text-left">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">الوجهة</p>
-                                            <p className="text-xs font-black text-slate-700 dark:text-slate-300 truncate">{shipment.destinationGovernorate}، {shipment.destinationCity}</p>
+                                            <p className="text-[8px] sm:text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">الوجهة</p>
+                                            <p className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 truncate">{shipment.destinationGovernorate}، {shipment.destinationCity}</p>
                                         </div>
                                     </div>
 
                                     {/* Bottom Row: Stats & Action */}
-                                    <div className="flex items-center justify-between mt-auto relative z-10 pt-2">
-                                        <div className="flex items-center gap-4">
+                                    <div className="flex items-center justify-between mt-auto relative z-10 pt-1 sm:pt-2">
+                                        <div className="flex items-center gap-3 sm:gap-4">
                                             <div>
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">الوزن</p>
-                                                <p className="text-xs font-black text-slate-900 dark:text-white">{shipment.weight} <span className="text-[10px] opacity-40">كجم</span></p>
+                                                <p className="text-[8px] sm:text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">الوزن</p>
+                                                <p className="text-xs font-black text-slate-900 dark:text-white">{shipment.weight} <span className="text-[9px] sm:text-[10px] opacity-40">كجم</span></p>
                                             </div>
                                             {shipment.bidsCount > 0 && (
                                                 <>
                                                     <div className="w-px h-6 bg-slate-100 dark:bg-slate-800"></div>
                                                     <div>
-                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">المزايدات</p>
+                                                        <p className="text-[8px] sm:text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">المزايدات</p>
                                                         <p className="text-xs font-black text-slate-900 dark:text-white">{shipment.bidsCount}</p>
                                                     </div>
                                                 </>
                                             )}
                                         </div>
                                         <Link to={`/customer/shipments/${shipment.id}`}>
-                                            <Button variant="ghost" className="h-10 px-6 text-xs font-black bg-brand-primary/5 hover:bg-brand-primary text-brand-primary hover:text-white rounded-xl transition-all shadow-sm hover:shadow-lg hover:shadow-brand-primary/20">
+                                            <Button variant="ghost" className="h-9 sm:h-10 px-4 sm:px-6 text-[11px] sm:text-xs font-black bg-brand-primary/5 hover:bg-brand-primary text-brand-primary hover:text-white rounded-xl transition-all shadow-sm hover:shadow-lg hover:shadow-brand-primary/20">
                                                 التفاصيل
                                             </Button>
                                         </Link>
@@ -233,8 +238,8 @@ export const CustomerDashboard = () => {
                                 </div>
                             ))
                         ) : (
-                            <div className="p-12 text-center flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/20 rounded-2xl border-2 border-dashed border-slate-100 dark:border-slate-700">
-                                <Box className="h-10 w-10 text-slate-300 mb-4" />
+                            <div className="p-10 sm:p-12 text-center flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/20 rounded-2xl border-2 border-dashed border-slate-100 dark:border-slate-700">
+                                <Box className="h-9 w-9 sm:h-10 sm:w-10 text-slate-300 mb-4" />
                                 <h4 className="text-sm font-black text-slate-900 dark:text-white mb-2">لا يوجد شحنات منشأة</h4>
                                 <Link to="/customer/create">
                                     <Button className="bg-[#064e3b] hover:bg-[#053a2c] text-white rounded-xl gap-2 font-black text-xs h-9 px-4 mt-2">
@@ -246,7 +251,7 @@ export const CustomerDashboard = () => {
 
                         {shipments.length > 0 && (
                             <div className="flex justify-center pt-4 border-t border-slate-50 dark:border-slate-800 mt-2">
-                                <Link to="/customer/shipments" className="flex items-center gap-1.5 text-xs font-black text-brand-primary hover:text-brand-secondary transition-colors group">
+                                <Link to="/customer/shipments" className="flex items-center gap-1.5 text-[11px] sm:text-xs font-black text-brand-primary hover:text-brand-secondary transition-colors group">
                                     عرض كل الشحنات
                                     <ChevronLeft className="h-3 w-3 group-hover:-translate-x-1 transition-transform" />
                                 </Link>
@@ -256,73 +261,73 @@ export const CustomerDashboard = () => {
                 </Card>
 
                 {/* Sidebar Widget: Active Offers */}
-                <div className="space-y-10">
-                    <Card className="bg-gradient-to-br from-brand-primary to-blue-900 border-none p-1 shadow-2xl shadow-brand-primary/30 dark:shadow-brand-primary/10">
-                        <CardContent className="p-8 text-white">
+                <div className="space-y-6 sm:space-y-10">
+                    <Card className="bg-gradient-to-br from-brand-primary to-blue-900 border-none p-0.5 shadow-2xl shadow-brand-primary/30 dark:shadow-brand-primary/10 rounded-[2.5rem]">
+                        <CardContent className="p-6 sm:p-8 text-white">
                             <div className="flex items-center gap-4 mb-6">
-                                <div className="h-12 w-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10">
-                                    <TrendingUp className="h-6 w-6 text-white" />
+                                <div className="h-10 w-10 sm:h-12 sm:w-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10">
+                                    <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                                 </div>
                                 <div>
-                                    <h4 className="text-xl font-black mb-0.5">عروض جديدة</h4>
-                                    <p className="text-[10px] font-bold opacity-70 uppercase tracking-widest">تحديث لحظي</p>
+                                    <h4 className="text-lg sm:text-xl font-black mb-0.5">عروض جديدة</h4>
+                                    <p className="text-[9px] sm:text-[10px] font-bold opacity-70 uppercase tracking-widest leading-none">تحديث لحظي</p>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
                                 {apiNewBids.length > 0 ? (
                                     apiNewBids.map((offer) => (
-                                        <div key={offer.id} className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-5 hover:bg-white/20 transition-all cursor-pointer group/offer">
-                                            <div className="flex justify-between items-center mb-5">
-                                                <div>
-                                                    <p className="text-sm font-black text-white leading-none">{offer.driver?.full_name || offer.driverName || 'سائق'}</p>
-                                                    <p className="text-[10px] font-bold text-white/40 mt-1.5">
+                                        <div key={offer.id} className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-5 hover:bg-white/20 transition-all cursor-pointer group/offer">
+                                            <div className="flex justify-between items-start mb-4">
+                                                <div className="min-w-0 pr-2">
+                                                    <p className="text-sm font-black text-white leading-tight truncate">{offer.driver?.full_name || offer.driverName || 'سائق'}</p>
+                                                    <p className="text-[9px] sm:text-[10px] font-bold text-white/40 mt-1 uppercase tracking-wider truncate">
                                                         {getGoodsTypeLabel(
                                                             offer.shipment?.goods_type || offer.shipment?.goodsType || offer.shipmentDetails?.goodsType,
                                                             offer.shipment?.other_goods_type || offer.shipment?.otherGoodsType || offer.shipmentDetails?.otherGoodsType
                                                         ) || 'شحنة عامة'}
                                                     </p>
                                                 </div>
-                                                <span className="text-[10px] font-black bg-brand-secondary text-white text-center px-3 py-1.5 rounded-lg shadow-sm">
+                                                <span className="shrink-0 text-[11px] font-black bg-brand-secondary text-white text-center px-2.5 py-1.5 rounded-lg shadow-sm">
                                                     {parseFloat(offer.negotiatedAmount || offer.negotiated_amount || offer.new_amount || offer.amount || offer.price || 0).toLocaleString('ar-EG')} ج.م
                                                 </span>
                                             </div>
                                             <Link
                                                 to={`/customer/bids/${offer.shipment?.id || offer.shipmentId || offer.shipment_id || offer.shipmentDetails?.id || offer.shipmentDetails?._id}`}
-                                                className="w-full py-3 bg-white text-brand-primary rounded-xl text-xs font-black flex items-center justify-center hover:bg-blue-50 transition-all shadow-lg shadow-black/5 active:scale-[0.98]"
+                                                className="w-full py-2.5 bg-white text-brand-primary rounded-xl text-[11px] font-black flex items-center justify-center hover:bg-blue-50 transition-all shadow-lg shadow-black/5 active:scale-[0.98]"
                                             >
                                                 عرض التفاصيل
                                             </Link>
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
-                                        <div className="h-12 w-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <AlertCircle className="h-6 w-6 text-white/40" />
+                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 text-center">
+                                        <div className="h-10 w-10 sm:h-12 sm:w-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-white/40" />
                                         </div>
-                                        <p className="text-sm font-bold text-white/60">لا توجد عروض جديدة حالياً</p>
-                                        <p className="text-[10px] text-white/30 mt-1">سيتم إشعارك فور وصول عروض من السائقين</p>
+                                        <p className="text-sm font-bold text-white/60 leading-none mb-2">لا توجد عروض جديدة</p>
+                                        <p className="text-[10px] text-white/30 tracking-tight">سيتم إشعارك فور وصول عروض جديدة</p>
                                     </div>
                                 )}
                             </div>
 
                             {apiNewBids.length > 0 && (
                                 <Link to="/customer/bids" className="block mt-6">
-                                    <Button variant="ghost" className="w-full text-white hover:bg-white/10 hover:text-white font-black">مشاهدة جميع العروض</Button>
+                                    <Button variant="ghost" className="w-full text-white hover:bg-white/10 hover:text-white font-black text-xs h-10 rounded-xl">مشاهدة جميع العروض</Button>
                                 </Link>
                             )}
                         </CardContent>
                     </Card>
 
                     {/* Digital Contracts Banner */}
-                    <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all cursor-pointer group">
-                        <CardContent className="p-8 text-center">
-                            <div className="h-16 w-16 bg-white dark:bg-slate-800 rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-700 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <ShieldCheck className="h-8 w-8 text-brand-secondary" />
+                    <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all cursor-pointer group rounded-[2.5rem]">
+                        <CardContent className="p-6 sm:p-8 text-center">
+                            <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white dark:bg-slate-800 rounded-2xl sm:rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-700 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <ShieldCheck className="h-7 w-7 sm:h-8 sm:w-8 text-brand-secondary" />
                             </div>
-                            <h5 className="text-lg font-black text-slate-900 dark:text-white mb-2">عقودك الرقمية جاهزة</h5>
-                            <p className="text-sm font-bold text-slate-500 dark:text-slate-400 leading-relaxed mb-6">جميع معاملاتك محمية بعقود رقمية ملزمة لضمان حقوقك وحقوق السائق</p>
-                            <Link to="/customer/contracts" className="inline-flex items-center text-sm font-black text-brand-secondary hover:gap-2 transition-all">
+                            <h5 className="text-base sm:text-lg font-black text-slate-900 dark:text-white mb-2 leading-none">عقودك الرقمية جاهزة</h5>
+                            <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-relaxed mb-6">جميع معاملاتك محمية بعقود رقمية ملزمة لضمان حقوق كافة الأطراف</p>
+                            <Link to="/customer/contracts" className="inline-flex items-center text-xs sm:text-sm font-black text-brand-secondary hover:gap-2 transition-all">
                                 تحميل العقود الأخيرة
                                 <ArrowLeftRight className="mr-2 h-4 w-4" />
                             </Link>
