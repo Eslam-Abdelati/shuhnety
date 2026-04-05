@@ -77,7 +77,7 @@ export const CreateShipmentPage = () => {
     const navigate = useNavigate()
 
     const [isInitialLoading, setIsInitialLoading] = useState(isEditMode)
-    
+
     // Scroll to top when switching steps
     useEffect(() => {
         const mainContent = document.querySelector('main');
@@ -339,7 +339,7 @@ export const CreateShipmentPage = () => {
             <div className="relative mb-12 px-4">
                 {/* Background Connecting Line */}
                 <div className="absolute top-5 left-12 right-12 h-0.5 bg-slate-100 hidden sm:block">
-                    <div 
+                    <div
                         className="h-full bg-brand-primary transition-all duration-500 ease-in-out"
                         style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
                     ></div>
@@ -350,15 +350,15 @@ export const CreateShipmentPage = () => {
                         const stepNum = i + 1
                         const isCompleted = step > stepNum
                         const isActive = step === stepNum
-                        
+
                         return (
                             <div key={i} className="flex flex-col items-center relative z-10 group">
                                 {/* Step Circle */}
                                 <div className={cn(
                                     "h-10 w-10 rounded-full flex items-center justify-center transition-all duration-500 border-2",
                                     isActive ? "bg-brand-primary border-brand-primary text-white shadow-xl shadow-brand-primary/20 scale-110" :
-                                    isCompleted ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/10" : 
-                                    "bg-white border-slate-200 text-slate-400 group-hover:border-slate-300"
+                                        isCompleted ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/10" :
+                                            "bg-white border-slate-200 text-slate-400 group-hover:border-slate-300"
                                 )}>
                                     {isCompleted ? (
                                         <CheckCircle2 className="h-6 w-6" />
@@ -485,11 +485,8 @@ export const CreateShipmentPage = () => {
                                 ></textarea>
                             </div>
 
-                            <div className="md:col-span-2">
-                                <label className="text-sm font-black text-slate-700 pr-1 block mb-3 flex items-center gap-2">
-                                    صورة الشحنة
-                                    <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">(اختياري)</span>
-                                </label>
+                            <div className="md:col-span-2 space-y-2">
+                                <label className="block text-sm font-bold text-slate-700 pr-1">صورة الشحنة (اختياري)</label>
                                 <div
                                     className={cn(
                                         "group relative min-h-[220px] rounded-[2.5rem] overflow-hidden transition-all duration-500",
@@ -882,10 +879,10 @@ export const CreateShipmentPage = () => {
                                                 صورة الشحنة
                                             </h5>
                                             <div className="relative h-32 w-full rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 group hover:border-brand-primary/30 transition-all">
-                                                <img 
-                                                    src={formData.shipmentImage} 
-                                                    className="h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-110" 
-                                                    alt="Shipment Preview" 
+                                                <img
+                                                    src={formData.shipmentImage}
+                                                    className="h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-110"
+                                                    alt="Shipment Preview"
                                                 />
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
                                             </div>

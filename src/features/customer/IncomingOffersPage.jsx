@@ -4,19 +4,17 @@ import {
     Truck,
     MapPin,
     ArrowLeftRight,
-    Search,
     Loader2,
-    Package,
-    TrendingUp,
-    ChevronLeft,
     CheckCircle,
-    User
+    User,
+    TrendingUp,
+    ChevronLeft
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { shipmentService } from '@/services/shipmentService'
-import { getGoodsTypeLabel, getStatusStyles, formatEstimatedTime } from '@/utils/shipmentUtils'
+import { getGoodsTypeLabel, formatEstimatedTime } from '@/utils/shipmentUtils'
 import { cn } from '@/lib/utils'
 
 export const IncomingOffersPage = () => {
@@ -46,7 +44,7 @@ export const IncomingOffersPage = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
                 <Loader2 className="h-10 w-10 text-brand-primary animate-spin mb-4" />
-                <p className="text-slate-500 font-black">جاري تحميل قائمة العروض الواردة...</p>
+                <p className="text-slate-500 font-black">جاري تحميل قائمة العروض الوادرية...</p>
             </div>
         )
     }
@@ -54,22 +52,20 @@ export const IncomingOffersPage = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-700 font-cairo" dir="rtl">
             {/* Header Area */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 bg-brand-primary/10 rounded-[1.5rem] flex items-center justify-center text-brand-primary border border-brand-primary/20">
-                        <TrendingUp className="h-7 w-7" />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">العروض الواردة</h1>
-                        <p className="text-sm font-bold text-slate-500 mt-1">إليك أحدث العروض المقدمة من السائقين على شحناتك النشطة</p>
-                    </div>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
+                <div>
+                    <h3 className="text-xl md:text-2xl font-black mb-1 md:mb-2 tracking-tight flex items-center gap-3">
+                        العروض الواردة
+                        <div className="h-2 w-2 rounded-full bg-brand-primary animate-pulse"></div>
+                    </h3>
+                    <p className="text-xs md:text-sm font-bold text-slate-500">إليك أحدث العروض المقدمة من السائقين على شحناتك النشطة</p>
                 </div>
 
                 <div className="flex items-center gap-2">
                     <Button
                         onClick={fetchOffers}
                         variant="ghost"
-                        className="h-11 rounded-xl font-black text-slate-600 dark:text-slate-400 group"
+                        className="h-11 rounded-xl font-black text-slate-600 dark:text-slate-400 group bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800"
                     >
                         <Clock className="ml-2 h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
                         تحديث القائمة
@@ -77,99 +73,106 @@ export const IncomingOffersPage = () => {
                 </div>
             </div>
 
-            {/* Offers Grid/List */}
+            {/* Offers List */}
             <div className="space-y-6">
                 {offers.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 gap-6">
                         {offers.map((offer) => (
-                            <Card key={offer.id} className="group overflow-hidden border-none shadow-sm hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all duration-500 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-50 dark:border-slate-800">
+                            <Card key={offer.id} className="group overflow-hidden border-none shadow-sm hover:shadow-2xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all duration-500 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800">
                                 <CardContent className="p-0">
-                                    <div className="flex flex-col lg:flex-row items-stretch">
-                                        {/* Left Side: Offer Main Info */}
-                                        <div className="p-6 md:p-8 flex-1 flex flex-col md:flex-row items-center gap-6 md:gap-10">
+                                    <div className="flex flex-col lg:flex-row">
+                                        {/* Main Info Section */}
+                                        <div className="flex-1 p-6 sm:p-8 flex flex-col sm:flex-row gap-6 sm:gap-8 items-start sm:items-center">
                                             {/* Driver Profile */}
-                                            <div className="flex items-center gap-4 min-w-[200px]">
-                                                <div className="h-16 w-16 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-brand-primary border border-slate-100 dark:border-slate-700 shadow-inner group-hover:scale-105 transition-transform">
-                                                    {offer.driver?.profile_picture ? (
-                                                        <img src={offer.driver.profile_picture} className="h-full w-full object-cover rounded-2xl" alt="" />
-                                                    ) : (
-                                                        <User className="h-8 w-8" />
-                                                    )}
+                                            <div className="flex items-center gap-4 min-w-[220px]">
+                                                <div className="relative h-16 w-16 shrink-0">
+                                                    <div className="h-full w-full rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-brand-primary border border-slate-100 dark:border-slate-700 shadow-inner group-hover:scale-105 transition-transform overflow-hidden">
+                                                        {offer.driver?.profile_picture ? (
+                                                            <img src={offer.driver.profile_picture} className="h-full w-full object-cover" alt="" />
+                                                        ) : (
+                                                            <User className="h-7 w-7" />
+                                                        )}
+                                                    </div>
+                                                    <div className="absolute -bottom-1 -right-1 h-5 w-5 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
                                                 </div>
                                                 <div>
-                                                    <h3 className="text-lg font-black text-slate-900 dark:text-white leading-none">
-                                                        {offer.driver?.full_name || offer.driverName || "سائق مستور"}
-                                                    </h3>
-                                                    <div className="flex flex-col gap-1 mt-2">
-                                                        <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
-                                                            <Truck className="h-3 w-3" />
+                                                    <h4 className="text-lg font-black text-slate-900 dark:text-white leading-none mb-1.5 flex items-center gap-2">
+                                                        {offer.driver?.full_name || offer.driverName || "سائق"}
+                                                        <CheckCircle className="h-4 w-4 text-brand-primary" />
+                                                    </h4>
+                                                    <div className="flex flex-col gap-1">
+                                                        <p className="text-[11px] font-bold text-slate-400 flex items-center gap-1.5">
+                                                            <Truck className="h-3.5 w-3.5" />
                                                             {offer.driverDetails?.vehicle_type || "نقل عام"}
                                                         </p>
-                                                        <p className="text-[10px] font-black text-brand-primary flex items-center gap-1.5">
-                                                            <Clock className="h-3 w-3" />
-                                                            {formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}
-                                                        </p>
+                                                        <div className="flex items-center gap-2 mt-1">
+                                                            <span className="px-2 py-0.5 bg-brand-primary/10 text-brand-primary rounded-md text-[9px] font-black uppercase tracking-widest">موثق</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            {/* Shipment Link */}
-                                            <div className="flex-1 space-y-3 w-full border-r border-slate-100 dark:border-slate-800 pr-6">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-[10px] font-black bg-brand-primary/5 text-brand-primary px-2.5 py-1 rounded-lg">
+                                            {/* Route Section */}
+                                            <div className="flex-1 w-full sm:border-r sm:border-slate-100 dark:sm:border-slate-800 sm:pr-8">
+                                                <div className="flex items-center gap-2 mb-4">
+                                                    <span className="text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-500 px-2.5 py-1 rounded-lg uppercase tracking-wider">
                                                         #{offer.shipment?.id?.toString().slice(-6) || '---'}
                                                     </span>
-                                                    <span className="text-xs font-black text-slate-700 dark:text-slate-300">
-                                                        {getGoodsTypeLabel(offer.shipment?.goodsType) || 'شحنة'}
+                                                    <span className="text-[11px] font-black text-brand-primary px-2.5 py-1 bg-brand-primary/5 rounded-lg">
+                                                        {getGoodsTypeLabel(offer.shipment?.goodsType) || 'شحنة عامة'}
                                                     </span>
                                                 </div>
-                                                <div className="flex items-center gap-4 text-xs font-bold text-slate-500">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <MapPin className="h-3.5 w-3.5 text-emerald-500" />
-                                                        <span>{offer.shipment?.pickupGovernorate}</span>
-                                                    </div>
-                                                    <ArrowLeftRight className="h-3 w-3 opacity-30" />
-                                                    <div className="flex items-center gap-1.5">
-                                                        <MapPin className="h-3.5 w-3.5 text-red-500" />
-                                                        <span>{offer.shipment?.destinationGovernorate}</span>
+                                                
+                                                <div className="bg-slate-50/50 dark:bg-slate-800/30 p-3 rounded-2xl border border-slate-100/50 dark:border-slate-800/50">
+                                                    <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="h-2 w-2 rounded-full bg-emerald-500 shrink-0"></div>
+                                                            <span className="truncate max-w-[100px]">{offer.shipment?.pickupGovernorate}</span>
+                                                        </div>
+                                                        <ArrowLeftRight className="h-3 w-3 text-slate-300" />
+                                                        <div className="flex items-center gap-2 text-left">
+                                                            <span className="truncate max-w-[100px]">{offer.shipment?.destinationGovernorate}</span>
+                                                            <div className="h-2 w-2 rounded-full bg-red-500 shrink-0"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {/* Right Side: Price & Action */}
-                                        <div className="bg-slate-50/50 dark:bg-slate-800/40 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-8 min-w-[450px]">
-                                            <div className="flex items-center gap-4 w-full md:w-auto flex-1">
+                                        {/* Action & Price Section */}
+                                        <div className="bg-slate-50/80 dark:bg-slate-800/50 p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 sm:gap-10 lg:w-[420px] lg:border-r lg:border-slate-100 dark:lg:border-slate-800">
+                                            <div className="grid grid-cols-2 gap-4 w-full sm:flex-1">
                                                 {/* Time Block */}
-                                                <div className="flex-1 text-center bg-white dark:bg-slate-900/50 px-4 py-3 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
-                                                    <span className="block text-[9px] text-slate-400 font-black mb-1 uppercase tracking-tighter leading-none">⏱️ وقت التوصيل</span>
-                                                    <div className="flex items-baseline justify-center gap-1">
-                                                        <span className="text-sm font-black text-brand-primary whitespace-nowrap">
-                                                            {formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}
-                                                        </span>
-                                                    </div>
+                                                <div className="bg-white dark:bg-slate-900 px-4 py-3 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-center items-center">
+                                                    <span className="block text-[9px] text-slate-400 font-black mb-1 uppercase tracking-tighter">التوصيل</span>
+                                                    <span className="text-xs font-black text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                                                        {formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}
+                                                    </span>
                                                 </div>
 
                                                 {/* Price Block */}
-                                                <div className="flex-1 text-center bg-brand-primary/5 px-4 py-3 rounded-2xl border border-brand-primary/10">
-                                                    <p className="text-[9px] font-black text-brand-primary uppercase tracking-[0.2em] mb-1">💰 العرض</p>
-                                                    <div className="flex items-baseline justify-center gap-1">
-                                                        <span className="text-2xl font-black text-brand-primary tracking-tighter">
-                                                            {offer.amount || offer.price}
+                                                <div className="bg-brand-primary text-white px-4 py-3 rounded-2xl shadow-xl shadow-brand-primary/20 flex flex-col justify-center items-center">
+                                                    <span className="block text-[10px] opacity-70 font-black mb-0.5 uppercase tracking-widest">قيمة العرض</span>
+                                                    <div className="flex items-baseline gap-1">
+                                                        <span className="text-lg font-black tracking-tighter leading-none">
+                                                            {parseFloat(offer.amount || offer.price || 0).toLocaleString('ar-EG')}
                                                         </span>
-                                                        <span className="text-[10px] font-black text-brand-primary/60">EGP</span>
+                                                        <span className="text-[9px] opacity-60 font-bold uppercase">ج.م</span>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-3 w-full md:w-auto">
-                                                <Link
-                                                    to={`/customer/bids/${offer.shipment?.id || offer.shipmentId}`}
-                                                    className="flex-1 md:flex-none"
-                                                >
-                                                    <Button className="w-full md:px-8 h-12 bg-brand-primary hover:bg-brand-primary/90 text-white rounded-2xl font-black shadow-lg shadow-brand-primary/20 group/btn transition-all active:scale-[0.98]">
-                                                        التفاوض والقبول
-                                                        <ChevronLeft className="mr-2 h-4 w-4 group-hover/btn:-translate-x-1 transition-transform" />
+                                            <div className="flex flex-col gap-3 w-full sm:w-auto">
+                                                <Link to={`/customer/bids/${offer.shipment?.id || offer.shipmentId}`} className="w-full">
+                                                    <Button className="w-full sm:w-[140px] h-12 bg-white hover:bg-slate-50 text-brand-primary border-2 border-brand-primary rounded-2xl font-black shadow-sm transition-all flex items-center justify-center gap-2 group/btn">
+                                                        <TrendingUp className="h-4 w-4" />
+                                                        تفاوض
+                                                    </Button>
+                                                </Link>
+                                                <Link to={`/customer/bids/${offer.shipment?.id || offer.shipmentId}`} className="w-full">
+                                                    <Button className="w-full sm:w-[140px] h-12 bg-brand-primary hover:bg-brand-primary/90 text-white rounded-2xl font-black shadow-lg shadow-brand-primary/20 flex items-center justify-center gap-2 group/btn">
+                                                        قبول العرض
+                                                        <ChevronLeft className="h-4 w-4 group-hover/btn:-translate-x-1 transition-transform" />
                                                     </Button>
                                                 </Link>
                                             </div>
