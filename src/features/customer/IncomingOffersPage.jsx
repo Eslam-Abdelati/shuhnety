@@ -8,10 +8,7 @@ import {
     User,
     TrendingUp,
     ChevronLeft,
-    Star,
-    ShieldCheck,
-    Calendar,
-    Wallet
+    CheckCircle2
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -45,189 +42,130 @@ export const IncomingOffersPage = () => {
 
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[70vh] bg-slate-50/30 dark:bg-slate-950/30 rounded-[4rem]">
-                <div className="relative">
-                    <div className="h-16 w-16 border-4 border-brand-primary/10 border-t-brand-primary rounded-full animate-spin"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <TrendingUp className="h-6 w-6 text-brand-primary/30" />
-                    </div>
-                </div>
-                <p className="text-slate-400 font-bold mt-6 animate-pulse">جاري تنسيق أقوى العروض...</p>
+            <div className="flex flex-col items-center justify-center min-h-[60vh]">
+                <Loader2 className="h-10 w-10 text-brand-primary animate-spin mb-4" />
+                <p className="text-slate-500 font-bold">جاري تحميل قائمة العروض...</p>
             </div>
         )
     }
 
     return (
-        <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in zoom-in-95 duration-1000 font-cairo py-6" dir="rtl">
-            {/* Minimalist Premium Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 px-6">
-                <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                        <div className="h-1 w-12 bg-brand-primary rounded-full"></div>
-                        <span className="text-brand-primary font-black uppercase tracking-[0.3em] text-[10px]">Offers Hub</span>
-                    </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight">العروض الواردة</h1>
-                    <p className="text-slate-500 font-bold text-lg max-w-md leading-relaxed opacity-80">اكتشف وفاوض على أفضل الأسعار المقدمة من شبكة سائقينا المحترفين.</p>
+        <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-700 font-cairo px-4" dir="rtl">
+            {/* Simple Clean Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div>
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tight">العروض الواردة</h1>
+                    <p className="text-sm font-bold text-slate-400 mt-1">إليك أحدث الأسعار المقترحة لشحناتك النشطة</p>
                 </div>
                 <Button
                     onClick={fetchOffers}
-                    variant="outline"
-                    className="h-14 px-8 rounded-2xl font-black text-slate-600 border-slate-200 bg-white/80 backdrop-blur-md shadow-lg shadow-slate-100/50 hover:shadow-xl transition-all"
+                    variant="ghost"
+                    className="h-11 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-colors"
                 >
-                    <Clock className="ml-3 h-5 w-5 opacity-40" />
-                    تحديث القائمة
+                    <Clock className="ml-2 h-4 w-4 opacity-50" />
+                    تحديث
                 </Button>
             </div>
 
-            {/* Premium List */}
-            <div className="space-y-8 px-6 pb-20">
+            {/* Simple Comfortable Cards */}
+            <div className="space-y-4">
                 {offers.length > 0 ? (
                     offers.map((offer) => (
-                        <div key={offer.id} className="group relative">
-                            {/* Glow Effect on Hover */}
-                            <div className="absolute -inset-1 bg-gradient-to-r from-brand-primary to-emerald-400 rounded-[3rem] opacity-0 group-hover:opacity-10 blur-xl transition duration-700"></div>
-                            
-                            <Card className="relative overflow-hidden border-none shadow-xl shadow-slate-200/40 dark:shadow-none transition-all duration-700 bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl rounded-[3rem] hover:translate-y-[-6px]">
-                                <CardContent className="p-0">
-                                    <div className="flex flex-col lg:flex-row items-stretch">
-                                        
-                                        {/* Driver & Status Column */}
-                                        <div className="lg:w-[320px] p-8 bg-slate-50/50 dark:bg-slate-800/30 border-l border-slate-100/50 dark:border-slate-800/50 flex flex-col justify-between">
-                                            <div className="flex items-center gap-5">
-                                                <div className="relative shrink-0">
-                                                    <div className="h-20 w-20 rounded-[2rem] overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl transition-transform duration-700 group-hover:scale-110">
-                                                        {offer.driver?.profile_picture ? (
-                                                            <img src={offer.driver.profile_picture} className="h-full w-full object-cover" alt="" />
-                                                        ) : (
-                                                            <div className="h-full w-full bg-slate-100 flex items-center justify-center text-slate-300">
-                                                                <User className="h-10 w-10" />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="absolute -bottom-2 -right-2 h-8 w-8 bg-brand-primary flex items-center justify-center text-white rounded-xl shadow-lg border-2 border-white dark:border-slate-800">
-                                                        <ShieldCheck className="h-4 w-4" />
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <h3 className="font-black text-xl text-slate-900 dark:text-white leading-tight">
-                                                        {offer.driver?.full_name || "سائق محترف"}
-                                                    </h3>
-                                                    <div className="flex items-center gap-1 mt-1 text-amber-500">
-                                                        <Star className="h-3 w-3 fill-current" />
-                                                        <Star className="h-3 w-3 fill-current" />
-                                                        <Star className="h-3 w-3 fill-current" />
-                                                        <Star className="h-3 w-3 fill-current" />
-                                                        <Star className="h-3 w-3 fill-current" />
-                                                        <span className="text-[10px] font-black mr-1 text-slate-400">5.0</span>
-                                                    </div>
-                                                </div>
+                        <Card key={offer.id} className="overflow-hidden border border-slate-100 shadow-sm hover:border-brand-primary/20 transition-all duration-300 bg-white rounded-3xl">
+                            <CardContent className="p-6">
+                                <div className="flex flex-col lg:flex-row items-center gap-6">
+                                    
+                                    {/* Part 1: Driver Profile */}
+                                    <div className="flex items-center gap-4 min-w-[200px]">
+                                        <div className="h-14 w-14 rounded-2xl bg-slate-50 flex items-center justify-center text-brand-primary border border-slate-100 shrink-0">
+                                            {offer.driver?.profile_picture ? (
+                                                <img src={offer.driver.profile_picture} className="h-full w-full object-cover rounded-2xl" alt="" />
+                                            ) : (
+                                                <User className="h-7 w-7 opacity-30" />
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-1.5 mb-0.5">
+                                                <h3 className="font-black text-slate-800">{offer.driver?.full_name || "سائق"}</h3>
+                                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                                             </div>
-
-                                            <div className="mt-8 space-y-3">
-                                                <div className="flex items-center justify-between p-3 bg-white/50 dark:bg-slate-900/50 rounded-2xl border border-slate-100/50">
-                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">المركبة</span>
-                                                    <span className="text-xs font-black text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                                                        <Truck className="h-3.5 w-3.5 opacity-40" />
-                                                        {offer.driverDetails?.vehicle_type || "سيارة نصف نقل"}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center justify-between p-3 bg-white/50 dark:bg-slate-900/50 rounded-2xl border border-slate-100/50">
-                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">تاريخ التقديم</span>
-                                                    <span className="text-xs font-black text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                                                        <Calendar className="h-3.5 w-3.5 opacity-40" />
-                                                        اليوم
-                                                    </span>
-                                                </div>
+                                            <div className="flex flex-col gap-0.5">
+                                                <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                                                    <Truck className="h-3 w-3" />
+                                                    {offer.driverDetails?.vehicle_type || "نقل عام"}
+                                                </span>
                                             </div>
                                         </div>
-
-                                        {/* Main Details Area */}
-                                        <div className="flex-1 p-8 lg:p-10 flex flex-col justify-between">
-                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-                                                <div className="space-y-6 flex-1">
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="px-4 py-1.5 bg-brand-primary/10 text-brand-primary rounded-full text-[10px] font-black uppercase tracking-widest border border-brand-primary/10">
-                                                            {getGoodsTypeLabel(offer.shipment?.goodsType) || 'شحنة'}
-                                                        </span>
-                                                        <span className="text-[10px] font-bold text-slate-300 tracking-widest">ID: {offer.shipment?.id?.toString().slice(-6)}</span>
-                                                    </div>
-                                                    
-                                                    {/* Journey visualization */}
-                                                    <div className="relative flex items-center gap-8 md:gap-12 w-full max-w-lg">
-                                                        <div className="flex flex-col items-center">
-                                                            <div className="h-12 w-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-emerald-500 shadow-sm border border-slate-100">
-                                                                <MapPin className="h-6 w-6" />
-                                                            </div>
-                                                            <span className="text-xs font-black text-slate-900 mt-3">{offer.shipment?.pickupGovernorate}</span>
-                                                        </div>
-                                                        <div className="flex-1 relative h-px bg-slate-100 dark:bg-slate-800 self-center -mt-6">
-                                                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-200">
-                                                                <ArrowLeftRight className="h-4 w-4" />
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex flex-col items-center">
-                                                            <div className="h-12 w-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-red-500 shadow-sm border border-slate-100">
-                                                                <MapPin className="h-6 w-6" />
-                                                            </div>
-                                                            <span className="text-xs font-black text-slate-900 mt-3">{offer.shipment?.destinationGovernorate}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex flex-col items-end gap-2">
-                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">قيمة العرض المالي</span>
-                                                    <div className="flex items-baseline gap-2">
-                                                        <span className="text-5xl font-black text-slate-900 tracking-tighter">
-                                                            {(offer.amount || offer.price || 0).toLocaleString()}
-                                                        </span>
-                                                        <span className="text-sm font-black text-slate-400 uppercase">ج.م</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-8 border-t border-slate-100 dark:border-slate-800">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="h-10 w-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500">
-                                                        <Clock className="h-5 w-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter leading-none mb-1">وقت التوصيل</p>
-                                                        <p className="text-sm font-black text-slate-700">{formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex gap-3 w-full sm:w-auto">
-                                                    <Link to={`/customer/bids/${offer.shipment?.id || offer.shipmentId}`} className="flex-1">
-                                                        <Button variant="ghost" className="w-full sm:w-[150px] h-14 rounded-2xl font-black text-slate-500 border-2 border-slate-100 hover:bg-slate-50 hover:text-slate-900">
-                                                            <TrendingUp className="h-5 w-5 ml-2 opacity-30" />
-                                                            تفاوض
-                                                        </Button>
-                                                    </Link>
-                                                    <Link to={`/customer/bids/${offer.shipment?.id || offer.shipmentId}`} className="flex-1">
-                                                        <Button className="w-full sm:w-[180px] h-14 bg-gradient-to-r from-brand-primary to-emerald-600 text-white rounded-2xl font-black shadow-2xl shadow-brand-primary/30 hover:scale-[1.03] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                                                            قبول العرض
-                                                            <ChevronLeft className="h-5 w-5" />
-                                                        </Button>
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        </div>
-
                                     </div>
-                                </CardContent>
-                            </Card>
-                        </div>
+
+                                    {/* Part 2: Shipment Path & Details */}
+                                    <div className="flex-1 w-full lg:px-6 lg:border-r lg:border-slate-50">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="text-[10px] font-black text-brand-primary bg-brand-primary/5 px-2 py-0.5 rounded-lg border border-brand-primary/10 uppercase">
+                                                {getGoodsTypeLabel(offer.shipment?.goodsType) || 'شحنة عامة'}
+                                            </span>
+                                            <span className="text-[10px] font-bold text-slate-300">#{offer.shipment?.id?.toString().slice(-6)}</span>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-4 text-sm font-black text-slate-600">
+                                            <div className="flex items-center gap-2 whitespace-nowrap">
+                                                <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
+                                                <span>{offer.shipment?.pickupGovernorate}</span>
+                                            </div>
+                                            <ArrowLeftRight className="h-3 w-3 text-slate-200" />
+                                            <div className="flex items-center gap-2 whitespace-nowrap">
+                                                <span>{offer.shipment?.destinationGovernorate}</span>
+                                                <div className="h-2 w-2 rounded-full bg-red-400"></div>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-3 flex items-center gap-3">
+                                            <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400">
+                                                <Clock className="h-3 w-3" />
+                                                <span>يصل في {formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Part 3: Price & Actions */}
+                                    <div className="flex flex-col md:flex-row items-center gap-6 lg:min-w-[280px] justify-between lg:pl-2">
+                                        <div className="text-center md:text-right">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">عرض السعر</p>
+                                            <div className="flex items-baseline gap-1">
+                                                <span className="text-2xl font-black text-slate-800 tracking-tighter">
+                                                    {(offer.amount || offer.price || 0).toLocaleString()}
+                                                </span>
+                                                <span className="text-[10px] font-bold text-slate-400">ج.م</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex gap-2 w-full md:w-auto">
+                                            <Link to={`/customer/bids/${offer.shipment?.id || offer.shipmentId}`} className="flex-1 md:flex-none">
+                                                <Button variant="ghost" className="h-11 px-6 rounded-2xl font-black text-slate-500 border border-slate-100 bg-slate-50/30 hover:bg-slate-100 transition-all flex items-center gap-2 text-xs">
+                                                    <TrendingUp className="h-4 w-4 opacity-40" />
+                                                    تفاوض
+                                                </Button>
+                                            </Link>
+                                            <Link to={`/customer/bids/${offer.shipment?.id || offer.shipmentId}`} className="flex-1 md:flex-none">
+                                                <Button className="h-11 px-8 bg-brand-primary text-white rounded-2xl font-black shadow-lg shadow-brand-primary/10 hover:translate-y-[-1px] active:scale-[0.98] transition-all text-xs flex items-center gap-1">
+                                                    القبول الآن
+                                                    <ChevronLeft className="h-4 w-4" />
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </CardContent>
+                        </Card>
                     ))
                 ) : (
-                    <div className="text-center py-32 bg-white/50 dark:bg-slate-900/50 rounded-[4rem] border-4 border-dashed border-slate-100 dark:border-slate-800">
-                        <div className="relative h-24 w-24 mx-auto mb-10">
-                            <div className="absolute inset-0 bg-brand-primary/20 rounded-full animate-ping opacity-20"></div>
-                            <div className="relative h-24 w-24 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-xl">
-                                <Wallet className="h-10 w-10 text-slate-200" />
-                            </div>
+                    <div className="flex flex-col items-center justify-center p-20 py-32 bg-slate-50/50 rounded-[2.5rem] border-2 border-dashed border-slate-100 text-center">
+                        <div className="h-20 w-20 bg-white rounded-full flex items-center justify-center mb-8 shadow-sm">
+                            <TrendingUp className="h-8 w-8 text-slate-200" />
                         </div>
-                        <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-3">لا توجد عروض حالية</h2>
-                        <p className="text-slate-500 font-bold max-w-sm mx-auto leading-relaxed opacity-60">سيتم عرض قائمة العروض هنا فور قيام السائقين بتقديمها. ترقب إشعارات هاتفك!</p>
+                        <h3 className="text-xl font-black text-slate-800 mb-2">لا توجد عروض جديدة</h3>
+                        <p className="text-sm font-bold text-slate-400 max-w-xs mx-auto leading-relaxed">سيظهر هنا فور قيام السائقين بتقديم أسعار مقترحة لشحناتك المتاحة.</p>
                     </div>
                 )}
             </div>
