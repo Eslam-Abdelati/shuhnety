@@ -112,7 +112,7 @@ export const BiddingInterface = () => {
         setSubmittingNegotiation(true)
         try {
             await shipmentService.negotiateBid(offerId, negotiationPrice);
-            toast.success(`تم إرسال عرض التفاوض بنجاح`)
+            // Relying on Backend Sockets for negotiation notification
             setNegotiatingOfferId(null)
             setNegotiationPrice('')
             await fetchShipmentData(false)
@@ -126,7 +126,7 @@ export const BiddingInterface = () => {
     const handleRejectOffer = async (offerId) => {
         try {
             await shipmentService.updateBidStatus(offerId, 'rejected');
-            toast.success('تم رفض العرض بنجاح')
+            // Relying on Backend Sockets for rejection notification
             await fetchShipmentData(false)
         } catch (error) {
             toast.error(error.message)
@@ -136,7 +136,7 @@ export const BiddingInterface = () => {
     const handleAcceptOffer = async (offerId) => {
         try {
             await shipmentService.updateBidStatus(offerId, 'accepted');
-            toast.success('تم قبول العرض بنجاح')
+            // Relying on Backend Sockets for acceptance notification
             await fetchShipmentData(false)
         } catch (error) {
             toast.error(error.message)

@@ -282,7 +282,7 @@ export const CreateShipmentPage = () => {
                 await shipmentService.updateShipment(editId, apiPayload)
 
                 updateShipment({ id: editId, ...formData })
-                toast.success('تم تحديث بيانات الشحنة بنجاح.')
+                // Relying on Backend Sockets for submission notification
             } else {
                 const result = await shipmentService.createShipment(apiPayload)
 
@@ -299,7 +299,7 @@ export const CreateShipmentPage = () => {
 
                 // Relying on Backend Sockets for notifications
 
-                toast.success('تم نشر شحنتك بنجاح! ستتلقى عروض السائقين قريباً.')
+                // Relying on Backend Sockets for notifications (removed redundant toast)
             }
 
             setTimeout(() => {

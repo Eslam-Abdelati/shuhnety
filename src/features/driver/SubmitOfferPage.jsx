@@ -86,7 +86,7 @@ export const SubmitOfferPage = () => {
             await shipmentService.submitBid(bidData)
 
             // Success feedback
-            toast.success('تم تقديم عرضك بنجاح ونحن في انتظار رد العميل');
+            // Relying on Backend Sockets for submission notification
             
             // Also update local store for UI feedback
             addOffer({

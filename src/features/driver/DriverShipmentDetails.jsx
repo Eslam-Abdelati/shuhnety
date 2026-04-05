@@ -66,7 +66,7 @@ export const DriverShipmentDetails = () => {
         setUpdating(true);
         try {
             await shipmentService.updateShipmentStatus(id, newStatus);
-            toast.success('تم تحديث حالة الشحنة بنجاح');
+            // Relying on Backend Sockets for status update notification
             window.location.reload();
         } catch (err) {
             toast.error('فشل تحديث الحالة');
@@ -88,7 +88,7 @@ export const DriverShipmentDetails = () => {
             if (myBid?.id) {
                 // If a bid already exists, we are negotiating (counter-offer)
                 await shipmentService.negotiateBid(myBid.id, bidForm.amount);
-                toast.success('تم إرسال عرضك التفاوضي الجديد بنجاح');
+                // Relying on Backend Sockets for negotiation notification
             } else {
                 // Standard initial bid submission
                 const bidData = {
@@ -98,7 +98,7 @@ export const DriverShipmentDetails = () => {
                     note: bidForm.note?.trim() || null
                 };
                 await shipmentService.submitBid(bidData);
-                toast.success('تم تقديم عرضك بنجاح');
+                // Relying on Backend Sockets for submission notification
 
                 addOffer({
                     id: Math.random().toString(36).substr(2, 9),
@@ -123,7 +123,7 @@ export const DriverShipmentDetails = () => {
         try {
             setUpdating(true);
             await shipmentService.updateBidStatus(myBid.id, 'accepted');
-            toast.success('تم قبول عرض السعر بنجاح وجاري تحديث الشحنة');
+            // Relying on Backend Sockets for acceptance notification
             fetchShipmentDetails(); // Refresh to show assigned status
         } catch (err) {
             toast.error(err.message || 'فشل قبول العرض');
