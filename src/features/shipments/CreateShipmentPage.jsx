@@ -327,34 +327,56 @@ export const CreateShipmentPage = () => {
             {/* Professional Blue Info Box */}
 
             {/* Progress Stepper */}
-            <div className="flex items-center gap-4 mb-4 overflow-x-auto pb-4 no-scrollbar">
-                {steps.map((s, i) => {
-                    const isCompleted = step > i + 1
-                    const isActive = step === i + 1
-                    return (
-                        <div key={i} className="flex items-center gap-4 shrink-0">
-                            <div className={cn(
-                                "flex items-center gap-2 px-4 py-2 rounded-xl transition-all",
-                                isActive ? "bg-brand-primary text-white shadow-lg scale-105" :
-                                    isCompleted ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-white text-slate-400 border border-slate-100"
-                            )}>
+            {/* Modern balanced Stepper */}
+            <div className="relative mb-12 px-4">
+                {/* Background Connecting Line */}
+                <div className="absolute top-5 left-12 right-12 h-0.5 bg-slate-100 hidden sm:block">
+                    <div 
+                        className="h-full bg-brand-primary transition-all duration-500 ease-in-out"
+                        style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
+                    ></div>
+                </div>
+
+                <div className="relative flex justify-between items-start max-w-4xl mx-auto">
+                    {steps.map((s, i) => {
+                        const stepNum = i + 1
+                        const isCompleted = step > stepNum
+                        const isActive = step === stepNum
+                        
+                        return (
+                            <div key={i} className="flex flex-col items-center relative z-10 group">
+                                {/* Step Circle */}
                                 <div className={cn(
-                                    "h-6 w-6 rounded-lg flex items-center justify-center text-xs font-bold",
-                                    isActive ? "bg-white/20" : "bg-slate-100"
+                                    "h-10 w-10 rounded-full flex items-center justify-center transition-all duration-500 border-2",
+                                    isActive ? "bg-brand-primary border-brand-primary text-white shadow-xl shadow-brand-primary/20 scale-110" :
+                                    isCompleted ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/10" : 
+                                    "bg-white border-slate-200 text-slate-400 group-hover:border-slate-300"
                                 )}>
-                                    {i + 1}
-                                </div>
-                                <span className="text-sm font-bold whitespace-nowrap">
-                                    {s}
-                                    {s === 'التأمين' && !IS_PRICING_ENABLED && (
-                                        <span className="mr-2 text-[9px] bg-white/20 text-white px-1.5 py-0.5 rounded-md">قريباً</span>
+                                    {isCompleted ? (
+                                        <CheckCircle2 className="h-6 w-6" />
+                                    ) : (
+                                        <span className="text-sm font-black">{stepNum}</span>
                                     )}
-                                </span>
+                                </div>
+
+                                {/* Step Label */}
+                                <div className="mt-4 flex flex-col items-center text-center">
+                                    <span className={cn(
+                                        "text-xs font-black transition-colors whitespace-nowrap",
+                                        isActive ? "text-brand-primary" : isCompleted ? "text-emerald-600" : "text-slate-400"
+                                    )}>
+                                        {s}
+                                    </span>
+                                    {s === 'التأمين' && !IS_PRICING_ENABLED && (
+                                        <span className="mt-1 px-2 py-0.5 bg-brand-primary/10 text-brand-primary text-[8px] font-black rounded-full uppercase tracking-tighter">
+                                            قريباً
+                                        </span>
+                                    )}
+                                </div>
                             </div>
-                            {i < steps.length - 1 && <ArrowLeftRight className="h-4 w-4 text-slate-200" />}
-                        </div>
-                    )
-                })}
+                        )
+                    })}
+                </div>
             </div>
 
             <Card>
