@@ -77,6 +77,11 @@ export const CreateShipmentPage = () => {
     const navigate = useNavigate()
 
     const [isInitialLoading, setIsInitialLoading] = useState(isEditMode)
+    
+    // Scroll to top when switching steps
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [step]);
 
     useEffect(() => {
         const fetchShipment = async () => {
