@@ -85,15 +85,24 @@ export const IncomingOffersPage = () => {
                                             )}
                                         </div>
                                         <div>
-                                            <div className="flex items-center gap-1.5 mb-0.5">
-                                                <h3 className="font-black text-slate-800">{offer.driver?.full_name || "سائق"}</h3>
-                                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                                            <div className="flex items-center gap-1.5 mb-1">
+                                                <h3 className="font-black text-slate-800 leading-none">{offer.driver?.full_name || "سائق"}</h3>
+                                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                                             </div>
-                                            <div className="flex flex-col gap-0.5">
-                                                <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                                                    <Truck className="h-3 w-3" />
-                                                    {offer.driverDetails?.vehicle_type || "نقل عام"}
-                                                </span>
+                                            <div className="flex flex-col gap-1.5">
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                                                        <Truck className="h-3 w-3" />
+                                                        {offer.driver?.vehicleDetails?.[0]?.vehicle_type || offer.driverDetails?.vehicle_type || "نقل عام"}
+                                                    </span>
+                                                    <span className="text-[9px] font-black bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md border border-slate-200">
+                                                        {offer.driver?.vehicleDetails?.[0]?.plate_number || "ج ر ع 123"}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 text-[10px] font-black text-brand-primary bg-brand-primary/5 px-2 py-1 rounded-lg w-fit">
+                                                    <Clock className="h-3 w-3" />
+                                                    <span>يصل في {formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -119,12 +128,6 @@ export const IncomingOffersPage = () => {
                                             </div>
                                         </div>
 
-                                        <div className="mt-3 flex items-center gap-3">
-                                            <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400">
-                                                <Clock className="h-3 w-3" />
-                                                <span>يصل في {formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}</span>
-                                            </div>
-                                        </div>
                                     </div>
 
                                     {/* Part 3: Price & Actions */}
