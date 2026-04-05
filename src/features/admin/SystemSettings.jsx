@@ -19,11 +19,10 @@ import {
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { useNotificationStore } from '@/store/useNotificationStore'
+import { toast } from 'react-hot-toast'
 import { cn } from '@/utils/cn'
 
 export const SystemSettings = () => {
-    const { addNotification } = useNotificationStore()
     const [activeTab, setActiveTab] = useState('fees')
     const [saving, setSaving] = useState(false)
 
@@ -31,11 +30,7 @@ export const SystemSettings = () => {
         setSaving(true)
         setTimeout(() => {
             setSaving(false)
-            addNotification({
-                title: 'تم الحفظ',
-                desc: 'تم تحديث إعدادات المنصة بنجاح وتطبيقها على النظام',
-                type: 'success'
-            })
+            toast.success('تم تحديث إعدادات المنصة بنجاح وتطبيقها على النظام');
         }, 1500)
     }
 

@@ -21,12 +21,11 @@ import { useParams, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { shipmentService } from '@/services/shipmentService'
 import { getGoodsTypeLabel, getVehicleTypeLabel, getStatusStyles, formatEstimatedTime } from '@/utils/shipmentUtils'
-import { useNotificationStore } from '@/store/useNotificationStore'
+import { toast } from 'react-hot-toast'
 import { cn } from '@/utils/cn'
 
 export const BiddingInterface = () => {
     const { id: shipmentId } = useParams()
-    const { addNotification } = useNotificationStore()
 
     const [shipment, setShipment] = useState(null)
     const [allShipments, setAllShipments] = useState([])
@@ -106,19 +105,19 @@ export const BiddingInterface = () => {
 
     const submitNegotiation = async (offerId) => {
         if (!negotiationPrice || isNaN(negotiationPrice) || Number(negotiationPrice) <= 0) {
-            addNotification({ title: 'خطأ', desc: 'يرجى إدخال سعر صحيح للتفاوض', type: 'error' })
+            toast.error('يرجى إدخال سعر صحيح للتفاوض')
             return;
         }
 
         setSubmittingNegotiation(true)
         try {
             await shipmentService.negotiateBid(offerId, negotiationPrice);
-            addNotification({ title: 'تم الإرسال', desc: `تم إرسال عرض التفاوض بنجاح`, type: 'success' })
+            toast.success(`تم إرسال عرض التفاوض بنجاح`)
             setNegotiatingOfferId(null)
             setNegotiationPrice('')
             await fetchShipmentData(false)
         } catch (error) {
-            addNotification({ title: 'فشل التفاوض', desc: error.message, type: 'error' })
+            toast.error(error.message)
         } finally {
             setSubmittingNegotiation(false)
         }
@@ -127,20 +126,20 @@ export const BiddingInterface = () => {
     const handleRejectOffer = async (offerId) => {
         try {
             await shipmentService.updateBidStatus(offerId, 'rejected');
-            addNotification({ title: 'مرفوض', desc: 'تم رفض العرض بنجاح', type: 'info' })
+            toast.success('تم رفض العرض بنجاح')
             await fetchShipmentData(false)
         } catch (error) {
-            addNotification({ title: 'فشل العملية', desc: error.message, type: 'error' })
+            toast.error(error.message)
         }
     }
 
     const handleAcceptOffer = async (offerId) => {
         try {
             await shipmentService.updateBidStatus(offerId, 'accepted');
-            addNotification({ title: 'تم القبول', desc: 'تم قبول العرض بنجاح', type: 'success' })
+            toast.success('تم قبول العرض بنجاح')
             await fetchShipmentData(false)
         } catch (error) {
-            addNotification({ title: 'فشل العملية', desc: error.message, type: 'error' })
+            toast.error(error.message)
         }
     }
 
@@ -154,13 +153,13 @@ export const BiddingInterface = () => {
                     const fullId = found.id || found._id;
                     const fullData = await shipmentService.getShipmentById(fullId)
                     setShipment(fullData)
-                    addNotification({ title: 'تم العثورعلى الشحنة', desc: `عرض عروض الشحنة ${fullData.displayId}`, type: 'success' })
+                    toast.success(`عرض عروض الشحنة ${fullData.displayId}`)
                     setSearchQuery('')
                 } catch (error) {
-                    addNotification({ title: 'خطأ', desc: 'فشل في تحميل تفاصيل الشحنة', type: 'error' })
+                    toast.error('فشل في تحميل تفاصيل الشحنة')
                 }
             } else {
-                addNotification({ title: 'غير موجود', desc: 'لم نجد شحنة بهذا الرقم', type: 'error' })
+                toast.error('لم نجد شحنة بهذا الرقم')
             }
         }
     }
@@ -175,17 +174,9 @@ export const BiddingInterface = () => {
                         <div className="flex items-center gap-3">
                             <h1 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight shrink-0">إدارة العروض</h1>
                             <div className="flex items-center gap-1.5 px-3 py-1 bg-brand-primary/5 dark:bg-brand-primary/10 border border-brand-primary/20 rounded-full">
-                                <span className="h-1.5 w-1.5 rounded-full bg-brand-primary animate-pulse"></span>
                                 <span className="text-[10px] md:text-xs font-black text-brand-primary tracking-wider">{shipment.displayId}</span>
                             </div>
-                            <span className={cn(
-                                "px-3 py-1 md:py-1.5 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest ring-1 ring-inset",
-                                getStatusStyles(shipment.status).bg,
-                                getStatusStyles(shipment.status).text,
-                                getStatusStyles(shipment.status).border?.replace('border-', 'ring-') || 'ring-slate-200'
-                            )}>
-                                {getStatusStyles(shipment.status).label}
-                            </span>
+
                         </div>
                         <p className="text-slate-400 font-bold text-[10px] md:text-xs mt-1">قارن عروض السائقين المتاحة لشحنتك</p>
                     </div>
@@ -219,7 +210,7 @@ export const BiddingInterface = () => {
             <div className="relative overflow-hidden bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem] shadow-xl shadow-slate-200/20 dark:shadow-none p-1">
                 <div className="bg-white dark:bg-slate-900 rounded-[1.8rem] p-6 md:p-8">
                     {/* Top Stats Grid */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
                         <div className="group/stat">
                             <div className="flex items-center gap-3 mb-2">
                                 <div className="h-8 w-8 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center text-blue-500 group-hover/stat:scale-110 transition-transform">
@@ -267,6 +258,20 @@ export const BiddingInterface = () => {
                                 {filteredOffers.length} عرض متاح
                             </p>
                         </div>
+
+                        {shipment.description && (
+                            <div className="group/stat lg:col-span-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="h-8 w-8 bg-slate-50 dark:bg-slate-900/20 rounded-xl flex items-center justify-center text-slate-500 group-hover/stat:scale-110 transition-transform">
+                                        <FileText className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">الوصف</span>
+                                </div>
+                                <p className="text-xs font-bold text-slate-600 dark:text-slate-400 line-clamp-2 pr-1 leading-relaxed">
+                                    {shipment.description}
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                     {/* Bottom Route Bar */}
@@ -351,8 +356,8 @@ export const BiddingInterface = () => {
                                                             {getVehicleTypeLabel(offer.driver?.vehicleDetails?.[0]?.vehicle_type || offer.driver?.vehicleType || offer.vehicleType)} {offer.driver?.vehicleDetails?.[0]?.vehicle_brand || offer.driver?.vehicleBrand || offer.vehicleBrand || ''}
                                                         </span>
                                                     </div>
+
                                                     <div className="flex items-center gap-1.5 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-[9px] font-black text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 tracking-widest uppercase">
-                                                        <span className="text-blue-300 mr-0.5">#</span>
                                                         {offer.driver?.vehicleDetails?.[0]?.vehicle_plate_number || 'الرقم'}
                                                     </div>
                                                 </div>
@@ -360,7 +365,20 @@ export const BiddingInterface = () => {
                                         </div>
 
                                         {/* Price & Time Blocks */}
-                                        <div className="flex flex-col items-end gap-1 w-full md:w-auto">
+                                        <div className="flex flex-row md:flex-row items-center gap-3 w-full md:w-auto">
+                                            {/* Time Block */}
+                                            <div className="flex-1 md:flex-none text-center bg-slate-50 dark:bg-slate-800/50 px-5 py-3 rounded-2xl border border-slate-100 dark:border-slate-700/50 transition-all hover:border-brand-primary/30 min-w-[120px] relative">
+                                                <span className="block text-[10px] text-slate-500 font-black mb-1 uppercase tracking-tighter leading-none">
+                                                    ⏱️ وقت التوصيل
+                                                </span>
+                                                <div className="flex flex-col items-center">
+                                                    <span className="text-sm font-black text-brand-primary">
+                                                        {formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {/* Price Block */}
                                             <div className="flex-1 md:flex-none text-center bg-slate-50 dark:bg-slate-800/50 px-5 py-3 rounded-2xl border border-slate-100 dark:border-slate-700/50 transition-all hover:border-emerald-500/30 min-w-[140px] relative">
                                                 <span className="block text-[10px] text-slate-500 font-black mb-1 uppercase tracking-tighter leading-none">
                                                     {offer.negotiatedAmount ? "💰 عرض مضاد" : "💰 العرض"}

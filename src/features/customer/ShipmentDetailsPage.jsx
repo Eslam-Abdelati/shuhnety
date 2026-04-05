@@ -55,6 +55,12 @@ export const ShipmentDetailsPage = () => {
     const shipmentOffers = shipment?.bids || []
     const acceptedOffer = shipmentOffers.find(o => o.status === 'accepted')
 
+    const formatDimension = (value) => {
+        if (!value) return '-';
+        const num = parseFloat(value);
+        return isNaN(num) ? '-' : num.toFixed(2);
+    };
+
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center p-20 text-center animate-pulse">
@@ -114,14 +120,14 @@ export const ShipmentDetailsPage = () => {
                             {['في انتظار العروض', 'عروض رهن المراجعة'].includes(shipment.status) && (
                                 <button
                                     onClick={() => navigate(`/customer/edit/${shipment.id}`)}
-                                    className="flex items-center justify-center gap-1.5 px-4 h-9 md:h-10 rounded-full text-[10px] md:text-xs font-black text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all ring-1 ring-slate-200 dark:ring-slate-700 hover:ring-slate-300"
+                                    className="flex items-center justify-center gap-1.5 px-4 h-9 md:h-10 rounded-md text-[10px] md:text-xs font-black text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all ring-1 ring-slate-200 dark:ring-slate-700 hover:ring-slate-300"
                                 >
                                     تعديل الشحنة
                                 </button>
                             )}
                             <button
                                 onClick={() => navigate(`/customer/tracking/${shipment.id}`)}
-                                className="flex items-center justify-center gap-1.5 px-5 h-9 md:h-10 rounded-full text-[10px] md:text-xs font-black text-white bg-brand-primary hover:bg-brand-primary/90 shadow-sm shadow-brand-primary/20 transition-all active:scale-95"
+                                className="flex items-center justify-center gap-1.5 px-5 h-9 md:h-10 rounded-md text-[10px] md:text-xs font-black text-white bg-brand-primary hover:bg-brand-primary/90 shadow-sm shadow-brand-primary/20 transition-all active:scale-95"
                             >
                                 تتبع المسار
                             </button>
@@ -131,7 +137,7 @@ export const ShipmentDetailsPage = () => {
                     {role === 'driver' && (
                         <button
                             onClick={() => navigate(`/driver/available/${shipment.id}/submit`)}
-                            className="flex items-center justify-center gap-1.5 px-6 h-10 md:h-11 rounded-full text-[11px] md:text-sm font-black text-white bg-brand-primary hover:bg-brand-primary/90 shadow-sm shadow-brand-primary/20 transition-all active:scale-95"
+                            className="flex items-center justify-center gap-1.5 px-6 h-10 md:h-11 rounded-md text-[11px] md:text-sm font-black text-white bg-brand-primary hover:bg-brand-primary/90 shadow-sm shadow-brand-primary/20 transition-all active:scale-95"
                         >
                             تقديم عرض سعر الآن
                             <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
@@ -229,45 +235,89 @@ export const ShipmentDetailsPage = () => {
                                 <div className="h-8 w-8 md:h-10 md:w-10 bg-white dark:bg-slate-800 rounded-full shadow-sm flex items-center justify-center text-slate-500">
                                     <Package className="h-4 w-4 md:h-5 md:w-5" />
                                 </div>
-                                <h3 className="font-black text-slate-900 dark:text-white text-sm md:text-base">تفاصيل البضاعة</h3>
+                                <h3 className="font-black text-slate-900 dark:text-white text-sm md:text-base">تفاصيل الشحنة</h3>
                             </div>
-                            <div className="p-5 md:p-6 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                                <div className="space-y-1">
-                                    <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">نوع الشحنة</p>
-                                    <span className="text-xs md:text-sm font-black text-slate-800 dark:text-white">{getGoodsTypeLabel(shipment.goodsType)}</span>
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">الوزن</p>
-                                    <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
-                                        <Weight className="h-3.5 w-3.5 text-brand-primary" />
-                                        {shipment.weight} كجم
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">نوع الشاحنة</p>
-                                    <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
-                                        <Truck className="h-3.5 w-3.5 text-brand-primary" />
-                                        {shipment.truckType || 'أي نوع'}
-                                    </div>
-                                </div>
-                                {shipmentOffers.length > 0 && (
+                            <div className="p-5 md:p-6 space-y-8">
+                                {/* Row 1: Core Info */}
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                                     <div className="space-y-1">
-                                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">عدد العروض</p>
+                                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">نوع الشحنة</p>
+                                        <span className="text-xs md:text-sm font-black text-slate-800 dark:text-white whitespace-nowrap">{getGoodsTypeLabel(shipment.goodsType)}</span>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">الوزن</p>
                                         <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
-                                            <ArrowLeftRight className="h-3.5 w-3.5 text-brand-primary" />
-                                            {shipmentOffers.length}
+                                            <Weight className="h-3.5 w-3.5 text-brand-primary" />
+                                            <span className="whitespace-nowrap">{formatDimension(shipment.weight)} كجم</span>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">تاريخ النشر</p>
+                                        <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
+                                            <Calendar className="h-3.5 w-3.5 text-brand-primary" />
+                                            <span className="whitespace-nowrap">{shipment.createdAt ? format(new Date(shipment.createdAt), 'dd MMMM yyyy', { locale: ar }) : '---'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Row 2: Dimensions & Truck */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-slate-50 dark:border-slate-800/50">
+                                    {(shipment.length || shipment.width || shipment.height || shipment.dimensions?.length || shipment.dimensions?.width || shipment.dimensions?.height) && (
+                                        <div className="space-y-1">
+                                            <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">الأبعاد (سم)</p>
+                                            <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
+                                                <Maximize className="h-3.5 w-3.5 text-brand-primary" />
+                                                <span className="whitespace-nowrap">
+                                                    {formatDimension(shipment.length || shipment.dimensions?.length)} × {formatDimension(shipment.width || shipment.dimensions?.width)} × {formatDimension(shipment.height || shipment.dimensions?.height)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="space-y-1">
+                                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">نوع الشاحنة المطلوبة</p>
+                                        <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
+                                            <Truck className="h-3.5 w-3.5 text-brand-primary" />
+                                            <span className="whitespace-nowrap">{shipment.truckType || 'أي نوع متوفر'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="p-5 md:p-6 pt-0 space-y-6">
+                                <div>
+                                    <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">وصف الشحنة والتعليمات</p>
+                                    <div className="bg-slate-50/50 dark:bg-slate-800/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800/50">
+                                        <p className="text-xs md:text-sm font-bold text-slate-600 dark:text-slate-400 leading-relaxed text-right">
+                                            {shipment.description || 'لا يوجد وصف إضافي تفصيلي'}
+                                        </p>
+                                        {shipment.note && shipment.note !== "لا يوجد ملاحظات" && (
+                                            <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/50">
+                                                <p className="text-[9px] font-black text-brand-primary uppercase tracking-widest mb-1">ملاحظات إضافية</p>
+                                                <p className="text-[11px] font-bold text-slate-500">{shipment.note}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {(shipment.shipment_image || shipment.shipmentImage) && (
+                                    <div>
+                                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">صورة الشحنة</p>
+                                        <div className="relative rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 group/img">
+                                            <img
+                                                src={shipment.shipment_image || shipment.shipmentImage}
+                                                alt="Shipment"
+                                                className="w-full h-auto max-h-[400px] object-contain bg-slate-50 dark:bg-slate-900 transition-transform duration-700 group-hover/img:scale-105"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity flex items-end justify-center p-4">
+                                                <button
+                                                    onClick={() => window.open(shipment.shipment_image || shipment.shipmentImage, '_blank')}
+                                                    className="bg-white/90 backdrop-blur-md text-slate-900 px-4 py-2 rounded-xl text-[10px] font-black shadow-xl"
+                                                >
+                                                    عرض الصورة كاملة
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
-
-                            </div>
-                            <div className="p-5 md:p-6 pt-0">
-                                <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">وصف الشحنة</p>
-                                <div className="bg-slate-50/50 dark:bg-slate-800/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800/50">
-                                    <p className="text-xs md:text-sm font-bold text-slate-600 dark:text-slate-400 leading-relaxed text-right">
-                                        {shipment.description || 'لا يوجد وصف إضافي'}
-                                    </p>
-                                </div>
                             </div>
                         </CardContent>
                     </Card>

@@ -19,6 +19,7 @@ import {
     Trash2,
     Loader2
 } from 'lucide-react'
+import { toast } from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -146,7 +147,7 @@ export const ShipmentsPage = () => {
                 // fetchStats(); // Refresh stats if needed
             } catch (error) {
                 console.error('Cancellation failed:', error);
-                alert(error.message || 'فشل في إلغاء الشحنة');
+                toast.error(error.message || 'فشل في إلغاء الشحنة');
             }
         }
     };

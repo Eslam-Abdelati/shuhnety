@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { DashboardLayout } from './layouts/DashboardLayout'
-import { NotificationProvider } from './components/ui/NotificationProvider'
 import { useThemeStore } from './store/useThemeStore'
+import { Toaster } from 'react-hot-toast'
 
 // Pages
 import { LandingPage } from './features/landing/LandingPage'
@@ -79,8 +79,9 @@ function App() {
     }, [theme])
 
     return (
-        <NotificationProvider>
+        <>
             <SocketSync />
+            <Toaster position="top-left" reverseOrder={false} />
             <Router>
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
@@ -189,7 +190,7 @@ function App() {
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </Router>
-        </NotificationProvider>
+        </>
     )
 }
 

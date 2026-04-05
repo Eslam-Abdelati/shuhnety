@@ -25,7 +25,7 @@ import { useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
-import { useNotification } from '@/components/ui/NotificationProvider'
+import { toast } from 'react-hot-toast'
 import { cn } from '@/utils/cn'
 import { useShipmentStore } from '@/store/useShipmentStore'
 import { useNotificationStore } from '@/store/useNotificationStore'
@@ -75,7 +75,6 @@ export const CreateShipmentPage = () => {
     const [displayId, setDisplayId] = useState(editId)
 
     const navigate = useNavigate()
-    const { showNotification } = useNotification()
 
     const [isInitialLoading, setIsInitialLoading] = useState(isEditMode)
 
@@ -99,7 +98,7 @@ export const CreateShipmentPage = () => {
                         );
 
                         if (!isPending) {
-                            showNotification('لا يمكن تعديل الشحنة بعد قبول العروض', 'error')
+                            toast.error('لا يمكن تعديل الشحنة بعد قبول العروض')
                             navigate('/customer/shipments')
                             return
                         }
@@ -135,7 +134,7 @@ export const CreateShipmentPage = () => {
                 }
             } catch (error) {
                 console.error('Failed to fetch shipment for editing:', error)
-                showNotification('تحذير: قد تظهر بعض البيانات ناقصة، يرجى إعادة تحميل الصفحة', 'warning')
+                toast.error('تحذير: قد تظهر بعض البيانات ناقصة، يرجى إعادة تحميل الصفحة')
             } finally {
                 setIsInitialLoading(false)
             }
@@ -238,11 +237,11 @@ export const CreateShipmentPage = () => {
                     extractedUrl = extractedUrl.startsWith('/') ? API_BASE_URL + extractedUrl : API_BASE_URL + '/' + extractedUrl;
                 }
                 handleChange('shipmentImage', extractedUrl);
-                showNotification('تم رفع الصورة بنجاح', 'success');
+                toast.success('تم رفع الصورة بنجاح');
             }
         } catch (err) {
             console.error('Failed to upload shipment image:', err);
-            showNotification('فشل في رفع الصورة، يرجى المحاولة مرة أخرى', 'error');
+            toast.error('فشل في رفع الصورة، يرجى المحاولة مرة أخرى');
         } finally {
             setIsUploading(false);
         }
@@ -283,11 +282,7 @@ export const CreateShipmentPage = () => {
                 await shipmentService.updateShipment(editId, apiPayload)
 
                 updateShipment({ id: editId, ...formData })
-                showNotification({
-                    message: 'تم تحديث بيانات الشحنة بنجاح.',
-                    severity: 'success',
-                    title: 'تم التحديث'
-                })
+                toast.success('تم تحديث بيانات الشحنة بنجاح.')
             } else {
                 const result = await shipmentService.createShipment(apiPayload)
 
@@ -304,11 +299,7 @@ export const CreateShipmentPage = () => {
 
                 // Relying on Backend Sockets for notifications
 
-                showNotification({
-                    message: 'تم نشر شحنتك بنجاح! ستتلقى عروض السائقين قريباً.',
-                    severity: 'success',
-                    title: 'تم النشر بنجاح'
-                })
+                toast.success('تم نشر شحنتك بنجاح! ستتلقى عروض السائقين قريباً.')
             }
 
             setTimeout(() => {
@@ -316,11 +307,7 @@ export const CreateShipmentPage = () => {
             }, 1000)
 
         } catch (error) {
-            showNotification({
-                message: error.message || 'فشل في اتمام العملية. يرجى المحاولة مرة أخرى.',
-                severity: 'error',
-                title: 'خطأ'
-            })
+            toast.error(error.message || 'فشل في اتمام العملية. يرجى المحاولة مرة أخرى.')
         } finally {
             setIsSubmitting(false)
         }

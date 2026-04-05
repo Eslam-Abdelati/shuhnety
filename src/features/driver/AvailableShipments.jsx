@@ -16,7 +16,6 @@ import { cn } from '@/utils/cn'
 import { shipmentService } from '@/services/shipmentService'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useOfferStore } from '@/store/useOfferStore'
-import { useNotificationStore } from '@/store/useNotificationStore'
 import { getGoodsTypeLabel } from '@/utils/shipmentUtils'
 import { formatDistanceToNow } from 'date-fns'
 import { ar } from 'date-fns/locale'
@@ -25,7 +24,6 @@ export const AvailableShipments = () => {
     const navigate = useNavigate()
     const { user } = useAuthStore()
     const { offers, addOffer } = useOfferStore()
-    const { addNotification } = useNotificationStore()
     const [shipments, setShipments] = useState([])
     const [loading, setLoading] = useState(true)
     useEffect(() => {

@@ -16,7 +16,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { shipmentService } from '@/services/shipmentService'
-import { getGoodsTypeLabel, getStatusStyles } from '@/utils/shipmentUtils'
+import { getGoodsTypeLabel, getStatusStyles, formatEstimatedTime } from '@/utils/shipmentUtils'
 import { cn } from '@/lib/utils'
 
 export const IncomingOffersPage = () => {
@@ -100,10 +100,16 @@ export const IncomingOffersPage = () => {
                                                     <h3 className="text-lg font-black text-slate-900 dark:text-white leading-none">
                                                         {offer.driver?.full_name || offer.driverName || "سائق مستور"}
                                                     </h3>
-                                                    <p className="text-xs font-bold text-slate-400 mt-2 flex items-center gap-1.5">
-                                                        <Truck className="h-3 w-3" />
-                                                        {offer.driverDetails?.vehicle_type || "نقل عام"}
-                                                    </p>
+                                                    <div className="flex flex-col gap-1 mt-2">
+                                                        <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
+                                                            <Truck className="h-3 w-3" />
+                                                            {offer.driverDetails?.vehicle_type || "نقل عام"}
+                                                        </p>
+                                                        <p className="text-[10px] font-black text-brand-primary flex items-center gap-1.5">
+                                                            <Clock className="h-3 w-3" />
+                                                            {formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -132,14 +138,27 @@ export const IncomingOffersPage = () => {
                                         </div>
 
                                         {/* Right Side: Price & Action */}
-                                        <div className="bg-slate-50/50 dark:bg-slate-800/40 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 min-w-[320px]">
-                                            <div className="text-center md:text-right">
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">المبلغ المعروض</p>
-                                                <div className="flex items-baseline gap-2">
-                                                    <span className="text-3xl font-black text-brand-primary tracking-tighter">
-                                                        {offer.amount || offer.price}
-                                                    </span>
-                                                    <span className="text-xs font-black text-slate-400">EGP</span>
+                                        <div className="bg-slate-50/50 dark:bg-slate-800/40 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-8 min-w-[450px]">
+                                            <div className="flex items-center gap-4 w-full md:w-auto flex-1">
+                                                {/* Time Block */}
+                                                <div className="flex-1 text-center bg-white dark:bg-slate-900/50 px-4 py-3 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                                                    <span className="block text-[9px] text-slate-400 font-black mb-1 uppercase tracking-tighter leading-none">⏱️ وقت التوصيل</span>
+                                                    <div className="flex items-baseline justify-center gap-1">
+                                                        <span className="text-sm font-black text-brand-primary whitespace-nowrap">
+                                                            {formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Price Block */}
+                                                <div className="flex-1 text-center bg-brand-primary/5 px-4 py-3 rounded-2xl border border-brand-primary/10">
+                                                    <p className="text-[9px] font-black text-brand-primary uppercase tracking-[0.2em] mb-1">💰 العرض</p>
+                                                    <div className="flex items-baseline justify-center gap-1">
+                                                        <span className="text-2xl font-black text-brand-primary tracking-tighter">
+                                                            {offer.amount || offer.price}
+                                                        </span>
+                                                        <span className="text-[10px] font-black text-brand-primary/60">EGP</span>
+                                                    </div>
                                                 </div>
                                             </div>
 

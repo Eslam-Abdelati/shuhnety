@@ -2,12 +2,11 @@ import { useEffect } from 'react';
 import { socketService } from '@/services/socketService';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useNotificationStore } from '@/store/useNotificationStore';
-import { useNotification } from '@/components/ui/NotificationProvider';
+import { toast } from 'react-hot-toast';
 
 export const SocketSync = () => {
     const { user, role } = useAuthStore();
     const { addNotification } = useNotificationStore();
-    const { showNotification } = useNotification();
 
     useEffect(() => {
         if (!user || !user.id) {
@@ -55,8 +54,10 @@ export const SocketSync = () => {
                         recipientRole: role
                     });
                 }
-                // UI Snackbar
-                showNotification(message, type, title);
+                // UI Toast
+                if (type === 'success') toast.success(message);
+                else if (type === 'error') toast.error(message);
+                else toast(message, { icon: '🔔' });
             } catch (err) {
                 // Keep error log
                 console.error('❌ Error handling notification:', err);
@@ -89,7 +90,7 @@ export const SocketSync = () => {
             delete window.testSocket;
             delete window.mockNotification;
         };
-    }, [user, role, addNotification, showNotification]);
+    }, [user, role, addNotification]);
 
     return null;
 };

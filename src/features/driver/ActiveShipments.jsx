@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/cn'
 import { shipmentService } from '@/services/shipmentService'
 import { useAuthStore } from '@/store/useAuthStore'
-import { useNotificationStore } from '@/store/useNotificationStore'
+import { toast } from 'react-hot-toast'
 import { getGoodsTypeLabel, getStatusStyles } from '@/utils/shipmentUtils'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
@@ -28,7 +28,6 @@ import { ar } from 'date-fns/locale'
 export const ActiveShipments = () => {
     const navigate = useNavigate()
     const { user } = useAuthStore()
-    const { addNotification } = useNotificationStore()
     const [shipments, setShipments] = useState([])
     const [loading, setLoading] = useState(true)
 
@@ -40,11 +39,7 @@ export const ActiveShipments = () => {
             setShipments(data)
         } catch (error) {
             console.error('Failed to fetch assigned shipments:', error)
-            addNotification({
-                title: 'خطأ',
-                desc: 'تعذر تحميل الرحلات النشطة',
-                type: 'error'
-            })
+            toast.error('تعذر تحميل الرحلات النشطة')
         } finally {
             setLoading(false)
         }

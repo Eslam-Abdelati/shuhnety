@@ -21,7 +21,7 @@ import {
 import { useShipmentStore } from '@/store/useShipmentStore'
 import { useOfferStore } from '@/store/useOfferStore'
 import { useAuthStore } from '@/store/useAuthStore'
-import { useNotificationStore } from '@/store/useNotificationStore'
+import { toast } from 'react-hot-toast'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/cn'
@@ -36,7 +36,6 @@ export const DriverDashboard = () => {
     const { shipments = [], updateShipmentStatus } = useShipmentStore()
     const { offers = [] } = useOfferStore()
     const { user } = useAuthStore()
-    const { addNotification } = useNotificationStore()
     const [availableShipments, setAvailableShipments] = useState([])
     const [assignedShipments, setAssignedShipments] = useState([])
     const [isFetchingAvailable, setIsFetchingAvailable] = useState(false)
@@ -73,7 +72,7 @@ export const DriverDashboard = () => {
     const handleStartNavigation = async (shipmentId) => {
         try {
             await shipmentService.updateShipmentStatus(shipmentId, 'delivery_in_progress');
-            addNotification({ title: 'تم التحديث', desc: 'تم بدء الرحلة بنجاح', type: 'success' });
+            toast.success('تم بدء الرحلة بنجاح');
             // Full reload to sync state as requested
             window.location.reload();
         } catch (error) {
@@ -84,7 +83,7 @@ export const DriverDashboard = () => {
     const handleCompleteDelivery = async (shipmentId) => {
         try {
             await shipmentService.updateShipmentStatus(shipmentId, 'delivered');
-            addNotification({ title: 'تم الوصول', desc: 'تم إتمام التوصيل بنجاح', type: 'success' });
+            toast.success('تم إتمام التوصيل بنجاح');
             // Full reload to sync state as requested
             window.location.reload();
         } catch (error) {

@@ -23,7 +23,7 @@ import {
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { useNotification } from '@/components/ui/NotificationProvider'
+import { toast } from 'react-hot-toast'
 import { cn } from '@/utils/cn'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -31,7 +31,6 @@ export const AdminDashboard = () => {
     const [users, setUsers] = useState([])
     const [filter, setFilter] = useState('all') // all, driver, customer, company
     const [searchQuery, setSearchQuery] = useState('')
-    const { showNotification } = useNotification()
 
     // 12 years senior: Encapsulate data fetching/updating
     const loadUsers = useCallback(() => {
@@ -55,11 +54,11 @@ export const AdminDashboard = () => {
         localStorage.setItem('registered_users', JSON.stringify(updatedUsers))
         setUsers(updatedUsers)
 
-        showNotification({
-            message: `تم ${newStatus === 'accepted' ? 'تفعيل' : 'تعليق'} حساب المستخدم بنجاح`,
-            severity: newStatus === 'accepted' ? 'success' : 'warning',
-            title: 'تحديث الحالة'
-        })
+        if (newStatus === 'accepted') {
+            toast.success(`تم تفعيل حساب المستخدم ${email} بنجاح`);
+        } else {
+            toast.success(`تم تعليق حساب المستخدم ${email} بنجاح`);
+        }
     }
 
     const filteredUsers = useMemo(() => {

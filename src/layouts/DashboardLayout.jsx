@@ -1,6 +1,5 @@
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
-import { GlobalNotification } from '@/components/ui/NotificationProvider'
 import { useUIStore } from '@/store/useUIStore'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
@@ -75,7 +74,6 @@ export const DashboardLayout = ({ children }) => {
 
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
                 <Topbar />
-                <GlobalNotification />
                 <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-brand-background dark:bg-slate-950/50">
                     <div className="max-w-7xl mx-auto space-y-6 md:space-y-8">
                         {children}

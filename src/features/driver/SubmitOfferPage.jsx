@@ -25,7 +25,7 @@ import { Button } from '@/components/ui/Button'
 import { shipmentService } from '@/services/shipmentService'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useOfferStore } from '@/store/useOfferStore'
-import { useNotificationStore } from '@/store/useNotificationStore'
+import { toast } from 'react-hot-toast'
 import { getGoodsTypeLabel } from '@/utils/shipmentUtils'
 import { formatDistanceToNow } from 'date-fns'
 import { ar } from 'date-fns/locale'
@@ -35,7 +35,6 @@ export const SubmitOfferPage = () => {
     const navigate = useNavigate()
     const { user } = useAuthStore()
     const { offers, addOffer } = useOfferStore()
-    const { addNotification } = useNotificationStore()
 
     const [shipment, setShipment] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -66,22 +65,12 @@ export const SubmitOfferPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         if (!price || isNaN(price) || Number(price) <= 0) {
-            addNotification({
-                title: 'تنبيه',
-                desc: 'برجاء إدخال مبلغ عرض صحيح',
-                type: 'warning',
-                recipientRole: 'driver'
-            })
+            toast.error('برجاء إدخال مبلغ عرض صحيح');
             return
         }
 
         if (!expectedTime.trim() || isNaN(expectedTime) || Number(expectedTime) < 10) {
-            addNotification({
-                title: 'تنبيه',
-                desc: 'برجاء إدخال موعد وصول صحيح (يجب ألا يقل عن 10 ساعات)',
-                type: 'warning',
-                recipientRole: 'driver'
-            })
+            toast.error('برجاء إدخال موعد وصول صحيح (يجب ألا يقل عن 10 ساعات)');
             return
         }
 
@@ -97,12 +86,7 @@ export const SubmitOfferPage = () => {
             await shipmentService.submitBid(bidData)
 
             // Success feedback
-            addNotification({
-                title: 'نجاح',
-                desc: 'تم تقديم عرضك بنجاح ونحن في انتظار رد العميل',
-                type: 'success',
-                recipientRole: 'driver'
-            })
+            toast.success('تم تقديم عرضك بنجاح ونحن في انتظار رد العميل');
             
             // Also update local store for UI feedback
             addOffer({
@@ -128,12 +112,7 @@ export const SubmitOfferPage = () => {
                 finalMessage = 'موعد الوصول المتوقع يجب ألا يقل عن 10 ساعات حسب قوانين المنصة';
             }
 
-            addNotification({
-                title: 'خطأ في العرض',
-                desc: finalMessage || 'فشل تقديم العرض. يرجى المحاولة مرة أخرى.',
-                type: 'error',
-                recipientRole: 'driver'
-            })
+            toast.error(finalMessage || 'فشل تقديم العرض. يرجى المحاولة مرة أخرى.');
         } finally {
             setSubmitting(false)
         }

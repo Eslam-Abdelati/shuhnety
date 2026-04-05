@@ -13,7 +13,7 @@ import {
     DialogFooter, DialogHeader, DialogTitle
 } from "@/components/ui/Dialog";
 import { useAuthStore } from '@/store/useAuthStore';
-import { useNotificationStore } from '@/store/useNotificationStore';
+import { toast } from 'react-hot-toast';
 import { useOfferStore } from '@/store/useOfferStore';
 import { getStatusStyles, getGoodsTypeLabel, mapShipmentData, formatEstimatedTime } from '@/utils/shipmentUtils';
 import { shipmentService } from '@/services/shipmentService';
@@ -26,7 +26,6 @@ export const DriverShipmentDetails = () => {
     const navigate = useNavigate();
     const { user } = useAuthStore();
     const { offers, addOffer } = useOfferStore();
-    const { addNotification } = useNotificationStore();
 
     const [shipment, setShipment] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -40,6 +39,12 @@ export const DriverShipmentDetails = () => {
     useEffect(() => {
         fetchShipmentDetails();
     }, [id]);
+
+    const formatDimension = (value) => {
+        if (!value) return '-';
+        const num = parseFloat(value);
+        return isNaN(num) ? '-' : num.toFixed(2);
+    };
 
     const fetchShipmentDetails = async () => {
         try {
@@ -61,14 +66,10 @@ export const DriverShipmentDetails = () => {
         setUpdating(true);
         try {
             await shipmentService.updateShipmentStatus(id, newStatus);
-            addNotification({
-                title: 'تم بنجاح',
-                desc: 'تم تحديث حالة الشحنة بنجاح',
-                type: 'success'
-            });
+            toast.success('تم تحديث حالة الشحنة بنجاح');
             window.location.reload();
         } catch (err) {
-            addNotification({ title: 'خطأ', desc: 'فشل تحديث الحالة', type: 'error' });
+            toast.error('فشل تحديث الحالة');
         } finally {
             setUpdating(false);
         }
@@ -87,7 +88,7 @@ export const DriverShipmentDetails = () => {
             if (myBid?.id) {
                 // If a bid already exists, we are negotiating (counter-offer)
                 await shipmentService.negotiateBid(myBid.id, bidForm.amount);
-                addNotification({ title: 'تم الإرسال', desc: 'تم إرسال عرضك التفاوضي الجديد بنجاح', type: 'success' });
+                toast.success('تم إرسال عرضك التفاوضي الجديد بنجاح');
             } else {
                 // Standard initial bid submission
                 const bidData = {
@@ -97,7 +98,7 @@ export const DriverShipmentDetails = () => {
                     note: bidForm.note?.trim() || null
                 };
                 await shipmentService.submitBid(bidData);
-                addNotification({ title: 'نجاح', desc: 'تم تقديم عرضك بنجاح', type: 'success' });
+                toast.success('تم تقديم عرضك بنجاح');
 
                 addOffer({
                     id: Math.random().toString(36).substr(2, 9),
@@ -111,7 +112,7 @@ export const DriverShipmentDetails = () => {
             setShowBidModal(false);
             fetchShipmentDetails();
         } catch (err) {
-            addNotification({ title: 'خطأ', desc: err.message || 'فشل إرسال العرض', type: 'error' });
+            toast.error(err.message || 'فشل إرسال العرض');
         } finally {
             setSubmittingBid(false);
         }
@@ -122,10 +123,10 @@ export const DriverShipmentDetails = () => {
         try {
             setUpdating(true);
             await shipmentService.updateBidStatus(myBid.id, 'accepted');
-            addNotification({ title: 'تم القبول', desc: 'تم قبول عرض السعر بنجاح وجاري تحديث الشحنة', type: 'success' });
+            toast.success('تم قبول عرض السعر بنجاح وجاري تحديث الشحنة');
             fetchShipmentDetails(); // Refresh to show assigned status
         } catch (err) {
-            addNotification({ title: 'خطأ', desc: err.message || 'فشل قبول العرض', type: 'error' });
+            toast.error(err.message || 'فشل قبول العرض');
         } finally {
             setUpdating(false);
         }
@@ -174,7 +175,7 @@ export const DriverShipmentDetails = () => {
     return (
         <div className="max-w-5xl mx-auto px-4 pb-24 font-cairo" dir="rtl">
             {/* --- Standard Simplified Header --- */}
-            <div className="pt-6 pb-8 space-y-6">
+            <div className="pb-4 space-y-6">
 
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div className="space-y-1">
@@ -185,19 +186,6 @@ export const DriverShipmentDetails = () => {
                             تفاصيل الشحنة
                         </h1>
                         <p className="text-xs font-bold text-slate-400 mr-14">{shipment.displayId}</p>
-                    </div>
-
-                    <div className={cn(
-                        "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border flex items-center gap-2.5",
-                        currentStatusStyle.bg,
-                        currentStatusStyle.text,
-                        currentStatusStyle.border
-                    )}>
-                        <span className={cn(
-                            "h-2 w-2 rounded-full animate-pulse",
-                            currentStatusStyle.dot
-                        )} />
-                        {shipment.status}
                     </div>
                 </div>
             </div>
@@ -210,11 +198,11 @@ export const DriverShipmentDetails = () => {
                     {/* Path & Map Section */}
                     <Card className="rounded-[2.5rem] border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
                         <CardContent className="p-8">
-                            <div className="flex items-center justify-between mb-10">
-                                <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest">مسار الشحنة</h3>
+                            <div className="flex items-center gap-4 mb-10">
                                 <div className="h-8 w-8 bg-emerald-50 text-emerald-500 rounded-lg flex items-center justify-center">
                                     <MapPin className="h-5 w-5" />
                                 </div>
+                                <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">مسار الشحنة</h3>
                             </div>
 
                             <div className="relative space-y-12 before:absolute before:right-[15px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-50 before:border-dashed before:border-r-2 before:border-slate-100">
@@ -264,38 +252,100 @@ export const DriverShipmentDetails = () => {
                     {/* Specifications Section */}
                     <Card className="rounded-[2.5rem] border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] p-8">
                         <div className="flex items-center gap-4 mb-10">
-                            <div className="h-12 w-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400">
+                            <div className="h-12 w-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400">
                                 <Box className="h-6 w-6" />
                             </div>
-                            <h3 className="text-lg font-black text-slate-900 tracking-tight">مواصفات الشحنة</h3>
+                            <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">مواصفات الشحنة</h3>
                         </div>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                            {[
-                                { label: 'الوزن', value: `${shipment.weight} كجم`, icon: Weight, color: 'text-blue-500', bg: 'bg-blue-50' },
-                                { label: 'نوع الحمولة', value: getGoodsTypeLabel(shipment.goodsType), icon: Box, color: 'text-orange-500', bg: 'bg-orange-50' },
-                                { label: 'الأبعاد', value: `${shipment.length || '?'}/${shipment.width || '?'}/${shipment.height || '?'}`, icon: Maximize, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-                                { label: 'تاريخ النشر', value: shipment.createdAt ? format(new Date(shipment.createdAt), 'dd MMM yyyy', { locale: ar }) : '---', icon: Calendar, color: 'text-purple-500', bg: 'bg-purple-50' }
-                            ].map((spec, i) => (
-                                <div key={i} className="flex flex-col items-center justify-center p-6 bg-slate-50 border border-slate-100 rounded-3xl text-center group transition-all hover:bg-white hover:shadow-xl hover:border-slate-200">
-                                    <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110", spec.bg, spec.color)}>
-                                        <spec.icon className="h-6 w-6" />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase text-slate-400 mb-1 whitespace-nowrap">{spec.label}</span>
-                                    <span className="text-xs font-black text-slate-800 whitespace-nowrap">{spec.value}</span>
-                                </div>
-                            ))}
-                        </div>
-
-                        {shipment.description && (
-                            <div className="p-6 bg-slate-50 border border-slate-100 rounded-[2rem] flex items-start gap-4">
-                                <Info className="h-5 w-5 text-slate-400 mt-1 shrink-0" />
+                        <div className="p-0 space-y-8 mb-10">
+                            {/* Row 1: Core Info */}
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                                 <div className="space-y-1">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase">وصف وتفاصيل الحمولة</span>
-                                    <p className="text-sm font-bold text-slate-700 leading-relaxed">{shipment.description}</p>
+                                    <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">نوع الشحنة</p>
+                                    <span className="text-xs md:text-sm font-black text-slate-800 dark:text-white whitespace-nowrap">{getGoodsTypeLabel(shipment.goodsType)}</span>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">الوزن</p>
+                                    <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
+                                        <Weight className="h-3.5 w-3.5 text-brand-primary" />
+                                        <span className="whitespace-nowrap">{formatDimension(shipment.weight)} كجم</span>
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">تاريخ النشر</p>
+                                    <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
+                                        <Calendar className="h-3.5 w-3.5 text-brand-primary" />
+                                        <span className="whitespace-nowrap">{shipment.createdAt ? format(new Date(shipment.createdAt), 'dd MMMM yyyy', { locale: ar }) : '---'}</span>
+                                    </div>
                                 </div>
                             </div>
-                        )}
+
+                            {/* Row 2: Dimensions & Others */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50 dark:border-slate-800/50">
+                                {(shipment.length || shipment.width || shipment.height || shipment.dimensions?.length || shipment.dimensions?.width || shipment.dimensions?.height) && (
+                                    <div className="space-y-1">
+                                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">الأبعاد (سم)</p>
+                                        <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
+                                            <Maximize className="h-3.5 w-3.5 text-brand-primary" />
+                                            <span className="whitespace-nowrap">
+                                                {formatDimension(shipment.length || shipment.dimensions?.length)} × {formatDimension(shipment.width || shipment.dimensions?.width)} × {formatDimension(shipment.height || shipment.dimensions?.height)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="space-y-1">
+                                    <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">نوع الشاحنة المطلوبة</p>
+                                    <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
+                                        <Truck className="h-3.5 w-3.5 text-brand-primary" />
+                                        <span className="whitespace-nowrap">{shipment.truckType || 'أي نوع متوفر'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            {shipment.description && (
+                                <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800/50 rounded-[2rem] flex items-start gap-4">
+                                    <Info className="h-5 w-5 text-slate-400 mt-1 shrink-0" />
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">وصف وتفاصيل الحمولة</span>
+                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-300 leading-relaxed">{shipment.description}</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {shipment.note && shipment.note !== "لا يوجد ملاحظات" && (
+                                <div className="p-6 bg-brand-primary/5 border border-brand-primary/10 rounded-[2rem] flex items-start gap-4">
+                                    <AlertCircle className="h-5 w-5 text-brand-primary mt-1 shrink-0" />
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-black text-brand-primary uppercase tracking-widest">ملاحظات إضافية وهامة</span>
+                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-300 leading-relaxed">{shipment.note}</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {(shipment.shipment_image || shipment.shipmentImage) && (
+                                <div className="space-y-3">
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">صورة الشحنة</span>
+                                    <div className="relative rounded-[2rem] overflow-hidden border border-slate-100 dark:border-slate-800 group/img bg-slate-50 dark:bg-slate-900/50">
+                                        <img
+                                            src={shipment.shipment_image || shipment.shipmentImage}
+                                            alt="Shipment"
+                                            className="w-full h-auto max-h-[500px] object-contain transition-transform duration-700 group-hover/img:scale-105"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                                            <button
+                                                onClick={() => window.open(shipment.shipment_image || shipment.shipmentImage, '_blank')}
+                                                className="bg-white text-slate-900 px-6 py-3 rounded-2xl text-xs font-black shadow-2xl active:scale-95 transition-transform"
+                                            >
+                                                عرض الصورة بالكامل
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </Card>
                 </div>
 

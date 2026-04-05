@@ -22,12 +22,11 @@ import {
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { useNotificationStore } from '@/store/useNotificationStore'
+import { toast } from 'react-hot-toast'
 import { cn } from '@/utils/cn'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export const DriverVerification = () => {
-    const { addNotification } = useNotificationStore()
     const [pendingDrivers, setPendingDrivers] = useState([])
     const [selectedDriver, setSelectedDriver] = useState(null)
     const [showRejectionModal, setShowRejectionModal] = useState(false)
@@ -58,11 +57,11 @@ export const DriverVerification = () => {
         setRejectionReason('')
         setCheckedDocs({})
 
-        addNotification({
-            title: status === 'accepted' ? 'تم التفعيل بنجاح' : 'تم رفض الطلب',
-            desc: status === 'accepted' ? `السائق ${email} متاح الآن للعمل على المنصة.` : `تم إرسال سبب الرفض للسائق ${email}.`,
-            type: status === 'accepted' ? 'success' : 'error'
-        })
+        if (status === 'accepted') {
+            toast.success(`تم تفعيل السائق ${email} بنجاح ومتاح الآن للعمل.`);
+        } else {
+            toast.error(`تم رفض طلب السائق ${email} وإرسال السبب.`);
+        }
     }
 
     const toggleDocCheck = (label) => {

@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { ar } from 'date-fns/locale'
 import { useState, useEffect, useRef } from 'react'
 import { shipmentService } from '@/services/shipmentService'
+import { socketService } from '@/services/socketService'
 import { getGoodsTypeLabel, getStatusStyles } from '@/utils/shipmentUtils'
 import DashboardStats from './components/DashboardStats'
 
@@ -27,61 +28,76 @@ export const CustomerDashboard = () => {
     const [apiError, setApiError] = useState(null)
     const isInitialMount = useRef(true)
 
+    const fetchInitialData = async () => {
+        setIsLoading(true)
+        setApiError(null)
+        try {
+            // Fetch shipments and stats in parallel to be faster
+            const [shipmentsRes, statsRes, bidsRes] = await Promise.all([
+                shipmentService.searchShipments({ skip: 0, take: 5 }).catch(err => {
+                    console.error('Shipments fetch error:', err);
+                    if (err.message.includes('429') || err.message.includes('الحد المسموح به')) {
+                        setApiError(err.message);
+                    }
+                    return { data: { shipments: [] } };
+                }),
+                shipmentService.getShipmentStats().catch(err => {
+                    console.error('Stats fetch error:', err);
+                    if (err.message.includes('429') || err.message.includes('الحد المسموح به')) {
+                        setApiError(err.message);
+                    }
+                    return { status: false };
+                }),
+                shipmentService.getNewBids().catch(err => {
+                    console.error('New bids fetch error:', err);
+                    return { data: [] };
+                })
+            ]);
+
+            // Handle shipments
+            const shipmentsData = shipmentsRes.data?.shipments || (Array.isArray(shipmentsRes.data) ? shipmentsRes.data : [])
+            setShipments(shipmentsData)
+            // Handle stats
+            if (statsRes && statsRes.status && statsRes.data) {
+                const statsData = statsRes.data;
+                setApiStats({
+                    total: statsData.totalShipments || 0,
+                    in_progress: statsData.inProgressShipments || 0,
+                    completed: statsData.completedShipments || 0,
+                    new_bids: statsData.newOffers || 0
+                })
+            }
+
+            // Handle new bids
+            const newBidsData = Array.isArray(bidsRes?.data) ? bidsRes.data : (bidsRes?.data?.bids || bidsRes?.bids || [])
+            setApiNewBids(newBidsData.slice(0, 3))
+        } catch (error) {
+            console.error('Failed to fetch dashboard data:', error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     useEffect(() => {
         if (!isInitialMount.current) return;
         isInitialMount.current = false;
-
-        const fetchInitialData = async () => {
-            setIsLoading(true)
-            setApiError(null)
-            try {
-                // Fetch shipments and stats in parallel to be faster
-                const [shipmentsRes, statsRes, bidsRes] = await Promise.all([
-                    shipmentService.searchShipments({ skip: 0, take: 5 }).catch(err => {
-                        console.error('Shipments fetch error:', err);
-                        if (err.message.includes('429') || err.message.includes('الحد المسموح به')) {
-                            setApiError(err.message);
-                        }
-                        return { data: { shipments: [] } };
-                    }),
-                    shipmentService.getShipmentStats().catch(err => {
-                        console.error('Stats fetch error:', err);
-                        if (err.message.includes('429') || err.message.includes('الحد المسموح به')) {
-                            setApiError(err.message);
-                        }
-                        return { status: false };
-                    }),
-                    shipmentService.getNewBids().catch(err => {
-                        console.error('New bids fetch error:', err);
-                        return { data: [] };
-                    })
-                ]);
-
-                // Handle shipments
-                const shipmentsData = shipmentsRes.data?.shipments || (Array.isArray(shipmentsRes.data) ? shipmentsRes.data : [])
-                setShipments(shipmentsData)
-                // Handle stats
-                if (statsRes && statsRes.status && statsRes.data) {
-                    const statsData = statsRes.data;
-                    setApiStats({
-                        total: statsData.totalShipments || 0,
-                        in_progress: statsData.inProgressShipments || 0,
-                        completed: statsData.completedShipments || 0,
-                        new_bids: statsData.newOffers || 0
-                    })
-                }
-
-                // Handle new bids
-                const newBidsData = Array.isArray(bidsRes?.data) ? bidsRes.data : (bidsRes?.data?.bids || bidsRes?.bids || [])
-                setApiNewBids(newBidsData.slice(0, 3))
-            } catch (error) {
-                console.error('Failed to fetch dashboard data:', error)
-            } finally {
-                setIsLoading(false)
-            }
-        }
         fetchInitialData()
     }, [])
+
+    useEffect(() => {
+        const handleUpdates = (data) => {
+            console.log('📡 [Dashboard] Real-time update received:', data);
+            fetchInitialData();
+        };
+
+        const events = ['new_bid', 'bid_received', 'notification', 'new_notification'];
+        
+        events.forEach(event => socketService.on(event, handleUpdates));
+
+        return () => {
+            events.forEach(event => socketService.off(event, handleUpdates));
+        };
+    }, []);
 
     // الحصول على العروض النشطة (في انتظار الرد أو عروض مقابلة)
     const activeOffers = (offers || []).filter(o => o.status === 'pending' || o.status === 'counter_offered')
@@ -260,14 +276,19 @@ export const CustomerDashboard = () => {
                                             <div className="flex justify-between items-center mb-5">
                                                 <div>
                                                     <p className="text-sm font-black text-white leading-none">{offer.driver?.full_name || offer.driverName || 'سائق'}</p>
-                                                    <p className="text-[10px] font-bold text-white/40 mt-1.5">{getGoodsTypeLabel(offer.shipment?.goodsType || offer.shipmentDetails?.goodsType) || 'شحنة عامة'}</p>
+                                                    <p className="text-[10px] font-bold text-white/40 mt-1.5">
+                                                        {getGoodsTypeLabel(
+                                                            offer.shipment?.goods_type || offer.shipment?.goodsType || offer.shipmentDetails?.goodsType,
+                                                            offer.shipment?.other_goods_type || offer.shipment?.otherGoodsType || offer.shipmentDetails?.otherGoodsType
+                                                        ) || 'شحنة عامة'}
+                                                    </p>
                                                 </div>
                                                 <span className="text-[10px] font-black bg-brand-secondary text-white text-center px-3 py-1.5 rounded-lg shadow-sm">
-                                                    {offer.amount || offer.price} EGP
+                                                    {parseFloat(offer.negotiatedAmount || offer.negotiated_amount || offer.new_amount || offer.amount || offer.price || 0).toLocaleString('ar-EG')} ج.م
                                                 </span>
                                             </div>
                                             <Link
-                                                to="/customer/bids"
+                                                to={`/customer/bids/${offer.shipment?.id || offer.shipmentId || offer.shipment_id || offer.shipmentDetails?.id || offer.shipmentDetails?._id}`}
                                                 className="w-full py-3 bg-white text-brand-primary rounded-xl text-xs font-black flex items-center justify-center hover:bg-blue-50 transition-all shadow-lg shadow-black/5 active:scale-[0.98]"
                                             >
                                                 عرض التفاصيل
