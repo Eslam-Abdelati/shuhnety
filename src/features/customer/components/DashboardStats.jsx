@@ -41,10 +41,10 @@ const DashboardStats = ({ statsData, isLoading }) => {
     ]
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {stats.map((stat, i) => (
                 <Card key={i} className="group relative overflow-hidden bg-white dark:bg-slate-900 border-none shadow-sm rounded-[1.5rem] sm:rounded-[2rem] dark:ring-1 dark:ring-slate-800">
-                    <CardContent className="p-4 sm:p-8">
+                    <CardContent className="p-6 sm:p-8">
                         <div className="flex justify-between items-start mb-4 sm:mb-8">
                             <div className={cn(
                                 "px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[10px] font-black flex items-center gap-1 sm:gap-1.5 transition-colors",

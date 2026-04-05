@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Plus, Package, TrendingUp, ArrowLeftRight, ShieldCheck, Box, AlertCircle, ChevronLeft, Calendar } from 'lucide-react'
+import { Plus, Package, TrendingUp, ArrowLeftRight, ShieldCheck, Box, AlertCircle, ChevronLeft, Calendar, Truck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
