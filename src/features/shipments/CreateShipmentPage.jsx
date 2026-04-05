@@ -80,7 +80,10 @@ export const CreateShipmentPage = () => {
     
     // Scroll to top when switching steps
     useEffect(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const mainContent = document.querySelector('main');
+        if (mainContent) {
+            mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     }, [step]);
 
     useEffect(() => {
