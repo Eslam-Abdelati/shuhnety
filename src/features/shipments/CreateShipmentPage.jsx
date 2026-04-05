@@ -35,12 +35,12 @@ import { authService } from '@/services/authService'
 import { API_BASE_URL } from '@/api/axiosClient'
 import { GOODS_TYPES, getGoodsTypeLabel } from '@/utils/shipmentUtils'
 
-const steps = ['تفاصيل المنتج', 'الموقع', 'التسعير', 'المراجعة']
+const steps = ['تفاصيل المنتج', 'المسار', 'التأمين', 'المراجعة']
 const IS_PRICING_ENABLED = false; // قم بتغيير هذه القيمة إلى true لتفعيل التنسيق الأخير
 
 
 const governorates = [
-    'الوادي الجديد', 'القاهرة', 'الجيزة', 'الإسكندرية', 'الدقهلية', 'البحر الأحمر', 'البحيرة', 'الفيوم', 'الغربية', 'الإسماعيلية', 'المنوفية', 'القليوبية', 'الأقصر', 'قنا', 'شمال سيناء', 'بورسعيد', 'سوهاج', 'جنوب سيناء', 'السويس', 'الشرقية', 'بني سويف', 'أسيوط', 'المنيا', 'دمياط', 'كفر الشيخ', 'مطروح', 'أسوان'
+    'القاهرة', 'الجيزة', 'الإسكندرية', 'الدقهلية', 'البحر الأحمر', 'البحيرة', 'الفيوم', 'الغربية', 'الإسماعيلية', 'المنوفية', 'القليوبية', 'الأقصر', 'قنا', 'شمال سيناء', 'بورسعيد', 'سوهاج', 'الوادي الجديد', 'جنوب سيناء', 'السويس', 'الشرقية', 'بني سويف', 'أسيوط', 'المنيا', 'دمياط', 'كفر الشيخ', 'مطروح', 'أسوان'
 ]
 
 export const CreateShipmentPage = () => {
@@ -257,7 +257,7 @@ export const CreateShipmentPage = () => {
                 total_weight: parseFloat(formData.weight) || 0,
                 description: formData.description.trim(),
                 note: formData.additionalNotes.trim() || "لا يوجد ملاحظات",
-                shipment_image: formData.shipmentImage || "https://shuhnety.com/placeholder-shipment.jpg",
+                shipment_image: formData.shipmentImage || null,
                 pickupGovernorate: formData.pickupGovernorate.trim(),
                 pickupCity: formData.pickupCity.trim(),
                 pickupAddressDetails: formData.pickupAddress.trim(),
@@ -338,22 +338,9 @@ export const CreateShipmentPage = () => {
             </div>
 
             {/* Professional Blue Info Box */}
-            {!isEditMode && (
-                <div className="mb-8 flex items-start gap-4 p-5 bg-blue-50/50 border border-blue-100 rounded-[1.5rem] animate-in fade-in slide-in-from-top-4 duration-500">
-                    <div className="h-10 w-10 bg-blue-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-600/20 mt-0.5">
-                        <Info className="h-5 w-5" />
-                    </div>
-                    <div className="flex-1 text-right">
-                        <h5 className="text-sm font-black text-blue-900 mb-1">تنبيه الموثوقية والأرشفة 🔒</h5>
-                        <p className="text-[12px] font-bold text-blue-800/80 leading-relaxed">
-                            لحماية حقوق جميع الأطراف وضمان شفافية التعاملات، يتم أرشفة كافة الشحنات المنشورة ضمن سجلات المنصة ولا يمكن <span className="font-black underline decoration-blue-500/30">حذفها نهائياً</span>. يُمكنك دائماً استخدام خيار <span className="text-blue-900 font-black">"إلغاء الشحنة"</span> كإجراء رسمي معتمد في حال رغبت في عدم المتابعة.
-                        </p>
-                    </div>
-                </div>
-            )}
 
             {/* Progress Stepper */}
-            <div className="flex items-center gap-4 mb-10 overflow-x-auto pb-4 no-scrollbar">
+            <div className="flex items-center gap-4 mb-4 overflow-x-auto pb-4 no-scrollbar">
                 {steps.map((s, i) => {
                     const isCompleted = step > i + 1
                     const isActive = step === i + 1
@@ -372,7 +359,7 @@ export const CreateShipmentPage = () => {
                                 </div>
                                 <span className="text-sm font-bold whitespace-nowrap">
                                     {s}
-                                    {s === 'التسعير' && !IS_PRICING_ENABLED && (
+                                    {s === 'التأمين' && !IS_PRICING_ENABLED && (
                                         <span className="mr-2 text-[9px] bg-white/20 text-white px-1.5 py-0.5 rounded-md">قريباً</span>
                                     )}
                                 </span>
@@ -389,7 +376,7 @@ export const CreateShipmentPage = () => {
                         <div className="space-y-8 animate-in fade-in slide-in-from-left-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label className="block text-sm font-bold text-slate-700 pr-1">نوع الشحنة</label>
+                                    <label className="block text-sm font-bold text-slate-700 pr-1">نوع الشحنة <span className="text-rose-500">*</span></label>
                                     <select
                                         value={formData.goodsType}
                                         onChange={(e) => handleChange('goodsType', e.target.value)}
@@ -407,6 +394,7 @@ export const CreateShipmentPage = () => {
                                 {formData.goodsType === 'other' && (
                                     <FormInput
                                         label="حدد نوع الشحنة"
+                                        required
                                         placeholder="مثال: أعشاب طبية، قطع غيار..."
                                         icon={Package}
                                         value={formData.otherGoodsType}
@@ -415,6 +403,7 @@ export const CreateShipmentPage = () => {
                                 )}
                                 <FormInput
                                     label="الوزن الإجمالي (كجم)"
+                                    required
                                     type="number"
                                     placeholder="مثال: 450"
                                     icon={Weight}
@@ -456,7 +445,7 @@ export const CreateShipmentPage = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="block text-sm font-bold text-slate-700 pr-1">وصف الشحنة</label>
+                                <label className="block text-sm font-bold text-slate-700 pr-1">وصف الشحنة <span className="text-rose-500">*</span></label>
                                 <textarea
                                     value={formData.description}
                                     onChange={(e) => handleChange('description', e.target.value)}
@@ -600,6 +589,7 @@ export const CreateShipmentPage = () => {
                                         </div>
                                         <FormInput
                                             label="المدينة / المنطقة"
+                                            required
                                             placeholder="مثال: مدينة نصر"
                                             value={formData.pickupCity}
                                             onChange={(e) => handleChange('pickupCity', e.target.value)}
@@ -608,6 +598,7 @@ export const CreateShipmentPage = () => {
                                         />
                                         <FormInput
                                             label="العنوان التفصيلي"
+                                            required
                                             placeholder="اسم الشارع، رقم المبنى..."
                                             className="md:col-span-2"
                                             value={formData.pickupAddress}
@@ -642,6 +633,7 @@ export const CreateShipmentPage = () => {
                                         </div>
                                         <FormInput
                                             label="المدينة / المنطقة"
+                                            required
                                             placeholder="مثال: محرم بك"
                                             value={formData.destinationCity}
                                             onChange={(e) => handleChange('destinationCity', e.target.value)}
@@ -650,6 +642,7 @@ export const CreateShipmentPage = () => {
                                         />
                                         <FormInput
                                             label="العنوان التفصيلي"
+                                            required
                                             placeholder="اسم الشارع، رقم المبنى..."
                                             className="md:col-span-2"
                                             value={formData.destinationAddress}
@@ -664,6 +657,7 @@ export const CreateShipmentPage = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <FormInput
                                     label="اسم المستلم"
+                                    required
                                     placeholder="أدخل اسم المستلم بالكامل"
                                     icon={User}
                                     value={formData.recipientName}
@@ -673,6 +667,7 @@ export const CreateShipmentPage = () => {
                                 />
                                 <FormInput
                                     label="رقم هاتف المستلم"
+                                    required
                                     placeholder="01xxxxxxxxx"
                                     icon={Phone}
                                     value={formData.recipientPhone}
@@ -682,12 +677,12 @@ export const CreateShipmentPage = () => {
                                 />
                             </div>
 
-                            <div className="h-40 bg-slate-100 rounded-[2rem] relative overflow-hidden flex items-center justify-center border border-slate-200">
+                            {/* <div className="h-40 bg-slate-100 rounded-[2rem] relative overflow-hidden flex items-center justify-center border border-slate-200">
                                 <div className="text-center">
                                     <MapPin className="h-10 w-10 text-slate-300 mx-auto mb-2" />
                                     <p className="text-slate-400 font-bold text-sm">خارطة تفاعلية لاختيار المواقع بدقة</p>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     )}
 
@@ -756,7 +751,7 @@ export const CreateShipmentPage = () => {
                                 <div className="h-24 w-24 bg-blue-50/50 rounded-[2rem] flex items-center justify-center mb-8 rotate-3 border border-blue-100/50 shadow-xl shadow-blue-500/5">
                                     <ShieldCheck className="h-12 w-12 text-blue-500" />
                                 </div>
-                                <h4 className="text-2xl font-black text-[#1c1919] mb-3">خدمة التسعير والتأمين</h4>
+                                <h4 className="text-2xl font-black text-[#1c1919] mb-3">خدمة التأمين والحماية</h4>
                                 <p className="text-sm font-bold text-[#57534d] mb-10 max-w-[380px] leading-relaxed">
                                     نحن نعمل بجهد لتوفير نظام تسعير ذكي وتغطية تأمينية شاملة لبضاعتك. هذه الميزة ستكون متاحة لجميع العملاء قريباً جداً.
                                 </p>
@@ -770,11 +765,17 @@ export const CreateShipmentPage = () => {
 
                     {step === 4 && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-left-4 text-right">
-                            <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 flex items-center gap-4">
-                                <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+                            <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 flex items-start gap-4">
+                                <CheckCircle2 className="h-8 w-8 text-emerald-500 shrink-0 mt-1" />
                                 <div>
-                                    <h4 className="font-bold text-emerald-700 text-lg">شحنتك جاهزة للنشر</h4>
-                                    <p className="text-sm text-emerald-600">يرجى مراجعة كافة البيانات قبل تأكيد الإرسال</p>
+                                    <h4 className="font-bold text-emerald-700 text-lg mb-1">شحنتك جاهزة للنشر</h4>
+                                    <p className="text-sm text-emerald-600 font-bold mb-3">يرجى مراجعة كافة البيانات قبل تأكيد الإرسال</p>
+                                    <div className="bg-white/50 p-4 rounded-xl border border-emerald-100/50">
+                                        <p className="text-[12px] font-bold text-emerald-800/80 leading-relaxed">
+                                            <span className="block mb-1 font-black underline underline-offset-4">تنبيه الموثوقية والأرشفة 🔒</span>
+                                            يتم أرشفة الشحنات المنشورة ولا يمكن حذفها نهائياً لضمان الشفافية. يُمكنك <span className="font-black">إلغاء الشحنة</span> فقط <span className="underline decoration-brand-primary/30">قبل قبول أي عروض</span>؛ بمجرد قبول العرض وتأكيده، لا يمكن التراجع عن العملية.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -787,6 +788,9 @@ export const CreateShipmentPage = () => {
                                         </h5>
                                         <p className="text-sm text-slate-500 font-bold">النوع: <span className="font-black text-slate-800">{getGoodsTypeLabel(formData.goodsType, formData.otherGoodsType)}</span></p>
                                         <p className="text-sm text-slate-500 font-bold">الوزن: <span className="font-black text-slate-800">{formData.weight} كجم</span></p>
+                                        {(formData.dimensions.width || formData.dimensions.length || formData.dimensions.height) && (
+                                            <p className="text-sm text-slate-500 font-bold">الأبعاد: <span className="font-black text-slate-800">{formData.dimensions.length || '-'} × {formData.dimensions.width || '-'} × {formData.dimensions.height || '-'} سم</span></p>
+                                        )}
                                         <p className="text-sm text-slate-500 font-bold">الوصف: <span className="font-black text-slate-800 block mt-1">{formData.description}</span></p>
                                     </div>
 
@@ -854,6 +858,23 @@ export const CreateShipmentPage = () => {
                                         )}
                                     </div>
 
+                                    {formData.shipmentImage && (
+                                        <div className="space-y-3 pt-2">
+                                            <h5 className="font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                                                <Package className="h-4 w-4 text-brand-primary" />
+                                                صورة الشحنة
+                                            </h5>
+                                            <div className="relative h-32 w-full rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 group hover:border-brand-primary/30 transition-all">
+                                                <img 
+                                                    src={formData.shipmentImage} 
+                                                    className="h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-110" 
+                                                    alt="Shipment Preview" 
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <div className="space-y-3 pt-2">
                                         <h5 className="font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                                             <Info className="h-4 w-4 text-brand-primary" />
@@ -872,22 +893,22 @@ export const CreateShipmentPage = () => {
                         </div>
                     )}
 
-                    <div className="mt-12 pt-8 border-t border-slate-50 flex items-center justify-between">
+                    <div className="mt-12 pt-8 border-t border-slate-50 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-4">
                         {step > 1 ? (
-                            <Button variant="outline" className="gap-2 px-8" onClick={prevStep}>
+                            <Button variant="outline" className="gap-2 px-8 h-12 rounded-xl sm:w-auto w-full" onClick={prevStep}>
                                 <ChevronRight className="h-5 w-5" />
                                 السابق
                             </Button>
-                        ) : <div></div>}
+                        ) : <div className="hidden sm:block"></div>}
 
                         {step < steps.length ? (
-                            <Button className="gap-2 px-8" onClick={nextStep}>
+                            <Button className="gap-2 px-8 h-12 rounded-xl sm:w-auto w-full" onClick={nextStep}>
                                 التالي
                                 <ChevronLeft className="h-5 w-5" />
                             </Button>
                         ) : (
                             <Button
-                                className={cn("gap-2 px-12", isEditMode ? "bg-brand-primary" : "bg-emerald-600 hover:bg-emerald-700")}
+                                className={cn("gap-2 px-12 h-12 rounded-xl sm:w-auto w-full", isEditMode ? "bg-brand-primary" : "bg-emerald-600 hover:bg-emerald-700")}
                                 onClick={handlePublish}
                                 disabled={isSubmitting}
                             >
@@ -910,11 +931,16 @@ export const CreateShipmentPage = () => {
 
 export default CreateShipmentPage
 
-const FormInput = ({ label, icon: Icon, error, wasNextAttempted, className, ...props }) => {
+const FormInput = ({ label, icon: Icon, error, wasNextAttempted, className, required, ...props }) => {
     const showError = error && wasNextAttempted
     return (
         <div className={cn("space-y-2", className)}>
-            {label && <label className="text-sm font-bold text-slate-700 block pr-1">{label}</label>}
+            {label && (
+                <label className="text-sm font-bold text-slate-700 block pr-1">
+                    {label}
+                    {required && <span className="text-rose-500 mr-1">*</span>}
+                </label>
+            )}
             <div className="relative group">
                 <input
                     className={cn(

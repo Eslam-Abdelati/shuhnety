@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Truck } from 'lucide-react'
 
 export const AuthLayout = ({ children, title, subtitle }) => {
@@ -32,7 +33,7 @@ export const AuthLayout = ({ children, title, subtitle }) => {
                     </p>
                     <div className="flex justify-center gap-6 text-xs font-bold text-slate-300">
                         <a href="#" className="hover:text-brand-secondary transition-colors underline decoration-slate-200 underline-offset-4">سياسة الخصوصية</a>
-                        <a href="#" className="hover:text-brand-secondary transition-colors underline decoration-slate-200 underline-offset-4">شروط الخدمة</a>
+                        <Link to="/terms" className="hover:text-brand-secondary transition-colors underline decoration-slate-200 underline-offset-4">شروط الخدمة</Link>
                     </div>
                 </div>
             </div>

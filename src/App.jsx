@@ -34,6 +34,9 @@ import { DriverManagement } from './features/company/DriverManagement'
 import { DisputeResolution } from './features/admin/DisputeResolution'
 import { DigitalContracts } from './features/admin/DigitalContracts'
 import { ProfilePage } from './features/profile/ProfilePage'
+import { TermsPage } from './features/legal/TermsPage'
+import { ContactPage } from './features/support/ContactPage'
+import { FaqPage } from './features/support/FaqPage'
 import { SocketSync } from './components/SocketSync'
 
 
@@ -180,6 +183,9 @@ function App() {
                         }
                     />
 
+                    <Route path="/terms" element={<TermsPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="/faq" element={<FaqPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </Router>

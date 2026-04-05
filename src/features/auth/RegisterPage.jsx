@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -93,10 +93,13 @@ const findStr = (obj) => {
 
 // --- Validation Schemas ---
 const step2BaseSchema = z.object({
-    fullName: z.string().min(5, 'الأسم الكامل يجب أن يكون أكثر من 5 أحرف'),
-    email: z.string().email('بريد إلكتروني غير صالح'),
-    phone: z.string().regex(/^01[0125]\d{8}$/, 'رقم هاتف مصري غير صالح'),
-    password: z.string().min(8, 'كلمة المرور يجب أن لا تقل عن 8 أحرف'),
+    fullName: z.string().trim().min(5, 'الأسم الكامل يجب أن يكون أكثر من 5 أحرف'),
+    email: z.string().trim().email('بريد إلكتروني غير صالح'),
+    phone: z.string().trim().regex(/^01[0125]\d{8}$/, 'رقم هاتف مصري غير صالح'),
+    password: z.string()
+        .min(8, 'كلمة المرور يجب أن لا تقل عن 8 أحرف')
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/,
+            'يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل وتشمل حرف كبير وصغير ورقم ورمز خاص'),
     confirmPassword: z.string().min(8, 'تأكيد كلمة المرور مطلوب'),
 }).refine(data => data.password === data.confirmPassword, {
     message: "كلمات المرور غير متطابقة",
@@ -160,8 +163,11 @@ const finalCustomerSchema = customerStep1Schema.extend({
 const STEPS = ['نوع الحساب', 'المعلومات الشخصية', 'تفاصيل إضافية']
 
 export const RegisterPage = () => {
-    const [step, setStep] = useState(1)
-    const [selectedRole, setSelectedRole] = useState(null)
+    const [searchParams] = useSearchParams()
+    const initialRole = searchParams.get('role') === 'driver' ? 'driver' : (searchParams.get('role') === 'customer' ? 'customer' : null)
+
+    const [step, setStep] = useState(initialRole ? 1 : 1) // Start at step 1 but with role set
+    const [selectedRole, setSelectedRole] = useState(initialRole)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -226,7 +232,8 @@ export const RegisterPage = () => {
         }
     })
 
-    const handleCheckAvailability = async (field, value) => {
+    const handleCheckAvailability = async (field, rawValue) => {
+        const value = typeof rawValue === 'string' ? rawValue.trim() : rawValue;
         if (!value || errors[field]) return;
 
         // Skip if value is clearly invalid based on basic regex before calling API
@@ -385,7 +392,7 @@ export const RegisterPage = () => {
             const registerDto = {
                 role: selectedRole === 'customer' ? UserRole.CLIENT : (selectedRole === 'driver' ? UserRole.DRIVER : selectedRole),
                 full_name: data.fullName,
-                email: data.email,
+                email: data.email.trim(),
                 phone_number: data.phone,
                 password: data.password,
                 confirm_password: data.confirmPassword,
@@ -1306,18 +1313,18 @@ const Input = React.forwardRef(({ label, icon: Icon, error, isTouched, wasNextAt
 const Checkbox = React.forwardRef(({ label, error, isTouched, wasNextAttempted, ...props }, ref) => {
     const showError = error && (isTouched || wasNextAttempted)
     return (
-        <label className="flex items-center gap-3 cursor-pointer group">
+        <label className="flex items-center gap-3 cursor-pointer group w-fit">
             <div className="relative flex items-center">
                 <input type="checkbox" className="peer hidden" ref={ref} {...props} />
                 <div className={cn(
-                    "h-5 w-5 rounded-full border-2 transition-all flex items-center justify-center peer-checked:[&>svg]:scale-100",
+                    "h-5 w-5 rounded-full border-2 transition-all flex items-center justify-center peer-checked:[&>svg]:scale-100 shrink-0",
                     showError ? "border-red-500 bg-red-50" : "border-slate-200 peer-checked:bg-[#064e3b] peer-checked:border-[#064e3b]"
                 )}>
                     <Check className="h-3 w-3 text-white scale-0 transition-transform" />
                 </div>
             </div>
-            <div className="flex-1">
-                <p className="text-[11px] font-bold text-[#57534d] group-hover:text-slate-700 transition-colors">
+            <div>
+                <p className="text-[11px] font-bold text-[#57534d] group-hover:text-slate-700 transition-colors whitespace-nowrap">
                     {label}
                 </p>
                 {showError && <p className="text-[10px] text-red-500 font-black mt-0.5">{error.message}</p>}

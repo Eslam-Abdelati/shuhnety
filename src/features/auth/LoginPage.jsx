@@ -15,7 +15,7 @@ import { authService } from '@/services/authService'
 import { StatusAlert } from '@/components/ui/StatusAlert'
 
 const loginSchema = z.object({
-    email: z.string().email('بريد إلكتروني غير صالح'),
+    email: z.string().trim().email('بريد إلكتروني غير صالح'),
     password: z.string().min(1, 'كلمة المرور مطلوبة'),
 })
 
@@ -40,9 +40,14 @@ export const LoginPage = () => {
         setIsLoading(true)
         setApiMessage(null)
 
+        const trimmedData = {
+            ...data,
+            email: data.email.trim()
+        }
+
         try {
             // Use real API
-            const response = await authService.login(data)
+            const response = await authService.login(trimmedData)
 
             // extract data exactly as it comes from API (it might be nested in response.data)
             const apiData = response.data || response;
