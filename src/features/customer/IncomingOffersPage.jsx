@@ -1,27 +1,20 @@
 import { useState, useEffect } from 'react'
 import {
     Clock,
-    Truck,
-    MapPin,
-    ArrowLeftRight,
     Loader2,
     User,
-    TrendingUp,
-    ChevronLeft,
-    CheckCircle2
+    ChevronLeft
 } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { shipmentService } from '@/services/shipmentService'
-import { getGoodsTypeLabel, formatEstimatedTime } from '@/utils/shipmentUtils'
-import { cn } from '@/lib/utils'
+import { formatEstimatedTime, mapShipmentData } from '@/utils/shipmentUtils'
 
 export const IncomingOffersPage = () => {
     const [offers, setOffers] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
-    const navigate = useNavigate()
 
     const fetchOffers = async () => {
         setIsLoading(true)
@@ -29,7 +22,7 @@ export const IncomingOffersPage = () => {
             const rawData = await shipmentService.getNewBids()
             const offersArray = Array.isArray(rawData) ? rawData : (rawData.data || [])
             
-            // Map the shipment data within each offer for precision and consistent naming
+            // Map the shipment data within each offer for precision
             const processedOffers = offersArray.map(offer => ({
                 ...offer,
                 shipment: offer.shipment ? mapShipmentData(offer.shipment) : null
@@ -58,12 +51,12 @@ export const IncomingOffersPage = () => {
     }
 
     return (
-        <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-700 font-cairo px-4" dir="rtl">
-            {/* Simple Clean Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-700 font-cairo px-4" dir="rtl">
+            {/* Simple Header */}
+            <div className="pb-4 border-b border-slate-100 flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-black text-slate-800 tracking-tight">العروض الواردة</h1>
-                    <p className="text-sm font-bold text-slate-400 mt-1">إليك أحدث الأسعار المقترحة لشحناتك النشطة</p>
+                    <h1 className="text-2xl font-black text-slate-800">العروض الواردة</h1>
+                    <p className="text-sm font-bold text-slate-400 mt-1">إليك أحدث العروض المقدمة من السائقين</p>
                 </div>
                 <Button
                     onClick={fetchOffers}
@@ -75,95 +68,56 @@ export const IncomingOffersPage = () => {
                 </Button>
             </div>
 
-            {/* Simple Comfortable Cards */}
+            {/* Ultra-Simple Cards */}
             <div className="space-y-4">
                 {offers.length > 0 ? (
                     offers.map((offer) => (
-                        <Card key={offer.id} className="overflow-hidden border border-slate-100 shadow-sm hover:border-brand-primary/20 transition-all duration-300 bg-white rounded-3xl">
-                            <CardContent className="p-6">
-                                <div className="flex flex-col lg:flex-row items-center gap-6">
+                        <Card key={offer.id} className="overflow-hidden border border-slate-100 shadow-sm hover:border-brand-primary/20 transition-all duration-300 bg-white rounded-[2rem]">
+                            <CardContent className="p-6 md:p-8">
+                                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                                     
-                                    {/* Part 1: Driver Profile */}
-                                    <div className="flex items-center gap-4 min-w-[200px]">
-                                        <div className="h-14 w-14 rounded-2xl bg-slate-50 flex items-center justify-center text-brand-primary border border-slate-100 shrink-0">
+                                    {/* 1. Driver Name */}
+                                    <div className="flex items-center gap-4 flex-1">
+                                        <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center text-brand-primary border border-slate-100">
                                             {offer.driver?.profile_picture ? (
                                                 <img src={offer.driver.profile_picture} className="h-full w-full object-cover rounded-2xl" alt="" />
                                             ) : (
-                                                <User className="h-7 w-7 opacity-30" />
+                                                <User className="h-6 w-6 opacity-30" />
                                             )}
                                         </div>
                                         <div>
-                                            <div className="flex items-center gap-1.5 mb-1">
-                                                <h3 className="font-black text-slate-800 leading-none">{offer.driver?.full_name || "سائق"}</h3>
-                                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-                                            </div>
-                                            <div className="flex flex-col gap-1.5">
-                                                <div className="flex items-center gap-2 flex-wrap">
-                                                    <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                                                        <Truck className="h-3 w-3" />
-                                                        {offer.driver?.vehicleDetails?.[0]?.vehicle_type || offer.driverDetails?.vehicle_type || "نقل عام"}
-                                                    </span>
-                                                    <span className="text-[9px] font-black bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md border border-slate-200">
-                                                        {offer.driver?.vehicleDetails?.[0]?.plate_number || "ج ر ع 123"}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5 text-[10px] font-black text-brand-primary bg-brand-primary/5 px-2 py-1 rounded-lg w-fit">
-                                                    <Clock className="h-3 w-3" />
-                                                    <span>يصل في {formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}</span>
-                                                </div>
-                                            </div>
+                                            <h3 className="font-black text-lg text-slate-800 leading-none mb-1.5">{offer.driver?.full_name || "سائق"}</h3>
+                                            <p className="text-xs font-bold text-slate-400">مقدم عرض سعر لشحنتك</p>
                                         </div>
                                     </div>
 
-                                    {/* Part 2: Shipment Path & Details */}
-                                    <div className="flex-1 w-full lg:px-6 lg:border-r lg:border-slate-50">
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <span className="text-[10px] font-black text-brand-primary bg-brand-primary/5 px-2 py-0.5 rounded-lg border border-brand-primary/10 uppercase">
-                                                {getGoodsTypeLabel(offer.shipment?.goodsType) || 'شحنة عامة'}
-                                            </span>
-                                            <span className="text-[10px] font-bold text-slate-300">#{offer.shipment?.id?.toString().slice(-6)}</span>
-                                        </div>
-                                        
-                                        <div className="flex items-center gap-4 text-sm font-black text-slate-600">
-                                            <div className="flex items-center gap-2 whitespace-nowrap">
-                                                <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
-                                                <span>{offer.shipment?.pickupGovernorate}</span>
-                                            </div>
-                                            <ArrowLeftRight className="h-3 w-3 text-slate-200" />
-                                            <div className="flex items-center gap-2 whitespace-nowrap">
-                                                <span>{offer.shipment?.destinationGovernorate}</span>
-                                                <div className="h-2 w-2 rounded-full bg-red-400"></div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    {/* Part 3: Price & Actions */}
-                                    <div className="flex flex-col md:flex-row items-center gap-6 lg:min-w-[280px] justify-between lg:pl-2">
-                                        <div className="text-center md:text-right">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">عرض السعر</p>
+                                    {/* 2. Price & 3. Time */}
+                                    <div className="flex items-center gap-8 md:gap-12 px-6 py-3 bg-slate-50/50 rounded-2xl border border-slate-50">
+                                        <div className="text-center">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">عرض السعر</p>
                                             <div className="flex items-baseline gap-1">
                                                 <span className="text-2xl font-black text-slate-800 tracking-tighter">
-                                                    {(offer.amount || offer.price || 0).toLocaleString()}
+                                                    {parseFloat(offer.negotiatedAmount || offer.amount || 0).toLocaleString()}
                                                 </span>
                                                 <span className="text-[10px] font-bold text-slate-400">ج.م</span>
                                             </div>
                                         </div>
-
-                                        <div className="flex gap-2 w-full md:w-auto">
-                                            <Link to={`/customer/bids/${offer.shipment?.id || offer.shipmentId}`} className="flex-1 md:flex-none">
-                                                <Button variant="ghost" className="h-11 px-6 rounded-2xl font-black text-slate-500 border border-slate-100 bg-slate-50/30 hover:bg-slate-100 transition-all flex items-center gap-2 text-xs">
-                                                    <TrendingUp className="h-4 w-4 opacity-40" />
-                                                    تفاوض
-                                                </Button>
-                                            </Link>
-                                            <Link to={`/customer/bids/${offer.shipment?.id || offer.shipmentId}`} className="flex-1 md:flex-none">
-                                                <Button className="h-11 px-8 bg-brand-primary text-white rounded-2xl font-black shadow-lg shadow-brand-primary/10 hover:translate-y-[-1px] active:scale-[0.98] transition-all text-xs flex items-center gap-1">
-                                                    القبول الآن
-                                                    <ChevronLeft className="h-4 w-4" />
-                                                </Button>
-                                            </Link>
+                                        <div className="text-center">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">وقت الوصول</p>
+                                            <span className="text-sm font-black text-brand-primary">
+                                                يصل في {formatEstimatedTime(offer.estimatedTime || offer.estimated_time)}
+                                            </span>
                                         </div>
+                                    </div>
+
+                                    {/* 4. Action Button */}
+                                    <div className="w-full md:w-auto">
+                                        <Link to={`/customer/bids/${offer.shipment?.id || offer.shipmentId}`}>
+                                            <Button className="w-full md:w-[160px] h-12 bg-brand-primary text-white rounded-2xl font-black shadow-lg shadow-brand-primary/10 hover:translate-y-[-1px] active:scale-[0.98] transition-all">
+                                                تفاصيل العرض
+                                                <ChevronLeft className="mr-2 h-4 w-4" />
+                                            </Button>
+                                        </Link>
                                     </div>
 
                                 </div>
@@ -173,10 +127,10 @@ export const IncomingOffersPage = () => {
                 ) : (
                     <div className="flex flex-col items-center justify-center p-20 py-32 bg-slate-50/50 rounded-[2.5rem] border-2 border-dashed border-slate-100 text-center">
                         <div className="h-20 w-20 bg-white rounded-full flex items-center justify-center mb-8 shadow-sm">
-                            <TrendingUp className="h-8 w-8 text-slate-200" />
+                            <Clock className="h-8 w-8 text-slate-200" />
                         </div>
-                        <h3 className="text-xl font-black text-slate-800 mb-2">لا توجد عروض جديدة</h3>
-                        <p className="text-sm font-bold text-slate-400 max-w-xs mx-auto leading-relaxed">سيظهر هنا فور قيام السائقين بتقديم أسعار مقترحة لشحناتك المتاحة.</p>
+                        <h3 className="text-xl font-black text-slate-800 mb-2">لا توجد عروض حالية</h3>
+                        <p className="text-sm font-bold text-slate-400 max-w-xs mx-auto mb-8">سيظهر هنا فور قيام السائقين بتقديم عروض سعر لشحناتك المتاحة.</p>
                     </div>
                 )}
             </div>
