@@ -26,8 +26,16 @@ export const IncomingOffersPage = () => {
     const fetchOffers = async () => {
         setIsLoading(true)
         try {
-            const data = await shipmentService.getNewBids()
-            setOffers(Array.isArray(data) ? data : (data.data || []))
+            const rawData = await shipmentService.getNewBids()
+            const offersArray = Array.isArray(rawData) ? rawData : (rawData.data || [])
+            
+            // Map the shipment data within each offer for precision and consistent naming
+            const processedOffers = offersArray.map(offer => ({
+                ...offer,
+                shipment: offer.shipment ? mapShipmentData(offer.shipment) : null
+            }))
+            
+            setOffers(processedOffers)
         } catch (err) {
             setError('فشل في تحميل العروض الجديدة')
             console.error(err)
