@@ -23,8 +23,8 @@ export const mapShipmentData = (s) => {
     const backendToFrontendStatus = {
         'pending': 'في انتظار العروض',
         'has_offers': 'عروض رهن المراجعة',
-        'pickup_in_progress': 'قيد التنفيذ • جاري التوجه للتحميل',
-        'delivery_in_progress': 'تم الاستلام (جاري التوصيل)',
+        'pickup_in_progress': 'قيد التنفيذ',
+        'delivery_in_progress': 'جاري التوصيل',
         'delivered': 'تم التوصيل',
         'canceled': 'ملغي',
 
@@ -46,8 +46,8 @@ export const mapShipmentData = (s) => {
         pickupAddress: s.pickup_address_details || s.pickup_address || s.pickupAddressDetails || s.pickupAddress,
         destinationAddress: s.destination_address_details || s.destination_address || s.destinationAddressDetails || s.destinationAddress,
         weight: s.total_weight || s.weight || s.totalWeight,
-        goodsType: (s.goods_type === 'other' || s.goodsType === 'other') 
-            ? (s.other_goods_type || s.otherGoodsType || (s.goods_type || s.goodsType)) 
+        goodsType: (s.goods_type === 'other' || s.goodsType === 'other')
+            ? (s.other_goods_type || s.otherGoodsType || (s.goods_type || s.goodsType))
             : (s.goods_type || s.goodsType),
         price: s.budget || s.price || s.expected_price || 0,
         customerName: s.client?.full_name || s.customerName || (s.client ? s.client.full_name : '---'),
@@ -142,15 +142,15 @@ export const getVehicleTypeLabel = (value) => {
 export const formatEstimatedTime = (totalMinutes) => {
     if (!totalMinutes) return '---';
     const total = Number(totalMinutes);
-    
+
     const days = Math.floor(total / (24 * 60));
     const hours = Math.floor((total % (24 * 60)) / 60);
     const minutes = total % 60;
-    
+
     const parts = [];
     if (days > 0) parts.push(`${days} يوم`);
     if (hours > 0) parts.push(`${hours} ساعة`);
     if (minutes > 0) parts.push(`${minutes} دقيقة`);
-    
+
     return parts.join(' و ') || 'أقل من دقيقة';
 };

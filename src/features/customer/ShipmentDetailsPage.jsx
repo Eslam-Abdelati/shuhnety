@@ -12,7 +12,7 @@ import {
     DollarSign,
     ArrowLeftRight,
     Star,
-    MessageSquare,
+    MessageCircle,
     Loader2,
     TrendingUp,
     ChevronLeft
@@ -382,8 +382,9 @@ export const ShipmentDetailsPage = () => {
                                                 <Button
                                                     className="h-10 w-10 md:h-12 md:w-12 rounded-xl bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/10 transition-all active:scale-95"
                                                     onClick={() => window.open(`https://wa.me/${acceptedOffer.driver?.phone_number || ''}`, '_blank')}
+                                                    title="تواصل عبر واتساب"
                                                 >
-                                                    <MessageSquare className="h-4 w-4 md:h-5 md:w-5" />
+                                                    <MessageCircle className="h-4 w-4 md:h-5 md:w-5" />
                                                 </Button>
                                             </div>
                                         </div>
@@ -499,14 +500,17 @@ export const ShipmentDetailsPage = () => {
                                         <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white">{shipment.recipientName}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800/50">
-                                    <div className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-full flex items-center justify-center text-slate-400 shadow-sm">
-                                        <Phone className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                                <div className="flex items-center justify-between p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800/50">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-full flex items-center justify-center text-slate-400 shadow-sm">
+                                            <Phone className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">رقم الهاتف</p>
+                                            <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white tracking-widest" dir="ltr">{shipment.recipientPhone}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">رقم الهاتف</p>
-                                        <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white tracking-widest" dir="ltr">{shipment.recipientPhone}</p>
-                                    </div>
+
                                 </div>
                             </div>
                         </CardContent>

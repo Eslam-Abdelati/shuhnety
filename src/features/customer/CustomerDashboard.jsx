@@ -12,6 +12,7 @@ import { shipmentService } from '@/services/shipmentService'
 import { socketService } from '@/services/socketService'
 import { getGoodsTypeLabel, getStatusStyles } from '@/utils/shipmentUtils'
 import DashboardStats from './components/DashboardStats'
+import DashboardAlerts from './components/DashboardAlerts'
 
 export const CustomerDashboard = () => {
     const { shipments = [], setShipments } = useShipmentStore()
@@ -124,6 +125,13 @@ export const CustomerDashboard = () => {
                 </Link>
             </div>
 
+            {/* Premium Alerts Section - Real-time updates for negotiations */}
+            <DashboardAlerts 
+                offers={apiNewBids} 
+                shipments={shipments}
+            />
+
+
             {apiError && (
                 <div className="bg-red-50 border border-red-100 rounded-[1.5rem] p-6 flex items-center gap-4 text-red-600 animate-in fade-in slide-in-from-top-4 duration-500">
                     <div className="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
@@ -144,30 +152,30 @@ export const CustomerDashboard = () => {
                 {/* Recent Shipments Table */}
                 <Card className="lg:col-span-2 overflow-hidden border-none shadow-2xl shadow-slate-200/50 dark:shadow-none dark:ring-1 dark:ring-slate-800 bg-white dark:bg-slate-900 rounded-[2.5rem]">
                     {/* Section Header */}
-                    <div className="flex items-center justify-between mb-8 px-8 pt-8">
-                        <div className="flex items-center gap-4">
-                            <div className="h-12 w-12 sm:h-14 sm:w-14 bg-brand-primary/10 rounded-2xl sm:rounded-[1.5rem] flex items-center justify-center text-brand-primary relative group overflow-hidden shadow-sm">
+                    <div className="flex items-center justify-between mb-6 px-8 pt-8">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 sm:h-12 sm:w-12 bg-brand-primary/10 rounded-2xl flex items-center justify-center text-brand-primary relative group overflow-hidden shadow-sm">
                                 <div className="absolute inset-0 bg-brand-primary/10 -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
-                                <Truck className="h-5 w-5 sm:h-6 sm:w-6 relative z-10" />
+                                <Truck className="h-4 w-4 sm:h-5 sm:w-5 relative z-10" />
                             </div>
                             <div>
-                                <h3 className="text-xl sm:text-2xl font-black text-[#1c1919] dark:text-white mb-0.5 tracking-tight">احدث الشحنات</h3>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none border-r-2 border-brand-primary/30 pr-2">متابعة شحناتك النشطة</p>
+                                <h3 className="text-lg sm:text-xl font-black text-[#1c1919] dark:text-white mb-0.5 tracking-tight">أحدث الشحنات</h3>
+                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none border-r-2 border-brand-primary/30 pr-2">متابعة شحناتك النشطة</p>
                             </div>
                         </div>
-                        <Link to="/customer/shipments" className="text-xs font-black text-brand-primary hover:text-brand-secondary transition-colors px-4 py-2 bg-brand-primary/10 rounded-xl">
+                        <Link to="/customer/shipments" className="text-[10px] font-black text-brand-primary hover:text-brand-secondary transition-colors px-4 py-2 bg-brand-primary/5 rounded-xl border border-brand-primary/10">
                             عرض الكل
                         </Link>
                     </div>
 
-                    <div className="p-4 sm:p-6 flex flex-col gap-4">
+                    <div className="p-4 sm:p-8 flex flex-col gap-5">
                         {shipments.length > 0 ? (
                             shipments.slice(0, 4).map((shipment, i) => (
-                                <div key={shipment.id} className="group relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-4 sm:p-5 hover:shadow-2xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all duration-500 flex flex-col gap-5 overflow-hidden">
+                                <div key={shipment.id} className="group relative bg-slate-50/50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/50 rounded-[2rem] p-5 sm:p-6 hover:bg-white dark:hover:bg-slate-800 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-none transition-all duration-500 flex flex-col gap-5 overflow-hidden">
                                     {/* Glassy Background Accent */}
                                     <div className={cn(
                                         "absolute top-0 right-0 w-32 h-32 blur-[60px] opacity-10 pointer-events-none transition-colors duration-500",
-                                        getStatusStyles(shipment.status).bg.replace('bg-', 'bg-')
+                                        getStatusStyles(shipment.status).bg
                                     )}></div>
 
                                     {/* Top Row: Icon, ID and Status */}
@@ -294,10 +302,11 @@ export const CustomerDashboard = () => {
                                             </div>
                                             <Link
                                                 to={`/customer/bids/${offer.shipment?.id || offer.shipmentId || offer.shipment_id || offer.shipmentDetails?.id || offer.shipmentDetails?._id}`}
-                                                className="w-full py-2.5 bg-white text-brand-primary rounded-xl text-[11px] font-black flex items-center justify-center hover:bg-blue-50 transition-all shadow-lg shadow-black/5 active:scale-[0.98]"
+                                                className="w-full py-2.5 bg-white text-brand-primary rounded-xl text-[11px] font-black flex items-center justify-center hover:bg-blue-50 transition-all shadow-lg shadow-black/5 active:scale-[0.98] group-hover/offer:scale-[1.02]"
                                             >
-                                                عرض التفاصيل
+                                                عرض تفاصيل العرض
                                             </Link>
+
                                         </div>
                                     ))
                                 ) : (

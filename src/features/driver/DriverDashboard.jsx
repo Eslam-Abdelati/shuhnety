@@ -30,6 +30,8 @@ import { shipmentService } from '@/services/shipmentService'
 import { getGoodsTypeLabel, getStatusStyles, formatEstimatedTime } from '@/utils/shipmentUtils'
 import { formatDistanceToNow } from 'date-fns'
 import { ar } from 'date-fns/locale'
+import DashboardAlerts from './components/DashboardAlerts'
+
 
 export const DriverDashboard = () => {
     const navigate = useNavigate()
@@ -101,6 +103,13 @@ export const DriverDashboard = () => {
                 </div>
 
             </div>
+
+            {/* Dashboard Alerts Section for Drivers */}
+            <DashboardAlerts 
+                assignedShipments={assignedShipments} 
+                availableShipments={availableShipments} 
+            />
+
 
             {/* Earnings Overview */}
             <Card className="bg-brand-primary text-white border-none shadow-2xl relative overflow-hidden transition-all duration-500">

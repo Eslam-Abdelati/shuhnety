@@ -462,25 +462,36 @@ export const DriverShipmentDetails = () => {
                                 ) : !hasOffer ? (
                                     <Button
                                         onClick={() => setShowBidModal(true)}
-                                        className="w-full h-14 bg-brand-primary text-white rounded-2xl font-black text-base shadow-lg shadow-brand-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all border-none"
+                                        className="w-full h-14 bg-brand-primary text-white rounded-2xl font-black text-base shadow-lg  hover:scale-[1.01] active:scale-[0.99] transition-all border-none"
                                     >
                                         تقديم عرض
                                     </Button>
                                 ) : myBid?.negotiatedAmount ? (
-                                    <div className="flex items-center gap-2">
-                                        <Button
-                                            onClick={handleAcceptNegotiatedPrice}
-                                            className="flex-1 h-11 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-200 transition-all border-none"
-                                        >
-                                            <CheckCircle2 className="ml-1.5 h-3.5 w-3.5" /> قبول عرض السعر
-                                        </Button>
-                                        <Button
-                                            onClick={() => setShowBidModal(true)}
-                                            variant="outline"
-                                            className="flex-1 h-11 text-amber-600 border-amber-100 hover:bg-amber-50 rounded-xl font-bold text-xs transition-all"
-                                        >
-                                            <ArrowLeftRight className="ml-1.5 h-3.5 w-3.5" /> تفاوض
-                                        </Button>
+                                    <div className="flex items-center gap-2 w-full">
+                                        {(isOfferAccepted || Number(myBid.amount) === Number(myBid.negotiatedAmount)) ? (
+                                            <Button
+                                                disabled
+                                                className="w-full h-11 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-xl font-bold text-xs cursor-not-allowed opacity-60"
+                                            >
+                                                <CheckCircle2 className="ml-1.5 h-3.5 w-3.5" /> تم قبول العرض ف انتظار الموافقه
+                                            </Button>
+                                        ) : (
+                                            <>
+                                                <Button
+                                                    onClick={handleAcceptNegotiatedPrice}
+                                                    className="flex-1 h-11 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-200 transition-all border-none"
+                                                >
+                                                    <CheckCircle2 className="ml-1.5 h-3.5 w-3.5" /> قبول العرض
+                                                </Button>
+                                                <Button
+                                                    onClick={() => setShowBidModal(true)}
+                                                    variant="outline"
+                                                    className="flex-1 h-11 text-amber-600 border-amber-100 hover:bg-amber-50 rounded-xl font-bold text-xs transition-all"
+                                                >
+                                                    تفاوض
+                                                </Button>
+                                            </>
+                                        )}
                                     </div>
                                 ) : (
                                     <div className="w-full h-14 bg-emerald-50/50 text-emerald-600 border border-emerald-100/50 rounded-2xl flex items-center justify-center gap-2 font-black text-sm shadow-sm transition-all duration-300">

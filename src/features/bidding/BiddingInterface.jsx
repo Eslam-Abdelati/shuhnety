@@ -398,6 +398,16 @@ export const BiddingInterface = () => {
                                         </div>
                                     </div>
 
+                                    {/* driver accepted negotiation alert - show only before customer final acceptance */}
+                                    {!isAccepted && (offer.negotiatedAmount && parseFloat(offer.amount) === parseFloat(offer.negotiatedAmount)) && (
+                                        <div className="bg-emerald-50/80 dark:bg-emerald-900/10 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-900/20 mb-4 flex items-center gap-3 animate-pulse">
+                                            <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
+                                            <p className="text-sm font-black text-emerald-700 dark:text-emerald-400">
+                                                هذا السائق وافق على عرض السعر المقدم منك
+                                            </p>
+                                        </div>
+                                    )}
+
                                     {/* Message */}
                                     <div className="bg-slate-50/80 dark:bg-slate-800/40 p-4 rounded-2xl border-r-2 border-brand-primary/40 mb-6">
                                         <p className="text-sm font-bold text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -408,7 +418,7 @@ export const BiddingInterface = () => {
                                     {/* Actions Container */}
                                     <div className="flex items-center justify-between gap-4 pt-5 border-t border-slate-50 dark:border-slate-800/50 mt-2">
                                         {isAccepted ? (
-                                            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-full border border-emerald-100 dark:border-emerald-900/30">
+                                            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-md border border-emerald-100 dark:border-emerald-900/30">
                                                 <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                                                 <span className="text-xs font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">تم قبول هذا السائق</span>
                                             </div>
@@ -419,7 +429,7 @@ export const BiddingInterface = () => {
                                                     {!isAnyOfferAccepted && (
                                                         <Button
                                                             variant="ghost"
-                                                            className="h-10 px-5 rounded-full text-[11px] font-black text-red-600 bg-red-50 hover:bg-red-100/80 transition-all border border-red-100/50"
+                                                            className="h-10 px-5 rounded-md text-[11px] font-black text-red-600 bg-red-50 hover:bg-red-100/80 transition-all border border-red-100/50"
                                                             onClick={() => handleRejectOffer(offer.id || offer._id)}
                                                         >
                                                             رفض
@@ -427,7 +437,7 @@ export const BiddingInterface = () => {
                                                     )}
                                                     <Button
                                                         variant="ghost"
-                                                        className="h-10 px-5 rounded-full text-[11px] font-black text-slate-500 bg-slate-50 hover:bg-slate-100 transition-all border border-slate-100"
+                                                        className="h-10 px-5 rounded-md text-[11px] font-black text-slate-500 bg-slate-50 hover:bg-slate-100 transition-all border border-slate-100"
                                                         onClick={() => handleNegotiateClick(offer.id || offer._id)}
                                                         disabled={isAnyOfferAccepted}
                                                     >
@@ -438,7 +448,7 @@ export const BiddingInterface = () => {
                                                 {/* Left Side Action (RTL End) */}
                                                 {!isAnyOfferAccepted && (
                                                     <Button
-                                                        className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full h-10 px-8 font-black shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2"
+                                                        className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-md h-10 px-8 font-black shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2"
                                                         onClick={() => handleAcceptOffer(offer.id || offer._id)}
                                                     >
                                                         <CheckCircle2 className="h-4 w-4" />

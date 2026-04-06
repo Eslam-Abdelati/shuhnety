@@ -105,7 +105,8 @@ export const ActiveShipments = () => {
                                                     </div>
                                                 </div>
                                                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                                                    {s.displayId} • {s.createdAt ? format(new Date(s.createdAt), 'dd MMMM yyyy', { locale: ar }) : '---'}
+                                                    {s.displayId}
+                                                    {/* {s.createdAt ? format(new Date(s.createdAt), 'dd MMMM yyyy', { locale: ar }) : '---'} */}
                                                 </p>
                                             </div>
                                         </div>
@@ -142,10 +143,7 @@ export const ActiveShipments = () => {
                                                 <Weight className="h-3 w-3 text-slate-400" />
                                                 <span>{s.weight} كجم</span>
                                             </div>
-                                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500">
-                                                <Calendar className="h-3 w-3 text-slate-400" />
-                                                <span>{s.pickupDate ? format(new Date(s.pickupDate), 'dd/MM', { locale: ar }) : '--/--'}</span>
-                                            </div>
+
                                         </div>
                                         <Button variant="ghost" size="sm" className="text-xs font-black text-slate-400 group-hover:text-brand-primary gap-1">
                                             التفاصيل
