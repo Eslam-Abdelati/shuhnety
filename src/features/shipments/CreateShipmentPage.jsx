@@ -265,7 +265,7 @@ export const CreateShipmentPage = () => {
     const handlePublish = async () => {
         setIsSubmitting(true)
         try {
-            // Ensure shipment_image is either a valid absolute URL or omitted
+            // Ensure shipment_image is a valid absolute URL or null
             let shipmentImageUrl = formData.shipmentImage?.trim() || null;
             
             if (shipmentImageUrl && !shipmentImageUrl.startsWith('http')) {
@@ -273,73 +273,65 @@ export const CreateShipmentPage = () => {
                     ? API_BASE_URL 
                     : window.location.origin + (API_BASE_URL.startsWith('/') ? '' : '/') + API_BASE_URL;
                 
-                // Cleanly join base URL and image path
                 const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
                 const cleanPath = shipmentImageUrl.startsWith('/') ? shipmentImageUrl : '/' + shipmentImageUrl;
                 shipmentImageUrl = cleanBase + cleanPath;
             }
 
+            // Reverting to the exact previous payload structure
+            // Backend seems very strict about these exact keys
             const apiPayload = {
                 goods_type: formData.goodsType,
-                other_goods_type: formData.goodsType === 'other' ? formData.otherGoodsType.trim() : null,
-                total_weight: parseFloat(formData.weight) || 0,
-                description: formData.description.trim(),
-                note: formData.additionalNotes.trim() || "لا يوجد ملاحظات",
-                pickupGovernorate: formData.pickupGovernorate.trim(),
-                pickupCity: formData.pickupCity.trim(),
-                pickupAddressDetails: formData.pickupAddress.trim(),
-                destinationGovernorate: formData.destinationGovernorate.trim(),
-                destinationCity: formData.destinationCity.trim(),
-                destinationAddressDetails: formData.destinationAddress.trim(),
-                recipientName: formData.recipientName.trim(),
-                recipientPhone: formData.recipientPhone.trim()
+                other_goods_type: formData.goodsType === 'other' ? (formData.otherGoodsType?.trim() || null) : null,
+                total_weight: Number(formData.weight) || 0,
+                description: formData.description?.trim() || "",
+                note: formData.additionalNotes?.trim() || "لا يوجد ملاحظات",
+                pickupGovernorate: formData.pickupGovernorate?.trim(),
+                pickupCity: formData.pickupCity?.trim(),
+                pickupAddressDetails: formData.pickupAddress?.trim(),
+                destinationGovernorate: formData.destinationGovernorate?.trim(),
+                destinationCity: formData.destinationCity?.trim(),
+                destinationAddressDetails: formData.destinationAddress?.trim(),
+                recipientName: formData.recipientName?.trim(),
+                recipientPhone: formData.recipientPhone?.trim()
             }
 
-            // Only add shipment_image if we have a valid URL to avoid validation errors
+            // Add dimensions only if valid
+            if (formData.dimensions?.width && Number(formData.dimensions.width) > 0) apiPayload.width = Number(formData.dimensions.width);
+            if (formData.dimensions?.height && Number(formData.dimensions.height) > 0) apiPayload.height = Number(formData.dimensions.height);
+            if (formData.dimensions?.length && Number(formData.dimensions.length) > 0) apiPayload.length = Number(formData.dimensions.length);
+
+            // Conditional shipment image - back to snake_case as it was accepted before
             if (shipmentImageUrl && shipmentImageUrl.startsWith('http')) {
                 apiPayload.shipment_image = shipmentImageUrl;
             }
 
-            // إضافة الأبعاد فقط إذا تم إدخال قيم صالحة (أكبر من 0) لتجنب أخطاء السيرفر
-            if (formData.dimensions.width && parseFloat(formData.dimensions.width) > 0) {
-                apiPayload.width = parseFloat(formData.dimensions.width);
-            }
-            if (formData.dimensions.height && parseFloat(formData.dimensions.height) > 0) {
-                apiPayload.height = parseFloat(formData.dimensions.height);
-            }
-            if (formData.dimensions.length && parseFloat(formData.dimensions.length) > 0) {
-                apiPayload.length = parseFloat(formData.dimensions.length);
-            }
+            console.log('Sending Refined Payload:', apiPayload);
 
             if (isEditMode) {
                 await shipmentService.updateShipment(editId, apiPayload)
-
                 updateShipment({ id: editId, ...formData })
-                // Relying on Backend Sockets for submission notification
             } else {
                 const result = await shipmentService.createShipment(apiPayload)
-
-                // Updating store with new shipment
                 addShipment({
                     ...formData,
                     id: result.id,
                     pickupPoint: `${formData.pickupCity}، ${formData.pickupAddress}`,
                     destinationPoint: `${formData.destinationCity}، ${formData.destinationAddress}`,
                     customerName: user?.full_name || '',
-                    customerPhone: user?.phone || '',
+                    customerPhone: user?.phone_number || user?.phone || '',
                     customerId: user?.id || ''
                 })
-
-                // Relying on Backend Sockets for notifications
-
-                // Relying on Backend Sockets for notifications (removed redundant toast)
             }
 
+            toast.success(isEditMode ? 'تم تحديث الشحنة بنجاح' : 'تم إنشاء الشحنة بنجاح');
+            
             setTimeout(() => {
                 navigate('/customer/shipments')
-            }, 1000)
+            }, 1500)
 
         } catch (error) {
+            console.error('Submission failed:', error);
             toast.error(error.message || 'فشل في اتمام العملية. يرجى المحاولة مرة أخرى.')
         } finally {
             setIsSubmitting(false)
