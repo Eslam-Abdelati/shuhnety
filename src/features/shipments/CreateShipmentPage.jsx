@@ -230,26 +230,19 @@ export const CreateShipmentPage = () => {
         };
 
         setIsUploading(true);
-        const uploadData = new FormData();
-        uploadData.append('key', 'shipment_image');
-        uploadData.append('prefix', 'shipment');
-        uploadData.append('file', file);
+        const formData = new FormData();
+        formData.append('key', 'shipment_image');
+        formData.append('prefix', 'shipment');
+        formData.append('file', file); // Use the original file object
 
         try {
-            const res = await authService.uploadImage(uploadData);
+            const res = await authService.uploadImage(formData);
             console.log('Image Upload Response:', res);
 
             let extractedUrl = findStr(res);
             if (extractedUrl && typeof extractedUrl === 'string') {
                 if (!extractedUrl.startsWith('http')) {
-                    // Ensure we have an absolute URL if the backend is strict
-                    const baseUrl = API_BASE_URL.startsWith('http') 
-                        ? API_BASE_URL 
-                        : window.location.origin + (API_BASE_URL.startsWith('/') ? '' : '/') + API_BASE_URL;
-                    
-                    extractedUrl = extractedUrl.startsWith('/') 
-                        ? baseUrl + extractedUrl 
-                        : baseUrl + '/' + extractedUrl;
+                    extractedUrl = extractedUrl.startsWith('/') ? API_BASE_URL + extractedUrl : API_BASE_URL + '/' + extractedUrl;
                 }
                 handleChange('shipmentImage', extractedUrl);
                 toast.success('تم رفع الصورة بنجاح');
@@ -265,10 +258,13 @@ export const CreateShipmentPage = () => {
     const handlePublish = async () => {
         setIsSubmitting(true)
         try {
-            // Ensure shipmentImage is a valid absolute URL or null
+            // Diagnostic: use a default placeholder if no image exists to see if it bypasses the error
             let shipmentImageUrl = formData.shipmentImage?.trim() || null;
             
-            if (shipmentImageUrl && !shipmentImageUrl.startsWith('http')) {
+            // If empty, let's try sending a real URL just for testing
+            if (!shipmentImageUrl) {
+                shipmentImageUrl = "https://res.cloudinary.com/demo/image/upload/sample.jpg"; 
+            } else if (!shipmentImageUrl.startsWith('http')) {
                 const baseUrl = API_BASE_URL.startsWith('http') 
                     ? API_BASE_URL 
                     : window.location.origin + (API_BASE_URL.startsWith('/') ? '' : '/') + API_BASE_URL;
@@ -278,34 +274,29 @@ export const CreateShipmentPage = () => {
                 shipmentImageUrl = cleanBase + cleanPath;
             }
 
-            // Trying Full CamelCase payload as the backend seems strict about it
             const apiPayload = {
-                goodsType: formData.goodsType,
-                otherGoodsType: formData.goodsType === 'other' ? (formData.otherGoodsType?.trim() || null) : null,
-                totalWeight: Number(formData.weight) || 0,
-                description: formData.description?.trim() || "",
-                note: formData.additionalNotes?.trim() || "لا يوجد ملاحظات",
-                pickupGovernorate: formData.pickupGovernorate?.trim(),
-                pickupCity: formData.pickupCity?.trim(),
-                pickupAddressDetails: formData.pickupAddress?.trim(),
-                destinationGovernorate: formData.destinationGovernorate?.trim(),
-                destinationCity: formData.destinationCity?.trim(),
-                destinationAddressDetails: formData.destinationAddress?.trim(),
-                recipientName: formData.recipientName?.trim(),
-                recipientPhone: formData.recipientPhone?.trim()
+                goods_type: formData.goodsType,
+                other_goods_type: formData.goodsType === 'other' ? (formData.otherGoodsType?.trim() || null) : null,
+                total_weight: parseFloat(formData.weight) || 0,
+                description: formData.description.trim(),
+                note: formData.additionalNotes.trim() || "لا يوجد ملاحظات",
+                shipment_image: shipmentImageUrl, // Sending a guaranteed URL
+                pickupGovernorate: formData.pickupGovernorate.trim(),
+                pickupCity: formData.pickupCity.trim(),
+                pickupAddressDetails: formData.pickupAddress.trim(),
+                destinationGovernorate: formData.destinationGovernorate.trim(),
+                destinationCity: formData.destinationCity.trim(),
+                destinationAddressDetails: formData.destinationAddress.trim(),
+                recipientName: formData.recipientName.trim(),
+                recipientPhone: formData.recipientPhone.trim()
             }
 
-            // Always use CamelCase for consistency now
-            if (formData.dimensions?.width && Number(formData.dimensions.width) > 0) apiPayload.width = Number(formData.dimensions.width);
-            if (formData.dimensions?.height && Number(formData.dimensions.height) > 0) apiPayload.height = Number(formData.dimensions.height);
-            if (formData.dimensions?.length && Number(formData.dimensions.length) > 0) apiPayload.length = Number(formData.dimensions.length);
+            // Dimensions: ensure they are sent as numbers or excluded if 0
+            if (formData.dimensions.width && parseFloat(formData.dimensions.width) > 0) apiPayload.width = parseFloat(formData.dimensions.width);
+            if (formData.dimensions.height && parseFloat(formData.dimensions.height) > 0) apiPayload.height = parseFloat(formData.dimensions.height);
+            if (formData.dimensions.length && parseFloat(formData.dimensions.length) > 0) apiPayload.length = parseFloat(formData.dimensions.length);
 
-            // Conditional shipmentImage (CamelCase)
-            if (shipmentImageUrl && shipmentImageUrl.startsWith('http')) {
-                apiPayload.shipmentImage = shipmentImageUrl;
-            }
-
-            console.log('Final Payload (Full CamelCase):', apiPayload);
+            console.log('Diagnostic Payload (with placeholder image):', apiPayload);
 
             if (isEditMode) {
                 await shipmentService.updateShipment(editId, apiPayload)
@@ -318,19 +309,16 @@ export const CreateShipmentPage = () => {
                     pickupPoint: `${formData.pickupCity}، ${formData.pickupAddress}`,
                     destinationPoint: `${formData.destinationCity}، ${formData.destinationAddress}`,
                     customerName: user?.full_name || '',
-                    customerPhone: user?.phone_number || user?.phone || '',
+                    customerPhone: user?.phone || '',
                     customerId: user?.id || ''
                 })
             }
 
-            toast.success(isEditMode ? 'تم تحديث الشحنة بنجاح' : 'تم إنشاء الشحنة بنجاح');
-            
             setTimeout(() => {
                 navigate('/customer/shipments')
-            }, 1500)
+            }, 1000)
 
         } catch (error) {
-            console.error('Submission failed:', error);
             toast.error(error.message || 'فشل في اتمام العملية. يرجى المحاولة مرة أخرى.')
         } finally {
             setIsSubmitting(false)
