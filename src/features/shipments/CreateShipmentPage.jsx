@@ -265,7 +265,7 @@ export const CreateShipmentPage = () => {
     const handlePublish = async () => {
         setIsSubmitting(true)
         try {
-            // Ensure shipment_image is a valid absolute URL or null
+            // Ensure shipmentImage is a valid absolute URL or null
             let shipmentImageUrl = formData.shipmentImage?.trim() || null;
             
             if (shipmentImageUrl && !shipmentImageUrl.startsWith('http')) {
@@ -278,12 +278,11 @@ export const CreateShipmentPage = () => {
                 shipmentImageUrl = cleanBase + cleanPath;
             }
 
-            // Reverting to the exact previous payload structure
-            // Backend seems very strict about these exact keys
+            // Trying Full CamelCase payload as the backend seems strict about it
             const apiPayload = {
-                goods_type: formData.goodsType,
-                other_goods_type: formData.goodsType === 'other' ? (formData.otherGoodsType?.trim() || null) : null,
-                total_weight: Number(formData.weight) || 0,
+                goodsType: formData.goodsType,
+                otherGoodsType: formData.goodsType === 'other' ? (formData.otherGoodsType?.trim() || null) : null,
+                totalWeight: Number(formData.weight) || 0,
                 description: formData.description?.trim() || "",
                 note: formData.additionalNotes?.trim() || "لا يوجد ملاحظات",
                 pickupGovernorate: formData.pickupGovernorate?.trim(),
@@ -296,17 +295,17 @@ export const CreateShipmentPage = () => {
                 recipientPhone: formData.recipientPhone?.trim()
             }
 
-            // Add dimensions only if valid
+            // Always use CamelCase for consistency now
             if (formData.dimensions?.width && Number(formData.dimensions.width) > 0) apiPayload.width = Number(formData.dimensions.width);
             if (formData.dimensions?.height && Number(formData.dimensions.height) > 0) apiPayload.height = Number(formData.dimensions.height);
             if (formData.dimensions?.length && Number(formData.dimensions.length) > 0) apiPayload.length = Number(formData.dimensions.length);
 
-            // Conditional shipment image - back to snake_case as it was accepted before
+            // Conditional shipmentImage (CamelCase)
             if (shipmentImageUrl && shipmentImageUrl.startsWith('http')) {
-                apiPayload.shipment_image = shipmentImageUrl;
+                apiPayload.shipmentImage = shipmentImageUrl;
             }
 
-            console.log('Sending Refined Payload:', apiPayload);
+            console.log('Final Payload (Full CamelCase):', apiPayload);
 
             if (isEditMode) {
                 await shipmentService.updateShipment(editId, apiPayload)
