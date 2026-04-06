@@ -230,19 +230,26 @@ export const CreateShipmentPage = () => {
         };
 
         setIsUploading(true);
-        const formData = new FormData();
-        formData.append('key', 'shipment_image');
-        formData.append('prefix', 'shipment');
-        formData.append('file', file); // Use the original file object
+        const uploadData = new FormData();
+        uploadData.append('key', 'shipment_image');
+        uploadData.append('prefix', 'shipment');
+        uploadData.append('file', file);
 
         try {
-            const res = await authService.uploadImage(formData);
+            const res = await authService.uploadImage(uploadData);
             console.log('Image Upload Response:', res);
 
             let extractedUrl = findStr(res);
             if (extractedUrl && typeof extractedUrl === 'string') {
                 if (!extractedUrl.startsWith('http')) {
-                    extractedUrl = extractedUrl.startsWith('/') ? API_BASE_URL + extractedUrl : API_BASE_URL + '/' + extractedUrl;
+                    // Ensure we have an absolute URL if the backend is strict
+                    const baseUrl = API_BASE_URL.startsWith('http') 
+                        ? API_BASE_URL 
+                        : window.location.origin + (API_BASE_URL.startsWith('/') ? '' : '/') + API_BASE_URL;
+                    
+                    extractedUrl = extractedUrl.startsWith('/') 
+                        ? baseUrl + extractedUrl 
+                        : baseUrl + '/' + extractedUrl;
                 }
                 handleChange('shipmentImage', extractedUrl);
                 toast.success('تم رفع الصورة بنجاح');
@@ -258,13 +265,26 @@ export const CreateShipmentPage = () => {
     const handlePublish = async () => {
         setIsSubmitting(true)
         try {
+            // Ensure shipment_image is either a valid absolute URL or omitted
+            let shipmentImageUrl = formData.shipmentImage?.trim() || null;
+            
+            if (shipmentImageUrl && !shipmentImageUrl.startsWith('http')) {
+                const baseUrl = API_BASE_URL.startsWith('http') 
+                    ? API_BASE_URL 
+                    : window.location.origin + (API_BASE_URL.startsWith('/') ? '' : '/') + API_BASE_URL;
+                
+                // Cleanly join base URL and image path
+                const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+                const cleanPath = shipmentImageUrl.startsWith('/') ? shipmentImageUrl : '/' + shipmentImageUrl;
+                shipmentImageUrl = cleanBase + cleanPath;
+            }
+
             const apiPayload = {
                 goods_type: formData.goodsType,
                 other_goods_type: formData.goodsType === 'other' ? formData.otherGoodsType.trim() : null,
                 total_weight: parseFloat(formData.weight) || 0,
                 description: formData.description.trim(),
                 note: formData.additionalNotes.trim() || "لا يوجد ملاحظات",
-                shipment_image: formData.shipmentImage || null,
                 pickupGovernorate: formData.pickupGovernorate.trim(),
                 pickupCity: formData.pickupCity.trim(),
                 pickupAddressDetails: formData.pickupAddress.trim(),
@@ -273,6 +293,11 @@ export const CreateShipmentPage = () => {
                 destinationAddressDetails: formData.destinationAddress.trim(),
                 recipientName: formData.recipientName.trim(),
                 recipientPhone: formData.recipientPhone.trim()
+            }
+
+            // Only add shipment_image if we have a valid URL to avoid validation errors
+            if (shipmentImageUrl && shipmentImageUrl.startsWith('http')) {
+                apiPayload.shipment_image = shipmentImageUrl;
             }
 
             // إضافة الأبعاد فقط إذا تم إدخال قيم صالحة (أكبر من 0) لتجنب أخطاء السيرفر
