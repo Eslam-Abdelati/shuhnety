@@ -9,6 +9,7 @@ import {
     ChevronRight, ExternalLink, Award, Share2,
     LogOut, Smartphone, Fingerprint, Eye, EyeOff
 } from 'lucide-react';
+import { getVehicleTypeLabel } from '@/utils/shipmentUtils';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -254,72 +255,38 @@ export const ProfilePage = () => {
                                             <span className="text-[10px] font-bold text-slate-400 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 rounded-lg uppercase tracking-widest">تحقق لحظي</span>
                                         </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                            <div className="space-y-8">
+                                        <div className="space-y-8">
+                                            {/* Compact Documentation Status */}
+                                            <div className="bg-emerald-50/40 dark:bg-emerald-500/5 rounded-xl p-4 border border-emerald-100/50 dark:border-emerald-500/10 flex items-center gap-4">
+                                                <div className="h-8 w-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white shrink-0">
+                                                    <CheckCircle2 className="h-4 w-4" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-[13px] font-black text-emerald-800 dark:text-emerald-400 mb-0.5">حالة التوثيق</h4>
+                                                    <p className="text-[11px] font-bold text-emerald-600/70">تم مراجعة بيانات رخصتك ومركبتك وهي صالحة وموثقة بالكامل في النظام.</p>
+                                                </div>
+                                            </div>
+
+                                            {/* Vehicle Details Grid - 2 Columns */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 pt-4">
                                                 {[
-                                                    { label: 'نوع الشاحنة', value: user?.vehicleDetails?.[0]?.vehicle_type || 'غير محدد', icon: Truck },
+                                                    { label: 'نوع الشاحنة', value: getVehicleTypeLabel(user?.vehicleDetails?.[0]?.vehicle_type), icon: Truck },
                                                     { label: 'ماركة المركبة', value: user?.vehicleDetails?.[0]?.vehicle_brand || 'غير محدد', icon: Box },
                                                     { label: 'الموديل', value: user?.vehicleDetails?.[0]?.model || 'غير محدد', icon: Hash },
                                                     { label: 'رقم اللوحات', value: user?.vehicleDetails?.[0]?.vehicle_plate_number || 'غير محدد', icon: CreditCard },
                                                     { label: 'سنة الصنع', value: user?.vehicleDetails?.[0]?.manufacture_year || '---', icon: Calendar },
                                                     { label: 'اللون', value: user?.vehicleDetails?.[0]?.color || '---', icon: Info },
                                                 ].map((item, i) => (
-                                                    <div key={i} className="flex gap-3">
-                                                        <div className="h-10 w-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-500/20">
-                                                            <item.icon className="h-4 w-4 text-indigo-500" />
+                                                    <div key={i} className="flex gap-4 group">
+                                                        <div className="h-12 w-12 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-300">
+                                                            <item.icon className="h-5 w-5 text-indigo-500 group-hover:text-white" />
                                                         </div>
-                                                        <div className="pt-0.5">
-                                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">{item.label}</p>
-                                                            <p className="text-[15px] font-black text-slate-700 dark:text-slate-100">{item.value}</p>
+                                                        <div className="pt-1">
+                                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">{item.label}</p>
+                                                            <p className="text-[16px] font-black text-slate-700 dark:text-slate-100">{item.value}</p>
                                                         </div>
                                                     </div>
                                                 ))}
-                                            </div>
-
-                                            <div className="space-y-6">
-                                                <div className="bg-slate-50 dark:bg-slate-800/20 rounded-[2rem] p-6 border border-white dark:border-slate-800 shadow-inner">
-                                                    <h4 className="text-[14px] font-black text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                                                        <ShieldCheck className="h-4 w-4 text-brand-primary" /> وثائق السائق
-                                                    </h4>
-                                                    <div className="grid grid-cols-2 gap-3">
-                                                        {[
-                                                            { label: 'البطاقة (وجه)', url: user?.driverDetails?.forward_nationalId_doc },
-                                                            { label: 'البطاقة (ظهر)', url: user?.driverDetails?.back_nationalId_doc },
-                                                            { label: 'الرخصة (وجه)', url: user?.driverDetails?.forward_license_doc },
-                                                            { label: 'الرخصة (ظهر)', url: user?.driverDetails?.back_license_doc },
-                                                        ].map((doc, i) => (
-                                                            <a
-                                                                key={i}
-                                                                href={doc.url}
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                                className="group relative h-24 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
-                                                            >
-                                                                {doc.url?.startsWith('http') ? (
-                                                                    <img src={doc.url} alt={doc.label} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
-                                                                ) : (
-                                                                    <div className="w-full h-full flex flex-col items-center justify-center gap-1 opacity-40">
-                                                                        <Info className="h-4 w-4" />
-                                                                        <span className="text-[8px] font-black">لا توجد صورة</span>
-                                                                    </div>
-                                                                )}
-                                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2 text-center">
-                                                                    <span className="text-[8px] font-black text-white">{doc.label}</span>
-                                                                </div>
-                                                            </a>
-                                                        ))}
-                                                    </div>
-                                                </div>
-
-                                                <div className="bg-emerald-50 dark:bg-emerald-500/5 rounded-2xl p-5 border border-emerald-100 dark:border-emerald-500/10">
-                                                    <div className="flex items-center gap-3 mb-2">
-                                                        <div className="h-8 w-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white">
-                                                            <CheckCircle2 className="h-4.5 w-4.5" />
-                                                        </div>
-                                                        <h4 className="text-[13px] font-black text-emerald-800 dark:text-emerald-400">حالة التوثيق</h4>
-                                                    </div>
-                                                    <p className="text-[11px] font-bold text-emerald-600/70 leading-relaxed">تم مراجعة بيانات رخصتك ومركبتك وهي صالحة وموثقة بالكامل في النظام.</p>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>

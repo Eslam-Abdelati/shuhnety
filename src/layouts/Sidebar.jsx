@@ -33,7 +33,7 @@ const navigation = {
     driver: [
         { name: 'الرئيسية', href: '/driver', icon: LayoutDashboard },
         { name: 'شحنات متاحة', href: '/driver/available', icon: FileSearch },
-        { name: 'رحلات نشطة', href: '/driver/active', icon: Truck },
+        { name: 'سجل رحلاتي', href: '/driver/active', icon: Truck },
         { name: 'تنبيهات الطريق', href: '/driver/alerts', icon: AlertTriangle },
         { name: 'الأرباح', href: '/driver/earnings', icon: Wallet },
         { name: 'الحساب', href: '/driver/profile', icon: Users },

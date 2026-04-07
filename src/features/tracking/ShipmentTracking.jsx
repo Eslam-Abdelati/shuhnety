@@ -77,8 +77,13 @@ export const ShipmentTracking = () => {
     const steps = useMemo(() => {
         const status = shipment?.status || '';
         const isAccepted = !!acceptedOffer;
-        const isHeadingToPickup = status.includes('قيد التنفيذ');
-        const isLoaded = status.includes('تم التحميل') || status.includes('وفي الطريق');
+        
+        // Accurate Status Checks
+        const isPickupInProgress = status.includes('قيد التنفيذ') || status.includes('في الطريق للاستلام');
+        // 'isReceived' means the driver has officially picked it up
+        const isReceived = status.includes('تم الاستلام') || status.includes('تم التحميل') || status.includes('وفي الطريق') || status.includes('جاري التوصيل') || status.includes('تم التوصيل');
+        // 'isDelivering' means it is currently on the way to destination
+        const isDelivering = status.includes('جاري التوصيل') || status.includes('وفي الطريق');
         const isDelivered = status.includes('تم التوصيل');
         const isCancelled = status.includes('ملغي');
 
@@ -111,21 +116,21 @@ export const ShipmentTracking = () => {
             ...baseSteps,
             {
                 label: 'في الطريق للاستلام',
-                time: (isLoaded || isDelivered) ? 'مكتمل' : isHeadingToPickup ? 'جاري التوجه' : '--:--',
-                completed: isLoaded || isDelivered,
-                active: isHeadingToPickup
+                time: isReceived ? 'مكتمل' : isPickupInProgress ? 'جاري التوجه' : '--:--',
+                completed: isReceived,
+                active: isPickupInProgress && !isReceived
             },
             {
                 label: 'تم الاستلام',
-                time: (isLoaded || isDelivered) ? 'مكتمل' : '--:--',
-                completed: isLoaded || isDelivered,
-                active: isLoaded && !isDelivered
+                time: isReceived ? 'مكتمل' : '--:--',
+                completed: isReceived,
+                active: status.includes('تم الاستلام') && !isDelivering
             },
             {
                 label: 'جاري التوصيل',
-                time: isDelivered ? 'مكتمل' : isLoaded ? 'الآن' : '--:--',
+                time: isDelivered ? 'مكتمل' : isDelivering ? 'الآن' : '--:--',
                 completed: isDelivered,
-                active: isLoaded
+                active: isDelivering && !isDelivered
             },
             {
                 label: 'تم التوصيل',

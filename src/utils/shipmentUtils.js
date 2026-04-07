@@ -58,74 +58,33 @@ export const mapShipmentData = (s) => {
 };
 
 export const getStatusStyles = (status) => {
-    switch (status) {
-        case 'pending':
-        case 'في انتظار العروض':
-            return {
-                bg: 'bg-amber-50',
-                text: 'text-amber-700',
-                border: 'border-amber-200',
-                dot: 'bg-amber-500',
-                label: status === 'pending' ? 'في انتظار العروض' : status
-            };
-        case 'has_offers':
-        case 'عروض رهن المراجعة':
-            return {
-                bg: 'bg-orange-50',
-                text: 'text-orange-700',
-                border: 'border-orange-200',
-                dot: 'bg-orange-500',
-                label: status === 'has_offers' ? 'عروض رهن المراجعة' : status
-            };
-        case 'pickup_in_progress':
-        case 'قيد التنفيذ • جاري التوجه للتحميل':
-        case 'تم قبول العرض (في الطريق للاستلام)':
-        case 'قيد التنفيذ':
-            return {
-                bg: 'bg-blue-50',
-                text: 'text-blue-700',
-                border: 'border-blue-200',
-                dot: 'bg-blue-500',
-                label: status === 'pickup_in_progress' ? 'جاري التوجه للاستلام' : status
-            };
-        case 'delivery_in_progress':
-        case 'تم الاستلام (جاري التوصيل)':
-        case 'جاري التوصيل':
-        case 'تم التحميل وفي الطريق':
-            return {
-                bg: 'bg-indigo-50',
-                text: 'text-indigo-700',
-                border: 'border-indigo-200',
-                dot: 'bg-indigo-500',
-                label: status === 'delivery_in_progress' ? 'جاري التوصيل' : status
-            };
-        case 'delivered':
-        case 'تم التوصيل':
-            return {
-                bg: 'bg-emerald-50',
-                text: 'text-emerald-700',
-                border: 'border-emerald-200',
-                dot: 'bg-emerald-500',
-                label: status === 'delivered' ? 'تم التوصيل' : status
-            };
-        case 'canceled':
-        case 'ملغي':
-            return {
-                bg: 'bg-red-50',
-                text: 'text-red-700',
-                border: 'border-red-200',
-                dot: 'bg-red-500',
-                label: status === 'canceled' ? 'ملغي' : status
-            };
-        default:
-            return {
-                bg: 'bg-slate-50',
-                text: 'text-slate-700',
-                border: 'border-slate-200',
-                dot: 'bg-slate-500',
-                label: status
-            };
-    }
+    const statusMap = {
+        'pending': { label: 'في انتظار العروض', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', dot: 'bg-amber-500' },
+        'في انتظار العروض': { label: 'في انتظار العروض', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200', dot: 'bg-amber-500' },
+        
+        'has_offers': { label: 'عروض رهن المراجعة', bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200', dot: 'bg-orange-500' },
+        'عروض رهن المراجعة': { label: 'عروض رهن المراجعة', bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200', dot: 'bg-orange-500' },
+        
+        'pickup_in_progress': { label: 'قيد التنفيذ', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', dot: 'bg-blue-500' },
+        'قيد التنفيذ': { label: 'قيد التنفيذ', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', dot: 'bg-blue-500' },
+        
+        'delivery_in_progress': { label: 'جاري التوصيل', bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200', dot: 'bg-indigo-500' },
+        'جاري التوصيل': { label: 'جاري التوصيل', bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200', dot: 'bg-indigo-500' },
+        
+        'delivered': { label: 'تم التوصيل', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: 'bg-emerald-500' },
+        'تم التوصيل': { label: 'تم التوصيل', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: 'bg-emerald-500' },
+        
+        'canceled': { label: 'ملغي', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', dot: 'bg-red-500' },
+        'ملغي': { label: 'ملغي', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', dot: 'bg-red-500' },
+    };
+
+    return statusMap[status] || {
+        bg: 'bg-slate-50',
+        text: 'text-slate-700',
+        border: 'border-slate-200',
+        dot: 'bg-slate-500',
+        label: status
+    };
 };
 
 export const getVehicleTypeLabel = (value) => {

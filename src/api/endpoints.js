@@ -1,43 +1,46 @@
 export const API_ENDPOINTS = {
-  AUTH: {
-    LOGIN: "/auth/login",
-    REGISTER: "/auth/register",
-    UPLOAD_IMAGE: "/auth/upload/image",
-    VERIFY_EMAIL: "/auth/verify-email",
-    FORGOT_PASSWORD: "/auth/forgot-password",
-    VERIFY_RESET_CODE: "/auth/verify-reset-code",
-    RESET_PASSWORD: "/auth/reset-password",
-    LOGOUT: "/auth/logOut",
-    CHECK_AVAILABILITY: "/auth/check-availability",
-    RESEND_VERIFICATION_CODE: "/auth/resend-verification-code",
-  },
-
-  USER: {
-    PROFILE: "/users/me",
-  },
-
-  LOCATION: {
-    GOVERNORATES: "/governorate/list",
-    CITIES: (id) => `/cities/list/${id}`,
-  },
-
-  SHIPMENT: {
-    CREATE: "/shipments",
-    SEARCH: "/shipments/me/search",
-    AVAILABLE: "/shipments/available",
-    ASSIGNED: "/shipments/assigned",
-    GET_DETAILS: (id) => `/shipments/${id}`,
-    UPDATE: (id) => `/shipments/${id}`,
-    CANCEL: (id) => `/shipments/${id}/cancel`,
-    UPDATE_STATUS: (id) => `/shipments/${id}/status`,
-    ME_STATS: "/shipments/me/stats",
-  },
-
-  BIDS: {
-    SUBMIT: "/bids/submit",
-    UPDATE_STATUS: (id) => `/bids/${id}/status`,
-    NEGOTIATE: (id) => `/bids/${id}/negotiate`,
-    NEW: "/bids/new",
-  },
-
+    AUTH: {
+        REGISTER: '/auth/register',
+        LOGIN: '/auth/login',
+        VERIFY_EMAIL: '/auth/verify-email',
+        FORGOT_PASSWORD: '/auth/forgot-password',
+        VERIFY_RESET_CODE: '/auth/verify-reset-code',
+        RESET_PASSWORD: '/auth/reset-password',
+        LOGOUT: '/auth/logOut',
+        CHECK_AVAILABILITY: '/auth/check-availability',
+        RESEND_VERIFICATION_CODE: '/auth/resend-verification-code',
+        UPLOAD_IMAGE: '/auth/upload/image',
+    },
+    USER: {
+        PROFILE: '/users/me',
+        // In case update profile is needed, often same as /users/me with PUT/PATCH
+        UPDATE_PROFILE: '/users/me', 
+    },
+    SHIPMENT: {
+        CREATE: '/shipments',
+        SEARCH: '/shipments/me/search',
+        GET_DETAILS: (id) => `/shipments/${id}`,
+        AVAILABLE: '/shipments/available',
+        ASSIGNED: '/shipments/assigned',
+        UPDATE: (id) => `/shipments/${id}`,
+        CANCEL: (id) => `/shipments/${id}/cancel`,
+        UPDATE_STATUS: (id) => `/shipments/${id}/status`,
+        CONFIRM_DELIVERY: (id) => `/shipments/${id}/confirm-delivery`,
+        ME_STATS: '/shipments/me/stats',
+    },
+    BIDS: {
+        SUBMIT: '/bids/submit',
+        NEW: '/bids/new',
+        UPDATE_STATUS: (bidId) => `/bids/${bidId}/status`,
+        NEGOTIATE: (bidId) => `/bids/${bidId}/negotiate`,
+        DASHBOARD_STATS: '/bids/dashboard-stats',
+    },
+    LOCATION: {
+        GOVERNORATES: '/governorate/list',
+        CITIES: (governorateId) => `/cities/list/${governorateId}`,
+    },
+    ROAD_ALERTS: {
+        CREATE: '/road-alerts',
+        GET_ACTIVE: '/road-alerts/active',
+    },
 };

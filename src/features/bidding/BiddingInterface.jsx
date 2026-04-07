@@ -398,13 +398,12 @@ export const BiddingInterface = () => {
                                         </div>
                                     </div>
 
-                                    {/* driver accepted negotiation alert - show only before customer final acceptance */}
-                                    {!isAccepted && (offer.negotiatedAmount && parseFloat(offer.amount) === parseFloat(offer.negotiatedAmount)) && (
+                                    {/* driver accepted negotiation alert - show only before any offer is accepted */}
+                                    {!isAnyOfferAccepted && (offer.negotiatedAmount && parseFloat(offer.amount) === parseFloat(offer.negotiatedAmount)) && (
                                         <div className="bg-emerald-50/80 dark:bg-emerald-900/10 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-900/20 mb-4 flex items-center gap-3 animate-pulse">
                                             <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
                                             <p className="text-sm font-black text-emerald-700 dark:text-emerald-400">
-                                                هذا السائق وافق على عرض السعر المقدم منك
-                                            </p>
+                                                وافق السائق علي العرض المقدم منك في انتظار تأكيد الشحنة                                            </p>
                                         </div>
                                     )}
 

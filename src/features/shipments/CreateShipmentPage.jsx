@@ -260,19 +260,22 @@ export const CreateShipmentPage = () => {
         try {
             // Diagnostic: use a default placeholder if no image exists to see if it bypasses the error
             let shipmentImageUrl = formData.shipmentImage?.trim() || null;
-            
-            // If empty, let's try sending a real URL just for testing
+            // If empty, set to null (User requested optional image)
             if (!shipmentImageUrl) {
-                shipmentImageUrl = "https://res.cloudinary.com/demo/image/upload/sample.jpg"; 
+                shipmentImageUrl = null;
             } else if (!shipmentImageUrl.startsWith('http')) {
-                const baseUrl = API_BASE_URL.startsWith('http') 
-                    ? API_BASE_URL 
+                const baseUrl = API_BASE_URL.startsWith('http')
+                    ? API_BASE_URL
                     : window.location.origin + (API_BASE_URL.startsWith('/') ? '' : '/') + API_BASE_URL;
-                
+
                 const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
                 const cleanPath = shipmentImageUrl.startsWith('/') ? shipmentImageUrl : '/' + shipmentImageUrl;
                 shipmentImageUrl = cleanBase + cleanPath;
             }
+
+            // Fallback for strict backend validation that requires a valid URL starting with http
+            // even if the user didn't upload an image.
+            const NO_IMAGE_URL = "https://placehold.co/1x1/transparent/transparent.png";
 
             const apiPayload = {
                 goods_type: formData.goodsType,
@@ -280,7 +283,7 @@ export const CreateShipmentPage = () => {
                 total_weight: parseFloat(formData.weight) || 0,
                 description: formData.description.trim(),
                 note: formData.additionalNotes.trim() || "لا يوجد ملاحظات",
-                shipment_image: shipmentImageUrl, // Sending a guaranteed URL
+                shipment_image: shipmentImageUrl || NO_IMAGE_URL,
                 pickupGovernorate: formData.pickupGovernorate.trim(),
                 pickupCity: formData.pickupCity.trim(),
                 pickupAddressDetails: formData.pickupAddress.trim(),

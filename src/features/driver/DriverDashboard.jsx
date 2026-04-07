@@ -16,7 +16,8 @@ import {
     CheckCircle2,
     Eye,
     Weight,
-    Box
+    Box,
+    AlertTriangle
 } from 'lucide-react'
 import { useShipmentStore } from '@/store/useShipmentStore'
 import { useOfferStore } from '@/store/useOfferStore'
@@ -30,7 +31,7 @@ import { shipmentService } from '@/services/shipmentService'
 import { getGoodsTypeLabel, getStatusStyles, formatEstimatedTime } from '@/utils/shipmentUtils'
 import { formatDistanceToNow } from 'date-fns'
 import { ar } from 'date-fns/locale'
-import DashboardAlerts from './components/DashboardAlerts'
+
 
 
 export const DriverDashboard = () => {
@@ -104,11 +105,7 @@ export const DriverDashboard = () => {
 
             </div>
 
-            {/* Dashboard Alerts Section for Drivers */}
-            <DashboardAlerts 
-                assignedShipments={assignedShipments} 
-                availableShipments={availableShipments} 
-            />
+
 
 
             {/* Earnings Overview */}
@@ -422,7 +419,7 @@ export const DriverDashboard = () => {
             </div>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Button variant="outline" className="h-24 rounded-[2rem] flex-col gap-2 border-slate-100 bg-white hover:bg-slate-50 shadow-sm" onClick={() => navigate('/driver/available')}>
                     <div className="h-10 w-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
                         <Clock className="h-5 w-5" />
@@ -435,6 +432,7 @@ export const DriverDashboard = () => {
                     </div>
                     <span className="text-sm font-bold m-0 p-0">سجل الرحلات</span>
                 </Button>
+
             </div>
         </div>
     )

@@ -177,16 +177,13 @@ export const DriverShipmentDetails = () => {
             {/* --- Standard Simplified Header --- */}
             <div className="pb-4 space-y-6">
 
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                    <div className="space-y-1">
-                        <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
-                            <span className="p-2.5 bg-brand-primary/10 rounded-2xl text-brand-primary shadow-sm">
-                                <Package className="h-6 w-6" />
-                            </span>
-                            تفاصيل الشحنة
-                        </h1>
-                        <p className="text-xs font-bold text-slate-400 mr-14">{shipment.displayId}</p>
-                    </div>
+                <div className="flex flex-row md:flex-col gap-2">
+                    <h3 className="text-2xl font-black text-slate-900 flex items-center gap-3">
+
+                        تفاصيل الشحنة
+                    </h3>
+                    <p className="text-xs font-bold text-slate-400">{shipment.displayId}</p>
+
                 </div>
             </div>
 
@@ -221,7 +218,7 @@ export const DriverShipmentDetails = () => {
                                                 الخريطة <Map className="h-3 w-3" />
                                             </button>
                                         </div>
-                                        <h4 className="text-xl font-black text-slate-800">{shipment.pickupPoint}</h4>
+                                        <p className="text-xs md:text-sm font-black text-slate-800 dark:text-white whitespace-nowrap">{shipment.pickupPoint}</p>
                                         <p className="text-sm font-bold text-slate-500 mt-1 leading-relaxed">{shipment.pickupAddress}</p>
                                     </div>
                                 </div>
@@ -241,7 +238,7 @@ export const DriverShipmentDetails = () => {
                                                 الخريطة <Map className="h-3 w-3" />
                                             </button>
                                         </div>
-                                        <h4 className="text-xl font-black text-slate-800">{shipment.destinationPoint}</h4>
+                                        <p className="text-xs md:text-sm font-bold text-slate-800 dark:text-white whitespace-nowrap">{shipment.destinationPoint}</p>
                                         <p className="text-sm font-bold text-slate-500 mt-1 leading-relaxed">{shipment.destinationAddress}</p>
                                     </div>
                                 </div>

@@ -244,6 +244,38 @@ export const shipmentService = {
     },
 
     /**
+     * Confirm shipment delivery (usually for drivers)
+     * @param {string|number} id
+     */
+    confirmDelivery: async (id) => {
+        try {
+            const response = await axiosClient.patch(API_ENDPOINTS.SHIPMENT.CONFIRM_DELIVERY(id));
+            const result = response.data;
+            if (result.status && result.data) {
+                result.data = mapShipmentData(result.data);
+            }
+            return result;
+        } catch (error) {
+            console.error('Confirm delivery error:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'فشل في تأكيد التوصيل');
+        }
+    },
+    /**
+     * Submit a review for a completed shipment
+     * @param {string|number} shipmentId
+     * @param {Object} reviewData - { rating, comment }
+     */
+    submitReview: async (shipmentId, reviewData) => {
+        try {
+            // Note: Updated review endpoint if it changes in backend, but keeping current if not listed
+            const response = await axiosClient.post(`/shipments/${shipmentId}/review`, reviewData);
+            return response.data;
+        } catch (error) {
+            console.error('Submit review error:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'فشل في إرسال التقيم');
+        }
+    },
+    /**
      * Get new bids for the logged-in customer
      */
     getNewBids: async () => {

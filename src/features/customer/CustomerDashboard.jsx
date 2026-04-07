@@ -12,7 +12,6 @@ import { shipmentService } from '@/services/shipmentService'
 import { socketService } from '@/services/socketService'
 import { getGoodsTypeLabel, getStatusStyles } from '@/utils/shipmentUtils'
 import DashboardStats from './components/DashboardStats'
-import DashboardAlerts from './components/DashboardAlerts'
 
 export const CustomerDashboard = () => {
     const { shipments = [], setShipments } = useShipmentStore()
@@ -92,7 +91,7 @@ export const CustomerDashboard = () => {
         };
 
         const events = ['new_bid', 'bid_received', 'notification', 'new_notification'];
-        
+
         events.forEach(event => socketService.on(event, handleUpdates));
 
         return () => {
@@ -125,11 +124,7 @@ export const CustomerDashboard = () => {
                 </Link>
             </div>
 
-            {/* Premium Alerts Section - Real-time updates for negotiations */}
-            <DashboardAlerts 
-                offers={apiNewBids} 
-                shipments={shipments}
-            />
+
 
 
             {apiError && (

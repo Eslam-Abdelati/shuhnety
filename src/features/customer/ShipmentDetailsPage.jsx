@@ -105,11 +105,8 @@ export const ShipmentDetailsPage = () => {
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="text-[9px] md:text-[10px] font-black text-slate-500 bg-slate-50 dark:bg-slate-800/50 px-2 py-1 rounded-md border border-slate-100 dark:border-slate-800">{shipment.displayId}</span>
-                            <span className="text-[9px] md:text-[10px] font-bold text-slate-400 bg-slate-50 dark:bg-slate-800/50 px-3 py-1 rounded-full flex items-center gap-1.5 border border-slate-100 dark:border-slate-800">
-                                <Calendar className="h-3 w-3" />
-                                {shipment.createdAt ? format(new Date(shipment.createdAt), 'dd MMMM yyyy', { locale: ar }) : '--'}
-                            </span>
+                            <p className="text-[9px] md:text-[10px] font-black text-slate-500 bg-slate-50 dark:bg-slate-800/50 px-4 py-1 rounded-md border border-slate-100 dark:border-slate-800">{shipment.displayId}</p>
+
                         </div>
                     </div>
                 </div>
@@ -298,26 +295,27 @@ export const ShipmentDetailsPage = () => {
                                     </div>
                                 </div>
 
-                                {(shipment.shipment_image || shipment.shipmentImage) && (
-                                    <div>
-                                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">صورة الشحنة</p>
-                                        <div className="relative rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 group/img">
-                                            <img
-                                                src={shipment.shipment_image || shipment.shipmentImage}
-                                                alt="Shipment"
-                                                className="w-full h-auto max-h-[400px] object-contain bg-slate-50 dark:bg-slate-900 transition-transform duration-700 group-hover/img:scale-105"
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity flex items-end justify-center p-4">
-                                                <button
-                                                    onClick={() => window.open(shipment.shipment_image || shipment.shipmentImage, '_blank')}
-                                                    className="bg-white/90 backdrop-blur-md text-slate-900 px-4 py-2 rounded-xl text-[10px] font-black shadow-xl"
-                                                >
-                                                    عرض الصورة كاملة
-                                                </button>
+                                {(shipment.shipment_image || shipment.shipmentImage) &&
+                                    !(shipment.shipment_image?.includes('transparent.png') || shipment.shipmentImage?.includes('transparent.png')) && (
+                                        <div>
+                                            <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">صورة الشحنة</p>
+                                            <div className="relative rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 group/img">
+                                                <img
+                                                    src={shipment.shipment_image || shipment.shipmentImage}
+                                                    alt="Shipment"
+                                                    className="w-full h-auto max-h-[400px] object-contain bg-slate-50 dark:bg-slate-900 transition-transform duration-700 group-hover/img:scale-105"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity flex items-end justify-center p-4">
+                                                    <button
+                                                        onClick={() => window.open(shipment.shipment_image || shipment.shipmentImage, '_blank')}
+                                                        className="bg-white/90 backdrop-blur-md text-slate-900 px-4 py-2 rounded-xl text-[10px] font-black shadow-xl"
+                                                    >
+                                                        عرض الصورة كاملة
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
                             </div>
                         </CardContent>
                     </Card>
