@@ -4,6 +4,7 @@ import { HelpCircle, ChevronDown, MessageCircle, Truck, Box, CreditCard, ShieldC
 import { Button } from '@/components/ui/Button'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { SimpleFooter } from '@/components/SimpleFooter'
 
 export const FaqPage = () => {
     const [openIndex, setOpenIndex] = useState(0)
@@ -51,43 +52,43 @@ export const FaqPage = () => {
         }
     ]
 
-    const filteredFaqs = faqs.filter(faq => 
+    const filteredFaqs = faqs.filter(faq =>
         (activeCategory === 'all' || faq.category === activeCategory) &&
         (faq.question.includes(searchQuery) || faq.answer.includes(searchQuery))
     )
 
     return (
-        <div className="min-h-screen bg-[#fcfcf9] font-cairo text-right pb-24" dir="rtl">
+        <div className="min-h-screen bg-[#fcfcf9] font-cairo text-right" dir="rtl">
             {/* Header Section */}
             <div className="relative bg-brand-secondary py-24 overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(235,106,29,0.15)_0%,transparent_50%)]"></div>
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <div className="text-center max-w-3xl mx-auto">
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-brand-primary text-[10px] font-black uppercase tracking-widest mb-6 border border-white/5 backdrop-blur-sm"
                         >
                             <MessageCircle className="h-3 w-3" />
                             مركز المساعدة
                         </motion.div>
-                        <motion.h1 
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                        <motion.h1
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             transition={{ delay: 0.1 }}
                             className="text-4xl lg:text-5xl font-black text-white mb-6 leading-tight"
                         >
                             الأسئلة الشائعة <br /> وكيفية استخدام المنصة
                         </motion.h1>
-                        
+
                         {/* Search Bar */}
-                        <motion.div 
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             transition={{ delay: 0.2 }}
                             className="relative max-w-xl mx-auto mt-10"
                         >
-                            <input 
+                            <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -104,7 +105,7 @@ export const FaqPage = () => {
             <div className="max-w-4xl mx-auto px-6 py-20">
                 {/* Category Pills */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
-                    <button 
+                    <button
                         onClick={() => setActiveCategory('all')}
                         className={cn(
                             "px-8 h-12 rounded-xl text-sm font-black transition-all border",
@@ -114,7 +115,7 @@ export const FaqPage = () => {
                         الكل
                     </button>
                     {faqCategories.map(cat => (
-                        <button 
+                        <button
                             key={cat.id}
                             onClick={() => setActiveCategory(cat.id)}
                             className={cn(
@@ -132,12 +133,12 @@ export const FaqPage = () => {
                 <div className="space-y-4">
                     {filteredFaqs.length > 0 ? (
                         filteredFaqs.map((faq, index) => (
-                            <motion.div 
+                            <motion.div
                                 key={index}
                                 layout
                                 className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                             >
-                                <button 
+                                <button
                                     onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
                                     className="w-full flex items-center justify-between p-7 text-right outline-none group"
                                 >
@@ -156,7 +157,7 @@ export const FaqPage = () => {
                                 </button>
                                 <AnimatePresence>
                                     {openIndex === index && (
-                                        <motion.div 
+                                        <motion.div
                                             initial={{ height: 0, opacity: 0 }}
                                             animate={{ height: 'auto', opacity: 1 }}
                                             exit={{ height: 0, opacity: 0 }}
@@ -182,9 +183,9 @@ export const FaqPage = () => {
                 </div>
 
                 {/* Contact CTA */}
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
                     className="mt-24 p-10 bg-brand-secondary rounded-[3rem] text-center relative overflow-hidden"
                 >
                     <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full -translate-x-10 -translate-y-10"></div>
@@ -192,7 +193,7 @@ export const FaqPage = () => {
                         <ShieldCheck className="h-12 w-12 text-brand-primary mx-auto mb-6" />
                         <h3 className="text-2xl font-black text-white mb-3">لم تجد إجابة لسؤالك؟</h3>
                         <p className="text-white/60 font-bold mb-8 max-w-md mx-auto">فريق الدعم الفني متواجد دائماً لمساعدتك في أي وقت خلال رحلتك.</p>
-                        <Button asChild size="lg" className="rounded-2xl px-12 bg-brand-primary hover:bg-orange-600 font-black h-14">
+                        <Button asChild size="lg" className="w-full sm:w-auto rounded-2xl px-8 md:px-12 bg-brand-primary hover:bg-orange-600 font-black h-14">
                             <Link to="/contact">تواصل معنا الآن</Link>
                         </Button>
                     </div>
@@ -208,6 +209,8 @@ export const FaqPage = () => {
                     </Button>
                 </div>
             </div>
+
+            <SimpleFooter />
         </div>
     )
 }

@@ -142,9 +142,9 @@ export const Topbar = () => {
                         <AnimatePresence>
                             {isNotificationsOpen && (
                                 <motion.div
-                                    initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                    exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
                                     className="fixed md:absolute inset-x-4 md:inset-x-auto md:left-0 top-[70px] md:top-full mt-2 md:mt-4 w-auto md:w-[380px] max-w-[calc(100vw-32px)] md:max-w-none mx-auto md:mx-0 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-2xl rounded-[1.5rem] overflow-hidden origin-top z-50 ring-1 ring-black/5 dark:ring-white/5"
                                 >
                                     <div className="p-5 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
@@ -259,9 +259,9 @@ export const Topbar = () => {
                         <AnimatePresence>
                             {isUserMenuOpen && (
                                 <motion.div
-                                    initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                    exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
                                     className="absolute left-0 top-full mt-4 w-[260px] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-2xl rounded-[1.5rem] overflow-hidden origin-top-right z-50 ring-1 ring-black/5 dark:ring-white/5"
                                 >
                                     <div className="p-6 border-b border-slate-50 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Shield, FileText, Scale, AlertCircle, ChevronRight, CheckCircle2, Lock, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { SimpleFooter } from '@/components/SimpleFooter'
 
 export const TermsPage = () => {
     const sections = [
@@ -44,23 +45,23 @@ export const TermsPage = () => {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(235,106,29,0.15)_0%,transparent_50%)]"></div>
                 <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         className="inline-flex items-center justify-center h-16 w-16 bg-brand-primary rounded-2xl mb-8 shadow-xl shadow-brand-primary/20"
                     >
                         <FileText className="h-8 w-8 text-white" />
                     </motion.div>
-                    <motion.h1 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                    <motion.h1
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         transition={{ delay: 0.1 }}
                         className="text-4xl lg:text-5xl font-black text-white mb-6"
                     >
                         الشروط والأحكام
                     </motion.h1>
-                    <motion.p 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         transition={{ delay: 0.2 }}
                         className="text-white/60 text-lg font-bold"
                     >
@@ -71,17 +72,17 @@ export const TermsPage = () => {
 
             {/* Content Section */}
             <div className="max-w-4xl mx-auto px-6 py-20 -mt-10 relative z-20">
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 p-10 md:p-16 border border-slate-100"
                 >
                     <div className="space-y-12">
                         {sections.map((section, index) => (
-                            <motion.div 
+                            <motion.div
                                 key={index}
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
+                                initial={{ opacity: 0 }}
+                                whileInView={{ opacity: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: index * 0.1 }}
                                 className="group"
@@ -104,12 +105,12 @@ export const TermsPage = () => {
                         <p className="text-sm text-slate-400 font-bold mb-8">
                             بإنشائك حساباً في منصة شحنتي، فإنك توافق ضمنياً على كافة البنود المذكورة أعلاه.
                         </p>
-                        <Button asChild size="lg" className="rounded-2xl px-12 bg-brand-secondary hover:bg-black font-black">
+                        <Button asChild size="lg" className="w-full sm:w-auto rounded-2xl px-6 md:px-12 bg-brand-secondary hover:bg-black font-black">
                             <Link to="/">العودة إلى الصفحة الرئيسية</Link>
                         </Button>
                     </div>
                 </motion.div>
-                
+
                 <div className="mt-12 text-center">
                     <p className="text-xs text-slate-300 font-bold uppercase tracking-widest flex items-center justify-center gap-2">
                         <CheckCircle2 className="h-3 w-3" />
@@ -117,6 +118,7 @@ export const TermsPage = () => {
                     </p>
                 </div>
             </div>
+            <SimpleFooter />
         </div>
     )
 }

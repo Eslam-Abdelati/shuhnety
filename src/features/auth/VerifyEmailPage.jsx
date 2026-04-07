@@ -109,8 +109,8 @@ export const VerifyEmailPage = () => {
 
             <div className="flex-1 flex items-center justify-center p-4 lg:p-12">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     transition={{ duration: 0.6 }}
                     className="w-full max-w-[500px] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 p-8 md:p-12 text-center"
                 >

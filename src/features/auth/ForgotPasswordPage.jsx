@@ -162,17 +162,17 @@ export const ForgotPasswordPage = () => {
 
             <div className="flex-1 flex items-center justify-center p-4 lg:p-12">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     className="w-full max-w-[500px] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 p-8 md:p-12 text-center"
                 >
                     <AnimatePresence mode="wait">
                         {step === 1 && (
                             <motion.div
                                 key="step1"
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
                             >
                                 <div className="inline-flex items-center justify-center h-20 w-20 bg-brand-primary/10 rounded-3xl mb-8 text-brand-primary">
                                     <KeyRound className="h-10 w-10" />
@@ -222,9 +222,9 @@ export const ForgotPasswordPage = () => {
                         {step === 2 && (
                             <motion.div
                                 key="step2"
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -20 }}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
                             >
                                 <div className="inline-flex items-center justify-center h-20 w-20 bg-brand-primary/10 rounded-3xl mb-8 text-brand-primary">
                                     <Shield className="h-10 w-10" />
@@ -283,8 +283,8 @@ export const ForgotPasswordPage = () => {
                         {step === 3 && (
                             <motion.div
                                 key="step3"
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
                             >
                                 <div className="inline-flex items-center justify-center h-20 w-20 bg-emerald-50 rounded-3xl mb-8 text-emerald-600">
                                     <Lock className="h-10 w-10" />

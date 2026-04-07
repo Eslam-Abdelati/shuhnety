@@ -236,8 +236,8 @@ export const ShipmentsPage = () => {
                 {stats.map((stat, i) => (
                     <motion.div
                         key={i}
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         transition={{ delay: i * 0.1 + 0.3 }}
                     >
                         <Card className="border-none shadow-sm bg-white dark:bg-slate-900 rounded-[1rem] md:rounded-[1.5rem] overflow-hidden group hover:shadow-md transition-all duration-300">
@@ -315,8 +315,8 @@ export const ShipmentsPage = () => {
                             return (
                                 <motion.div
                                     key={shipment.id}
-                                    initial={{ opacity: 0, y: 15 }}
-                                    animate={{ opacity: 1, y: 0 }}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
                                     exit={{ opacity: 0, scale: 0.98 }}
                                     transition={{ duration: 0.4, delay: i * 0.05 }}
                                     layout

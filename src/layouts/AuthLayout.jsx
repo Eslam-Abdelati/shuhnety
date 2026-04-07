@@ -19,7 +19,7 @@ export const AuthLayout = ({ children, title, subtitle }) => {
             </div>
 
             <div className="mt-12 sm:mx-auto sm:w-full sm:max-w-xl relative z-10">
-                <div className="bg-white/80 backdrop-blur-xl py-12 px-12 shadow-[0_40px_80px_-15px_rgba(30,58,138,0.08)] border border-white/20 rounded-[3.5rem] relative">
+                <div className="bg-white/80 backdrop-blur-xl py-12 px-6 md:px-12 shadow-[0_40px_80px_-15px_rgba(30,58,138,0.08)] border border-white/20 rounded-[3.5rem] relative">
                     <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent pointer-events-none rounded-[3.5rem]"></div>
                     <div className="relative z-10">
                         {children}

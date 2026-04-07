@@ -342,12 +342,11 @@ export const CreateShipmentPage = () => {
             {/* Professional Blue Info Box */}
 
             {/* Progress Stepper */}
-            {/* Modern balanced Stepper */}
-            <div className="relative mb-12 px-4">
-                {/* Background Connecting Line */}
-                <div className="absolute top-5 left-12 right-12 h-0.5 bg-slate-100 hidden sm:block">
+            <div className="relative mb-16 px-2 sm:px-6">
+                {/* Background Connecting Line - Premium look and mobile visible */}
+                <div className="absolute top-5 left-10 right-10 h-0.5 bg-slate-100/80 rounded-full">
                     <div
-                        className="h-full bg-brand-primary transition-all duration-500 ease-in-out"
+                        className="h-full bg-brand-primary transition-all duration-700 ease-in-out rounded-full shadow-[0_0_10px_rgba(235,106,29,0.3)]"
                         style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
                     ></div>
                 </div>
@@ -362,28 +361,28 @@ export const CreateShipmentPage = () => {
                             <div key={i} className="flex flex-col items-center relative z-10 group">
                                 {/* Step Circle */}
                                 <div className={cn(
-                                    "h-10 w-10 rounded-full flex items-center justify-center transition-all duration-500 border-2",
-                                    isActive ? "bg-brand-primary border-brand-primary text-white shadow-xl shadow-brand-primary/20 scale-110" :
-                                        isCompleted ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/10" :
-                                            "bg-white border-slate-200 text-slate-400 group-hover:border-slate-300"
+                                    "h-10 w-10 sm:h-11 sm:w-11 rounded-full flex items-center justify-center transition-all duration-500 border-2 select-none",
+                                    isActive ? "bg-brand-primary border-brand-primary text-white shadow-xl shadow-brand-primary/30 scale-110" :
+                                        isCompleted ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20" :
+                                            "bg-white border-slate-200 text-slate-400 group-hover:border-brand-primary/30 group-hover:text-brand-primary"
                                 )}>
                                     {isCompleted ? (
-                                        <CheckCircle2 className="h-6 w-6" />
+                                        <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6" />
                                     ) : (
-                                        <span className="text-sm font-black">{stepNum}</span>
+                                        <span className="text-sm sm:text-base font-black">{stepNum}</span>
                                     )}
                                 </div>
 
                                 {/* Step Label */}
-                                <div className="mt-4 flex flex-col items-center text-center">
+                                <div className="mt-4 flex flex-col items-center text-center max-w-[70px] sm:max-w-none">
                                     <span className={cn(
-                                        "text-xs font-black transition-colors whitespace-nowrap",
-                                        isActive ? "text-brand-primary" : isCompleted ? "text-emerald-600" : "text-slate-400"
+                                        "text-[9px] sm:text-xs font-black transition-colors leading-tight",
+                                        isActive ? "text-brand-primary" : isCompleted ? "text-emerald-600" : "text-slate-400 group-hover:text-slate-600"
                                     )}>
                                         {s}
                                     </span>
                                     {s === 'التأمين' && !IS_PRICING_ENABLED && (
-                                        <span className="mt-1 px-2 py-0.5 bg-brand-primary/10 text-brand-primary text-[8px] font-black rounded-full uppercase tracking-tighter">
+                                        <span className="mt-1 px-1.5 py-0.5 bg-brand-primary/10 text-brand-primary text-[7px] sm:text-[8px] font-black rounded-full uppercase tracking-tighter">
                                             قريباً
                                         </span>
                                     )}
@@ -929,7 +928,7 @@ export const CreateShipmentPage = () => {
                             </Button>
                         ) : (
                             <Button
-                                className={cn("gap-2 px-12 h-12 rounded-xl sm:w-auto w-full", isEditMode ? "bg-brand-primary" : "bg-emerald-600 hover:bg-emerald-700")}
+                                className={cn("gap-2 px-6 sm:px-12 h-12 rounded-xl sm:w-auto w-full", isEditMode ? "bg-brand-primary" : "bg-emerald-600 hover:bg-emerald-700")}
                                 onClick={handlePublish}
                                 disabled={isSubmitting}
                             >

@@ -38,7 +38,7 @@ import { TermsPage } from './features/legal/TermsPage'
 import { ContactPage } from './features/support/ContactPage'
 import { FaqPage } from './features/support/FaqPage'
 import { SocketSync } from './components/SocketSync'
-
+import ScrollToTop from './components/ScrollToTop'
 
 // Placeholders for features
 const Placeholder = ({ title }) => (
@@ -67,6 +67,8 @@ const Unauthorized = () => (
     </div>
 )
 
+
+
 function App() {
     const { theme } = useThemeStore()
 
@@ -83,6 +85,7 @@ function App() {
             <SocketSync />
             <Toaster position="top-left" reverseOrder={false} />
             <Router>
+                <ScrollToTop />
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
                     <Route path="/login" element={<LoginPage />} />

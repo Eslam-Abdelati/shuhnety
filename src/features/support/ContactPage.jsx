@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Globe, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useState } from 'react'
+import { SimpleFooter } from '@/components/SimpleFooter'
 
 export const ContactPage = () => {
     const [formStatus, setFormStatus] = useState(null)
@@ -26,13 +27,6 @@ export const ContactPage = () => {
             info2: '02 2345 6789',
             icon: Phone,
             color: 'bg-emerald-50 text-emerald-600'
-        },
-        {
-            title: 'المقر الرئيسي',
-            info: 'القاهرة، المعادي، برج النصر التجاري',
-            info2: 'الدور العاشر، مكتب رقم 1005',
-            icon: MapPin,
-            color: 'bg-orange-50 text-brand-primary'
         }
     ]
 
@@ -44,24 +38,24 @@ export const ContactPage = () => {
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <div className="text-center max-w-2xl mx-auto">
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-brand-primary text-[10px] font-black uppercase tracking-widest mb-6 border border-white/5 backdrop-blur-sm"
                         >
                             <MessageSquare className="h-3 w-3" />
                             نحن هنا لمساعدتك
                         </motion.div>
-                        <motion.h1 
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                        <motion.h1
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             transition={{ delay: 0.1 }}
-                            className="text-4xl lg:text-5xl font-black text-white mb-6"
+                            className="text-4xl lg:text-5xl font-black text-white mb-6 leading-tight"
                         >
                             تواصل مع فريق شحنتي
                         </motion.h1>
-                        <motion.p 
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             transition={{ delay: 0.2 }}
                             className="text-white/60 text-lg font-bold leading-relaxed"
                         >
@@ -74,11 +68,11 @@ export const ContactPage = () => {
             {/* Main Content Area */}
             <div className="max-w-7xl mx-auto px-6 py-20 -mt-10 relative z-20">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    
+
                     {/* Contact Cards */}
                     <div className="lg:col-span-1 space-y-4">
                         {contactInfo.map((item, index) => (
-                            <motion.div 
+                            <motion.div
                                 key={index}
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -116,7 +110,7 @@ export const ContactPage = () => {
 
                     {/* Contact Form Area */}
                     <div className="lg:col-span-2">
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 p-10 md:p-16 border border-slate-100 h-full"
@@ -127,7 +121,7 @@ export const ContactPage = () => {
                             </div>
 
                             {formStatus === 'success' ? (
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     className="bg-emerald-50 border border-emerald-100 p-10 rounded-[2.5rem] text-center"
@@ -161,10 +155,9 @@ export const ContactPage = () => {
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">رسالتك</label>
                                         <textarea required rows={5} className="w-full bg-slate-50 border border-slate-100 rounded-[2rem] px-6 py-5 font-bold outline-none focus:border-brand-primary transition-all text-right resize-none" placeholder="اكتب استفسارك بالتفصيل هنا..."></textarea>
                                     </div>
-                                    <div className="md:col-span-2 pt-4">
-                                        <Button type="submit" size="lg" className="w-full h-16 rounded-[2rem] bg-brand-primary hover:bg-orange-600 font-black text-lg shadow-xl shadow-brand-primary/20 transition-all hover:-translate-y-1">
-                                            إرسال الرسالة الآن
-                                            <Send className="mr-3 h-5 w-5" />
+                                    <div className="md:col-span-2 pt-4 flex justify-center">
+                                        <Button type="submit" size="lg" className="h-16 px-16 rounded-2xl bg-brand-primary hover:bg-orange-600 font-black text-lg shadow-xl shadow-brand-primary/20 transition-all hover:-translate-y-1">
+                                            إرسال
                                         </Button>
                                     </div>
                                 </form>
@@ -183,6 +176,7 @@ export const ContactPage = () => {
                     </Button>
                 </div>
             </div>
+            <SimpleFooter />
         </div>
     )
 }

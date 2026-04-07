@@ -9,11 +9,13 @@ import {
 import { Button } from '@/components/ui/Button'
 import { GlobalNotification } from '@/components/ui/NotificationProvider'
 import { cn } from '@/lib/utils'
+import { SimpleFooter } from '@/components/SimpleFooter'
+
 
 export const LandingPage = () => {
     const fadeIn = {
-        initial: { opacity: 0, y: 20 },
-        animate: { opacity: 1, y: 0 },
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
         transition: { duration: 0.6 }
     }
 
@@ -77,24 +79,27 @@ export const LandingPage = () => {
                     <motion.div className="flex-1 text-center lg:text-right" {...fadeIn}>
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[#57534d] text-[9px] font-black tracking-widest uppercase mb-6 border border-slate-200/50">
                             <Zap className="h-3 w-3 text-brand-primary" />
-                            منصة الشحن الذكي الأولى في مصر
+                            منصة ذكية تربط بين أصحاب الشحنات والسائقين في مكان واحد
                         </div>
 
-                        <h1 className="text-xl lg:text-5xl font-black leading-[1.15] tracking-tight mb-8 text-brand-secondary">
-                            تحكم كامل في شحناتك<br />
-                            {/* <span className="text-brand-primary drop-shadow-sm">   من أول عرض سعر لحد التحصيل</span> */}
+                        <h1 className="text-xl lg:text-5xl font-black leading-[1.40] tracking-tight mb-6 text-brand-secondary">
+
+                            اشحن أو اشتغل بسهولة<br />
+                            <span className="text-brand-primary drop-shadow-sm">  في منصة واحدة ذكية </span>
                         </h1>
 
                         <p className="max-w-lg lg:mr-0 mx-auto text-base text-[#57534d] font-bold leading-relaxed mb-10 opacity-80">
-                            اشحن بذكاء، وفر في التكلفة، واستلم فلوسك بدون تعقيد.   </p>
+                            سواء كنت عميل عايز تشحن، أو سائق بتدور على شغل —
+                            شحنتي بتوصلك للطرف المناسب بسرعة وبأفضل سعر.
+                        </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                             <Button size="lg" asChild className="rounded-2xl px-10 h-12 text-sm font-black bg-brand-secondary hover:bg-black shadow-2xl shadow-brand-secondary/20 transition-all duration-300 hover:-translate-y-1 active:scale-95 cursor-pointer">
-                                <Link to="/login"> ابدأ شحنتك الآن </Link>
+                                <Link to="/login"> اشحن الآن </Link>
                             </Button>
                             <Button variant="outline" size="lg" asChild className="rounded-2xl px-10 h-12 text-sm font-black border-slate-200 hover:bg-slate-50 hover:border-brand-primary hover:text-brand-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 group cursor-pointer">
                                 <Link to="/register" className="flex items-center gap-2">
-                                    انضم إلينا الان
+                                    انضم كسائق
                                 </Link>
                             </Button>
                         </div>
@@ -112,7 +117,7 @@ export const LandingPage = () => {
                                 <div className="flex items-center gap-1 text-brand-primary mb-0.5 scale-90 origin-right">
                                     {[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-3 w-3 fill-current" />)}
                                 </div>
-                                <p className="text-[10px] font-black text-[#57534d]/60 uppercase tracking-widest"> ينضم إلينا تجار جدد يوميًا </p>
+                                <p className="text-[10px] font-black text-[#57534d]/60 uppercase tracking-widest"> ينضم إلينا عملاء / سائقين جدد يوميًا </p>
                             </div>
                         </div>
                     </motion.div>
@@ -225,7 +230,7 @@ export const LandingPage = () => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[
-                            { title: 'للتجار', desc: 'تحكم كامل في شحناتك مع نظام مزايدة يضمن لك أفضل سعر وأسرع تنفيذ.', icon: Box },
+                            { title: 'للعملاء', desc: 'تحكم كامل في شحناتك مع نظام مزايدة يضمن لك أفضل سعر وأسرع تنفيذ.', icon: Box },
                             { title: 'للسائقين', desc: 'فرص عمل يومية مع ضمان التحصيل الفوري.', icon: Truck },
                             { title: 'للشركات', desc: 'إدارة أسطول كامل مع تقارير أداء دقيقة.', icon: Building2 },
                             { title: 'للمحافظات', desc: 'رقابة رقمية شاملة وتحصيل آمن للرسوم.', icon: Globe },
@@ -251,8 +256,8 @@ export const LandingPage = () => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
-                            { title: 'غياب الثقة', desc: 'صعوبة التحقق من هوية السائق أو جودة الخدمة قبل "شحنتي".', icon: ShieldCheck },
-                            { title: 'عشوائية الرسوم', desc: 'مفيش نظام واضح لتحديد السعر… وغالبًا بتدفع أكتر من اللازم', icon: Wallet },
+                            { title: 'غياب الثقة', desc: 'صعوبة التحقق من هوية السائق أو جودة الخدمة قبل شحنتي', icon: ShieldCheck },
+                            { title: 'عشوائية الرسوم', desc: 'مفيش نظام واضح لتحديد السعر. وغالبًا بتدفع أكتر من اللازم', icon: Wallet },
                             { title: 'ضياع الشحنات', desc: 'انعدام تكنولوجيا التتبع اللحظي مما عرض بضاعتك للخطر.', icon: MapPin },
                         ].map((item, i) => (
                             <div key={i} className="group relative bg-white p-10 rounded-[3rem] border border-slate-100/50 hover:shadow-[0_40px_80px_-20px_rgba(235,106,29,0.12)] hover:-translate-y-2 transition-all duration-500 text-center overflow-hidden">
@@ -280,10 +285,10 @@ export const LandingPage = () => {
                         <div className="absolute top-10 left-10 right-10 h-0.5 bg-brand-primary/10 hidden md:block"></div>
                         {[
                             { title: 'سجل حسابك', icon: Users },
-                            { title: 'أضف شحنتك', icon: Package },
+                            { title: 'إضافة/استعراض شحنات', icon: Package },
                             { title: 'اختر عرضك', icon: TrendingUp },
                             { title: 'تابع المسار', icon: MapPin },
-                            { title: 'تم التسليم', icon: CheckCircle2 },
+                            { title: 'التسليم / التحصيل', icon: CheckCircle2 },
                         ].map((step, i) => (
                             <div key={i} className="relative z-10 flex flex-col items-center group">
                                 <div className="h-20 w-20 rounded-[2.5rem] bg-white border-2 border-slate-50 flex items-center justify-center mb-6 group-hover:bg-brand-primary group-hover:text-white group-hover:border-brand-primary group-hover:-translate-y-2 transition-all duration-500 shadow-xl shadow-slate-100 group-hover:shadow-brand-primary/20">
@@ -323,71 +328,7 @@ export const LandingPage = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-[#043327] py-16 text-white border-t border-white/5">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-16">
-                        <div className="col-span-1 md:col-span-1 space-y-8">
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 bg-brand-primary rounded-xl flex items-center justify-center">
-                                    <Truck className="h-6 w-6" />
-                                </div>
-                                <span className="text-2xl font-black tracking-tighter">شحنتي</span>
-                            </div>
-                            <p className="text-sm text-white/50 leading-relaxed font-bold">
-                                المنصة الرقمية الأولى في جمهورية مصر العربية المتخصصة في ربط سلاسل النقل اللوجستي والتحصيل الرقمي عن طريق المزايدة والتفاوض.
-                            </p>
-                            <div className="flex gap-4">
-                                <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all cursor-pointer">
-                                    <Globe className="h-5 w-5" />
-                                </div>
-                                <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all cursor-pointer">
-                                    <Heart className="h-5 w-5" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-6">
-                            <h5 className="font-black text-brand-primary tracking-widest uppercase text-xs">روابط سريعة</h5>
-                            <ul className="space-y-4 text-sm text-white/60 font-bold">
-                                <li><HashLink smooth to="/#about" className="hover:text-white transition-colors">عن المنصة</HashLink></li>
-                                <li><HashLink smooth to="/#workflow" className="hover:text-white transition-colors">آلية العمل</HashLink></li>
-                                <li><Link to="/register?role=driver" className="hover:text-white transition-colors">انضم كسائق</Link></li>
-                                <li><HashLink smooth to="/register" className="hover:text-white transition-colors">تسجيل الشركات</HashLink></li>
-                            </ul>
-                        </div>
-
-                        <div className="space-y-6">
-                            <h5 className="font-black text-brand-primary tracking-widest uppercase text-xs">الدعم والمساعدة</h5>
-                            <ul className="space-y-4 text-sm text-white/60 font-bold">
-                                <li><Link to="/faq" className="hover:text-white transition-colors">الأسئلة الشائعة</Link></li>
-                                {/* <li><a href="#" className="hover:text-white transition-colors">سياسة الخصوصية</a></li> */}
-                                <li><Link to="/terms" className="hover:text-white transition-colors"> الشروط والأحكام</Link></li>
-                                <li><Link to="/contact" className="hover:text-white transition-colors">تواصل معنا</Link></li>
-                            </ul>
-                        </div>
-
-                        <div className="space-y-6">
-                            <h5 className="font-black text-brand-primary tracking-widest uppercase text-xs">النشرة البريدية</h5>
-                            <p className="text-xs text-white/40 font-bold">اشترك لتصلك آخر أخبار قطاع النقل اللوجستي.</p>
-                            <div className="relative">
-                                <input type="text" placeholder="بريدك الإلكتروني" className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-xs font-bold outline-none focus:border-brand-primary transition-all pr-5 pl-12" />
-                                <button className="absolute left-2 top-2 bottom-2 bg-brand-primary text-white px-4 rounded-lg flex items-center justify-center">
-                                    <ChevronLeft className="h-4 w-4" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="pt-8 border-t border-white/5 flex flex-col md:flex-col justify-center items-center gap-2">
-                        <p className="text-xs text-white/30 font-bold tracking-wide">
-                            © {new Date().getFullYear()} منصة شحنتي الرقمية. جميع الحقوق محفوظة   .
-                        </p>
-                        <div className="flex items-center gap-2 text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">
-                            MADE WITH <Heart className="h-3 w-3 text-brand-primary animate-pulse inline" /> BY ATWA_TECH TEAM
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            <SimpleFooter />
         </div>
     )
 }
