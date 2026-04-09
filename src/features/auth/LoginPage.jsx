@@ -12,7 +12,8 @@ import { Button } from '@/components/ui/Button'
 import { useAuthStore } from '@/store/useAuthStore'
 import { cn } from '@/utils/cn'
 import { authService } from '@/services/authService'
-import { StatusAlert } from '@/components/ui/StatusAlert'
+import { toast } from 'react-hot-toast'
+
 
 const loginSchema = z.object({
     email: z.string().trim().email('بريد إلكتروني غير صالح'),
@@ -22,7 +23,7 @@ const loginSchema = z.object({
 export const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const [apiMessage, setApiMessage] = useState(null)
+
 
     const login = useAuthStore(state => state.login)
     const navigate = useNavigate()
@@ -38,7 +39,7 @@ export const LoginPage = () => {
 
     const onLoginSubmit = async (data) => {
         setIsLoading(true)
-        setApiMessage(null)
+
 
         const trimmedData = {
             ...data,
@@ -60,7 +61,8 @@ export const LoginPage = () => {
                 throw new Error('فشل تسجيل الدخول: لم يتم العثور على رمز الوصول');
             }
 
-            setApiMessage({ type: 'success', text: "تم تسجيل الدخول بنجاح" })
+            toast.success("تم تسجيل الدخول بنجاح")
+
 
             // Use uiRole for frontend navigation only
             const uiRole = rawRole === 'client' ? 'customer' : rawRole;
@@ -74,7 +76,7 @@ export const LoginPage = () => {
         } catch (error) {
             // Show error from API
             const errorMsg = error.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
-            setApiMessage({ type: 'error', text: errorMsg })
+            toast.error(errorMsg)
         } finally {
             setIsLoading(false)
         }
@@ -191,13 +193,6 @@ export const LoginPage = () => {
                                     <Link to="/forgot-password" size="sm" className="text-sm font-bold text-brand-primary hover:underline">نسيت كلمة المرور؟</Link>
                                 </div>
 
-                                {apiMessage && (
-                                    <StatusAlert
-                                        type={apiMessage.type}
-                                        message={apiMessage.text}
-                                        onClose={() => setApiMessage(null)}
-                                    />
-                                )}
 
                                 <Button
                                     type="submit"

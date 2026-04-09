@@ -108,11 +108,22 @@ export const CustomerDashboard = () => {
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-brand-primary/5 blur-[100px] rounded-full pointer-events-none"></div>
 
                 <div className="relative z-10">
-                    <h1 className="text-2xl sm:text-3xl lg:text-[24px] xl:text-[36px] font-black text-[#1c1919] dark:text-white tracking-tight mb-2">لوحة التحكم</h1>
-                    <p className="text-sm sm:text-base lg:text-[14px] text-[#57534d] dark:text-slate-400 font-bold flex items-center gap-2">
-                        مرحباً {user?.full_name || 'يا بطل'} <span className="text-xl lg:text-xl">👋</span>
+                    <h1 className="text-2xl sm:text-3xl xl:text-[36px] font-black text-[#1c1919] dark:text-white tracking-tight mb-2">
+                        لوحة التحكم
+                    </h1>
+
+                    <p className="text-sm sm:text-base text-[#57534d] dark:text-slate-400 font-medium flex flex-wrap items-center gap-2">
+
+                        <span>
+                            مرحبًا{" "}
+                            <span className="text-brand-primary font-semibold">
+                                {user?.full_name || "المستخدم"}
+                            </span>
+                        </span>
+
                         <span className="block h-1.5 w-1.5 rounded-full bg-brand-secondary"></span>
-                        لديك {shipments.filter(s => s.status !== 'تم التوصيل' && s.status !== 'ملغي').length} شحنات نشطة اليوم
+
+                        <span>دارة شحناتك أصبحت أسهل وأسرع من أي وقت مضى</span>
                     </p>
                 </div>
 

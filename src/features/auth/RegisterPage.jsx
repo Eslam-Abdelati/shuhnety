@@ -10,6 +10,8 @@ import {
     Eye, EyeOff, ArrowLeft, ChevronRight, Info, Check,
     Upload, CreditCard, CalendarDays
 } from 'lucide-react'
+import { toast } from 'react-hot-toast'
+
 
 // UI Components
 import { Button } from '@/components/ui/Button'
@@ -19,7 +21,8 @@ import { cn } from '@/utils/cn'
 import { authService } from '@/services/authService'
 import { locationService } from '@/services/locationService'
 import { API_BASE_URL } from '@/api/axiosClient'
-import { StatusAlert } from '@/components/ui/StatusAlert'
+// import { StatusAlert } from '@/components/ui/StatusAlert'
+
 
 // --- Backend Enums ---
 export const AvailabilityField = {
@@ -172,7 +175,7 @@ export const RegisterPage = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [wasNextAttempted, setWasNextAttempted] = useState(false)
-    const [apiMessage, setApiMessage] = useState(null)
+
     const [checkingFields, setCheckingFields] = useState({
         email: false,
         phone: false,
@@ -340,16 +343,13 @@ export const RegisterPage = () => {
     useEffect(() => {
         clearErrors()
         setWasNextAttempted(false)
-        setApiMessage(null)
     }, [step, clearErrors])
+
 
     const nextStep = async () => {
         if (step === 1) {
             if (!selectedRole) {
-                setApiMessage({
-                    type: 'warning',
-                    text: 'يرجى اختيار نوع الحساب أولاً'
-                })
+                toast.error('يرجى اختيار نوع الحساب أولاً')
                 return
             }
             setStep(2)
@@ -418,7 +418,7 @@ export const RegisterPage = () => {
                 const forward_vehicle_license_doc = getDocUrl(data.vehicleLicensePhoto);
                 const back_vehicle_license_doc = getDocUrl(data.vehicleLicensePhotoBack);
 
-                setApiMessage({ type: 'info', text: 'جاري إنشاء الحساب...' });
+                toast.loading('جاري إنشاء الحساب...', { id: 'register' });
 
                 registerDto.driverDetails = { // Correct field: driverDetails
                     national_id: data.nationalId,
@@ -450,8 +450,11 @@ export const RegisterPage = () => {
 
             const response = await authService.register(registerDto)
 
-            setApiMessage({ type: 'success', text: 'تم إنشاء الحساب بنجاح! و تم إرسال رمز التحقق إلى بريدك الإلكتروني بنجاح. يتم توجيهك...' })
-
+            const successMsg = selectedRole === 'driver' 
+                ? 'تم التسجيل بنجاح 🙌 حسابك قيد المراجعة وسيتم تفعيله خلال 24 ساعة من قبل الإدارة.'
+                : 'تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني لتفعيل الحساب.';
+            
+            toast.success(successMsg, { id: 'register' })
             // Navigate to verify email
             setTimeout(() => {
                 navigate('/verify-email', {
@@ -464,8 +467,9 @@ export const RegisterPage = () => {
 
         } catch (error) {
             const errorMsg = error.message || 'حدث خطأ غير متوقع';
-            setApiMessage({ type: 'error', text: errorMsg })
+            toast.error(errorMsg, { id: 'register' })
         } finally {
+
             setIsLoading(false)
         }
     }
@@ -648,15 +652,6 @@ export const RegisterPage = () => {
                                 </motion.div>
                             </AnimatePresence>
 
-                            {apiMessage && (
-                                <div className="pt-4">
-                                    <StatusAlert
-                                        type={apiMessage.type}
-                                        message={apiMessage.text}
-                                        onClose={() => setApiMessage(null)}
-                                    />
-                                </div>
-                            )}
 
                             <div className="flex gap-4 mt-10">
                                 {step > 1 && (

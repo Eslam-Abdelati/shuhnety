@@ -17,7 +17,8 @@ export const FaqPage = () => {
         { id: 'payments', label: 'التحصيل', icon: CreditCard },
     ]
 
-    const [activeCategory, setActiveCategory] = useState('general')
+    const [activeCategory, setActiveCategory] = useState('all')
+
 
     const faqs = [
         {

@@ -35,6 +35,8 @@ export const DriverShipmentDetails = () => {
     const [showBidModal, setShowBidModal] = useState(false);
     const [submittingBid, setSubmittingBid] = useState(false);
     const [bidForm, setBidForm] = useState({ amount: '', days: '', hours: '', minutes: '', note: null });
+    const [bidErrors, setBidErrors] = useState({});
+
 
     useEffect(() => {
         fetchShipmentDetails();
@@ -77,13 +79,31 @@ export const DriverShipmentDetails = () => {
 
     const handleSubmitBid = async (e) => {
         e.preventDefault();
+
+        // Validation
+        const errors = {};
+        if (!bidForm.amount || parseFloat(bidForm.amount) <= 0) {
+            errors.amount = 'يرجى إدخال سعر صحيح';
+        }
+
+        const totalMinutes = (parseInt(bidForm.days || 0) * 1440) +
+            (parseInt(bidForm.hours || 0) * 60) +
+            parseInt(bidForm.minutes || 0);
+
+        if (totalMinutes <= 0) {
+            errors.time = 'يرجى تحديد وقت التوصيل المتوقع';
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setBidErrors(errors);
+            toast.error(errors.amount || errors.time);
+            return;
+        }
+
+        setBidErrors({});
         try {
             setSubmittingBid(true);
 
-            // Calculate total minutes
-            const totalMinutes = (parseInt(bidForm.days || 0) * 1440) +
-                (parseInt(bidForm.hours || 0) * 60) +
-                parseInt(bidForm.minutes || 0);
 
             if (myBid?.id) {
                 // If a bid already exists, we are negotiating (counter-offer)
@@ -502,97 +522,100 @@ export const DriverShipmentDetails = () => {
                 </div>
             </div>
 
-            {/* Bidding Modal - Redesigned to be simple and beautiful */}
+            {/* Compact & Centered Bidding Modal */}
             <Dialog open={showBidModal} onOpenChange={setShowBidModal}>
-                <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] p-0 overflow-hidden font-cairo shadow-2xl border-none" dir="rtl">
-                    <div className="p-8 pb-4">
-                        <div className="flex items-center gap-4 mb-2">
-                            <div className="h-12 w-12 bg-brand-primary/10 text-brand-primary rounded-2xl flex items-center justify-center">
-                                <CreditCard className="h-6 w-6" />
+                <DialogContent
+                    className="w-[92%] sm:max-w-[440px] rounded-[2.5rem] p-0 overflow-hidden font-cairo shadow-2xl border-none bg-white [&>button]:right-auto [&>button]:left-4"
+                    dir="rtl"
+                >
+                    <div className="p-7 pb-3 bg-slate-50/50">
+                        <div className="flex items-center gap-4">
+                            <div className="h-10 w-10 bg-brand-primary/10 text-brand-primary rounded-xl flex items-center justify-center">
+                                <CreditCard className="h-5 w-5" />
                             </div>
-                            <DialogTitle className="text-2xl font-black text-slate-900">تقديم عرض سعر</DialogTitle>
+                            <DialogTitle className="text-xl font-black text-slate-900">تقديم عرض سعر</DialogTitle>
                         </div>
-                        <DialogDescription className="text-slate-400 font-bold pr-16 text-sm">
-                            أرسل تفاصيل عرضك المالي والزمني للعميل للبدء في التفاوض.
+                        <DialogDescription className="text-slate-400 font-bold pr-14 text-xs leading-relaxed">
+                            أرسل تفاصيل عرضك المالي والزمني للعميل.
                         </DialogDescription>
                     </div>
 
-                    <form onSubmit={handleSubmitBid} className="p-8 pt-4 space-y-6">
-                        {/* Price Input - Added autofocus and enhanced styles */}
+                    <form onSubmit={handleSubmitBid} className="p-7 pt-4 space-y-5">
+                        {/* Price Input */}
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">العرض المالي (جنيه مصري)</label>
+                            <label className="text-sm font-bold text-[#57534d] block pr-1">السعر المقترح (جنيه)</label>
                             <input
                                 type="number"
                                 value={bidForm.amount}
                                 autoFocus
-                                onChange={(e) => setBidForm({ ...bidForm, amount: e.target.value })}
-                                className="w-full h-14 bg-slate-50 border border-slate-100 hover:border-slate-300 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 rounded-2xl px-6 text-lg font-black transition-all outline-none"
-                                placeholder="ادخل السعر..."
-                                required
+                                onChange={(e) => {
+                                    setBidForm({ ...bidForm, amount: e.target.value });
+                                    if (bidErrors.amount) setBidErrors({ ...bidErrors, amount: null });
+                                }}
+                                className={cn(
+                                    "w-full h-12 bg-white border-2 rounded-xl px-5 text-lg font-black transition-all outline-none",
+                                    bidErrors.amount ? "border-red-500" : "border-slate-100 focus:border-brand-primary"
+                                )}
+                                placeholder="0.00"
                             />
                         </div>
 
-                        {/* Detailed Time Inputs - Enhanced hover/focus */}
+                        {/* Detailed Time Grid */}
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">الوقت المتوقع للتوصيل</label>
-                            <div className="grid grid-cols-3 gap-3">
-                                <div className="space-y-1">
-                                    <input
-                                        type="number"
-                                        value={bidForm.days}
-                                        onChange={(e) => setBidForm({ ...bidForm, days: e.target.value })}
-                                        className="w-full h-12 bg-slate-50 border border-slate-100 hover:border-slate-300 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 rounded-xl px-4 text-center font-black text-slate-700 transition-all outline-none"
-                                        placeholder="0"
-                                    />
-                                    <p className="text-[9px] font-black text-slate-400 text-center uppercase tracking-widest">أيام</p>
-                                </div>
-                                <div className="space-y-1">
-                                    <input
-                                        type="number"
-                                        value={bidForm.hours}
-                                        onChange={(e) => setBidForm({ ...bidForm, hours: e.target.value })}
-                                        className="w-full h-12 bg-slate-50 border border-slate-100 hover:border-slate-300 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 rounded-xl px-4 text-center font-black text-slate-700 transition-all outline-none"
-                                        placeholder="0"
-                                    />
-                                    <p className="text-[9px] font-black text-slate-400 text-center uppercase tracking-widest">ساعات</p>
-                                </div>
-                                <div className="space-y-1">
-                                    <input
-                                        type="number"
-                                        value={bidForm.minutes}
-                                        onChange={(e) => setBidForm({ ...bidForm, minutes: e.target.value })}
-                                        className="w-full h-12 bg-slate-50 border border-slate-100 hover:border-slate-300 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 rounded-xl px-4 text-center font-black text-slate-700 transition-all outline-none"
-                                        placeholder="0"
-                                    />
-                                    <p className="text-[9px] font-black text-slate-400 text-center uppercase tracking-widest">دقائق</p>
-                                </div>
+                            <label className={cn(
+                                "text-sm font-bold block pr-1",
+                                bidErrors.time ? "text-red-500" : "text-[#57534d]"
+                            )}>الوقت المتوقع للتوصيل</label>
+                            <div className="grid grid-cols-3 gap-2">
+                                {[
+                                    { key: 'days', label: 'أيام' },
+                                    { key: 'hours', label: 'ساعات' },
+                                    { key: 'minutes', label: 'دقائق' }
+                                ].map((t) => (
+                                    <div key={t.key} className="space-y-2 text-center group">
+                                        <input
+                                            type="number"
+                                            value={bidForm[t.key]}
+                                            onChange={(e) => {
+                                                setBidForm({ ...bidForm, [t.key]: e.target.value });
+                                                if (bidErrors.time) setBidErrors({ ...bidErrors, time: null });
+                                            }}
+                                            className={cn(
+                                                "w-full h-10 bg-white border-2 rounded-xl px-2 text-center font-black text-slate-700 outline-none transition-all",
+                                                bidErrors.time ? "border-red-500" : "border-slate-100 focus:border-brand-primary"
+                                            )}
+                                            placeholder="0"
+                                        />
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter group-focus-within:text-brand-primary transition-colors">{t.label}</p>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
-                        {/* Notes - Enhanced hover/focus */}
+                        {/* Notes - Compact */}
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">ملاحظات إضافية (اختياري)</label>
+                            <label className="text-sm font-bold text-[#57534d] block pr-1">ملاحظات إضافية (اختياري)</label>
                             <textarea
-                                value={bidForm.note}
+                                value={bidForm.note || ''}
                                 onChange={(e) => setBidForm({ ...bidForm, note: e.target.value })}
-                                className="w-full h-24 bg-slate-50 border border-slate-100 hover:border-slate-300 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 rounded-2xl px-6 py-4 font-bold text-sm transition-all outline-none resize-none"
-                                placeholder="اكتب هنا أي تفاصيل تود إبلاغ العميل بها..."
+                                className="w-full h-20 bg-white border-2 border-slate-100 focus:border-brand-primary rounded-xl px-5 py-3 font-bold text-xs transition-all outline-none resize-none"
+                                placeholder="أي ملاحظات إضافية للعميل..."
                             />
                         </div>
 
-                        <DialogFooter className="gap-3 flex-row pt-4">
+                        <DialogFooter className="gap-2 flex-row pt-2 pb-1">
                             <Button
                                 type="submit"
                                 disabled={submittingBid}
-                                className="flex-1 h-14 bg-brand-primary text-white rounded-2xl font-black text-base shadow-lg shadow-brand-primary/10 hover:bg-brand-primary/90 transition-all active:scale-95 border-none"
+                                className="flex-1 h-12 bg-brand-primary text-white rounded-xl font-black text-sm shadow-lg shadow-brand-primary/10 hover:bg-brand-primary/90 transition-all border-none"
                             >
-                                {submittingBid ? <Loader2 className="h-5 w-5 animate-spin" /> : 'إرسال العرض'}
+                                {submittingBid ? <Loader2 className="h-4 w-4 animate-spin text-white" /> : 'تقديم العرض'}
                             </Button>
                             <Button
                                 type="button"
                                 variant="ghost"
                                 onClick={() => setShowBidModal(false)}
-                                className="flex-1 h-14 text-slate-400 font-bold hover:bg-slate-50 rounded-2xl transition-colors"
+                                className="flex-1 h-12 text-slate-400 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm"
                             >
                                 إلغاء
                             </Button>
@@ -600,6 +623,7 @@ export const DriverShipmentDetails = () => {
                     </form>
                 </DialogContent>
             </Dialog>
+
         </div>
     );
 };

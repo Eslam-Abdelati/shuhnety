@@ -8,7 +8,8 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/cn'
 import { authService } from '@/services/authService'
-import { StatusAlert } from '@/components/ui/StatusAlert'
+import { toast } from 'react-hot-toast'
+
 
 
 export const ForgotPasswordPage = () => {
@@ -21,7 +22,7 @@ export const ForgotPasswordPage = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [errors, setErrors] = useState({})
-    const [apiMessage, setApiMessage] = useState(null)
+
     const [timer, setTimer] = useState(0)
     const [userId, setUserId] = useState(null)
 
@@ -39,7 +40,7 @@ export const ForgotPasswordPage = () => {
 
     const handleSendCode = async (e) => {
         e.preventDefault()
-        setApiMessage(null)
+
         const newErrors = {}
         if (!email) {
             newErrors.email = 'يرجى إدخال البريد الإلكتروني'
@@ -58,22 +59,25 @@ export const ForgotPasswordPage = () => {
             setStep(2)
             setTimer(59)
             setErrors({})
-            setApiMessage({ type: 'success', text: 'تم إرسال رمز استعادة كلمة المرور إلى بريدك الإلكتروني' })
+            toast.success('تم إرسال رمز استعادة كلمة المرور إلى بريدك الإلكتروني')
+
         } catch (error) {
-            setApiMessage({ type: 'error', text: error.message || 'فشل إرسال رمز التحقق' })
+            toast.error(error.message || 'فشل إرسال رمز التحقق')
         } finally {
+
             setIsLoading(false)
         }
     }
 
     const handleVerifyOtp = async (e) => {
         e.preventDefault()
-        setApiMessage(null)
+
         if (otp.join('').length < 4) {
-            setApiMessage({ type: 'error', text: 'يرجى إدخال الرمز كاملاً' })
+            toast.error('يرجى إدخال الرمز كاملاً')
             setErrors({ otp: 'يرجى إدخال الرمز كاملاً' })
             return
         }
+
         setIsLoading(true)
         try {
             const code = otp.join('')
@@ -89,15 +93,16 @@ export const ForgotPasswordPage = () => {
             setStep(3)
             setErrors({})
         } catch (error) {
-            setApiMessage({ type: 'error', text: error.message || 'رمز التحقق غير صحيح' })
+            toast.error(error.message || 'رمز التحقق غير صحيح')
         } finally {
+
             setIsLoading(false)
         }
     }
 
     const handleResetPassword = async (e) => {
         e.preventDefault()
-        setApiMessage(null)
+
         const newErrors = {}
         const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/
 
@@ -124,11 +129,13 @@ export const ForgotPasswordPage = () => {
             })
 
             console.log('Password Reset Successful for userId:', userId);
-            setApiMessage({ type: 'success', text: 'تم تغيير كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول.' })
+            toast.success('تم تغيير كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول.')
             setTimeout(() => navigate('/login'), 2000)
+
         } catch (error) {
-            setApiMessage({ type: 'error', text: error.message || 'حدث خطأ، يرجى المحاولة مرة أخرى' })
+            toast.error(error.message || 'حدث خطأ، يرجى المحاولة مرة أخرى')
         } finally {
+
             setIsLoading(false)
         }
     }
@@ -136,14 +143,16 @@ export const ForgotPasswordPage = () => {
     const handleResendCode = async () => {
         if (timer > 0 || isLoading) return
         setIsLoading(true)
-        setApiMessage(null)
+
         try {
             await authService.forgotPassword(email)
             setTimer(59)
-            setApiMessage({ type: 'success', text: 'تم إعادة إرسال رمز التحقق إلى بريدك الإلكتروني' })
+            toast.success('تم إعادة إرسال رمز التحقق إلى بريدك الإلكتروني')
+
         } catch (error) {
-            setApiMessage({ type: 'error', text: error.message || 'فشل إعادة إرسال الرمز' })
+            toast.error(error.message || 'فشل إعادة إرسال الرمز')
         } finally {
+
             setIsLoading(false)
         }
     }
@@ -202,15 +211,7 @@ export const ForgotPasswordPage = () => {
                                         {errors.email && <p className="text-xs text-red-500 font-bold pr-1">{errors.email}</p>}
                                     </div>
 
-                                    {apiMessage && (
-                                        <div className="pt-2">
-                                            <StatusAlert
-                                                type={apiMessage.type}
-                                                message={apiMessage.text}
-                                                onClose={() => setApiMessage(null)}
-                                            />
-                                        </div>
-                                    )}
+
 
                                     <Button type="submit" disabled={isLoading} className="w-full h-14 rounded-2xl bg-brand-primary hover:bg-orange-600 text-white font-black shadow-xl shadow-brand-primary/20">
                                         {isLoading ? <RefreshCw className="h-5 w-5 animate-spin" /> : 'إرسال الرمز'}
@@ -244,24 +245,16 @@ export const ForgotPasswordPage = () => {
                                                     value={data}
                                                     onChange={(e) => handleOtpChange(e.target, index)}
                                                     className={cn(
-                                                        "w-full h-16 md:h-20 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all shadow-sm",
-                                                        errors.otp ? "border-red-500 bg-red-50/30" : "border-slate-100 focus:border-brand-primary focus:bg-orange-50/30"
+                                                        "w-full h-16 md:h-20 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all shadow-sm border-slate-100 focus:border-brand-primary focus:bg-orange-50/30"
                                                     )}
+
                                                 />
                                             ))}
                                         </div>
                                         {errors.otp && <p className="text-xs text-red-500 font-bold">{errors.otp}</p>}
                                     </div>
 
-                                    {apiMessage && (
-                                        <div className="pt-2">
-                                            <StatusAlert
-                                                type={apiMessage.type}
-                                                message={apiMessage.text}
-                                                onClose={() => setApiMessage(null)}
-                                            />
-                                        </div>
-                                    )}
+
 
                                     <div className="space-y-4">
                                         <Button type="submit" disabled={isLoading} className="w-full h-14 rounded-2xl bg-brand-primary hover:bg-orange-600 text-white font-black shadow-xl shadow-brand-primary/20">
@@ -340,15 +333,7 @@ export const ForgotPasswordPage = () => {
                                         {errors.confirmPassword && <p className="text-xs text-red-500 font-bold pr-1">{errors.confirmPassword}</p>}
                                     </div>
 
-                                    {apiMessage && (
-                                        <div className="pt-2">
-                                            <StatusAlert
-                                                type={apiMessage.type}
-                                                message={apiMessage.text}
-                                                onClose={() => setApiMessage(null)}
-                                            />
-                                        </div>
-                                    )}
+
 
                                     <Button type="submit" disabled={isLoading} className="w-full h-14 rounded-2xl bg-[#064e3b] hover:bg-[#053a2c] text-white font-black shadow-xl shadow-[#064e3b]/20">
                                         {isLoading ? <RefreshCw className="h-5 w-5 animate-spin" /> : 'حفظ كلمة المرور'}

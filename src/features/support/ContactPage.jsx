@@ -83,8 +83,9 @@ export const ContactPage = () => {
                                     <item.icon className="h-6 w-6" />
                                 </div>
                                 <h3 className="text-xl font-black text-brand-secondary mb-3">{item.title}</h3>
-                                <p className="text-[#57534d] font-bold tracking-wide ltr text-right">{item.info}</p>
-                                {item.info2 && <p className="text-[#57534d] font-bold tracking-wide mt-1 ltr text-right">{item.info2}</p>}
+                                <p className="text-[#57534d] font-bold tracking-wide text-right" style={{ direction: 'ltr' }}>{item.info}</p>
+                                {item.info2 && <p className="text-[#57534d] font-bold tracking-wide mt-1 text-right" style={{ direction: 'ltr' }}>{item.info2}</p>}
+
                             </motion.div>
                         ))}
 
@@ -135,16 +136,16 @@ export const ContactPage = () => {
                             ) : (
                                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">الأسم بالكامل</label>
-                                        <input type="text" required className="w-full h-14 bg-slate-50 border border-slate-100 rounded-2xl px-6 font-bold outline-none focus:border-brand-primary transition-all text-right" placeholder="ادخل اسمك هنا" />
+                                        <label className="text-sm font-bold text-[#57534d] block pr-1 text-right">الأسم بالكامل</label>
+                                        <input type="text" required className="w-full h-14 bg-slate-50/50 border-2 border-slate-100 rounded-2xl px-6 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right" placeholder="ادخل اسمك هنا" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">البريد الإلكتروني</label>
-                                        <input type="email" required className="w-full h-14 bg-slate-50 border border-slate-100 rounded-2xl px-6 font-bold outline-none focus:border-brand-primary transition-all text-right" placeholder="email@example.com" />
+                                        <label className="text-sm font-bold text-[#57534d] block pr-1 text-right">البريد الإلكتروني</label>
+                                        <input type="email" required className="w-full h-14 bg-slate-50/50 border-2 border-slate-100 rounded-2xl px-6 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right" placeholder="email@example.com" />
                                     </div>
                                     <div className="md:col-span-2 space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">الموضوع</label>
-                                        <select className="w-full h-14 bg-slate-50 border border-slate-100 rounded-2xl px-6 font-bold outline-none focus:border-brand-primary transition-all text-right appearance-none cursor-pointer">
+                                        <label className="text-sm font-bold text-[#57534d] block pr-1 text-right">الموضوع</label>
+                                        <select className="w-full h-14 bg-slate-50/50 border-2 border-slate-100 rounded-2xl px-6 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right appearance-none cursor-pointer">
                                             <option>استفسار عام</option>
                                             <option>مشكلة تقنية</option>
                                             <option>شريك لوجستي (سائق/شركة)</option>
@@ -152,9 +153,10 @@ export const ContactPage = () => {
                                         </select>
                                     </div>
                                     <div className="md:col-span-2 space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">رسالتك</label>
-                                        <textarea required rows={5} className="w-full bg-slate-50 border border-slate-100 rounded-[2rem] px-6 py-5 font-bold outline-none focus:border-brand-primary transition-all text-right resize-none" placeholder="اكتب استفسارك بالتفصيل هنا..."></textarea>
+                                        <label className="text-sm font-bold text-[#57534d] block pr-1 text-right">رسالتك</label>
+                                        <textarea required rows={5} className="w-full bg-slate-50/50 border-2 border-slate-100 rounded-[2rem] px-6 py-5 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right resize-none" placeholder="اكتب استفسارك بالتفصيل هنا..."></textarea>
                                     </div>
+
                                     <div className="md:col-span-2 pt-4 flex justify-center">
                                         <Button type="submit" size="lg" className="h-16 px-16 rounded-2xl bg-brand-primary hover:bg-orange-600 font-black text-lg shadow-xl shadow-brand-primary/20 transition-all hover:-translate-y-1">
                                             إرسال

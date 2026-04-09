@@ -4,17 +4,22 @@ import { motion } from 'framer-motion'
 import { Mail, ArrowLeft, Shield, CheckCircle2, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/cn'
+import { useAuthStore } from '@/store/useAuthStore'
+
 import { authService } from '@/services/authService'
-import { StatusAlert } from '@/components/ui/StatusAlert'
+import { toast } from 'react-hot-toast'
+
 
 export const VerifyEmailPage = () => {
     const [otp, setOtp] = useState(['', '', '', ''])
     const [isLoading, setIsLoading] = useState(false)
     const [isResending, setIsResending] = useState(false)
     const [timer, setTimer] = useState(59)
-    const [apiMessage, setApiMessage] = useState(null)
+
     const navigate = useNavigate()
     const location = useLocation()
+    const { isAuthenticated, user } = useAuthStore()
+
 
     const { email, role } = location.state || {}
 
@@ -22,7 +27,13 @@ export const VerifyEmailPage = () => {
         if (!email) {
             navigate('/register')
         }
-    }, [email, navigate])
+        
+        // If already verified, go to login or home
+        if (isAuthenticated && user?.is_verified) {
+            navigate('/')
+        }
+    }, [email, navigate, isAuthenticated, user])
+
 
     useEffect(() => {
         let interval = null
@@ -39,7 +50,6 @@ export const VerifyEmailPage = () => {
     const handleChange = (element, index) => {
         if (isNaN(element.value)) return false
 
-        if (apiMessage) setApiMessage(null)
 
         setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))])
 
@@ -62,44 +72,43 @@ export const VerifyEmailPage = () => {
         const otpValue = otp.join('')
 
         if (otpValue.length < 4) {
-            setApiMessage({ type: 'error', text: 'يرجى إدخال رمز التحقق كاملاً' })
+            toast.error('يرجى إدخال رمز التحقق كاملاً')
             return
         }
+
 
         setIsLoading(true)
         try {
             await authService.verifyEmail(email, otpValue)
 
-            setApiMessage({ type: 'success', text: 'تم تفعيل بريدك الإلكتروني بنجاح! يمكنك الآن تسجيل الدخول.' })
+            toast.success('تم تفعيل بريدك الإلكتروني بنجاح! يمكنك الآن تسجيل الدخول.')
+
 
             setTimeout(() => {
                 navigate('/login')
             }, 2000)
         } catch (error) {
             const errorMsg = error.message || 'حدث خطأ أثناء التحقق، يرجى المحاولة مرة أخرى';
-            setApiMessage({ type: 'error', text: errorMsg })
+            toast.error(errorMsg)
         } finally {
+
             setIsLoading(false)
         }
     }
 
     const handleResend = async () => {
         if (timer > 0 || isResending) return
-        
+
         setIsResending(true)
         try {
             const data = await authService.resendVerificationCode(email)
             setTimer(59)
-            setApiMessage({ 
-                type: 'success', 
-                text: data.message || 'إذا كان البريد الإلكتروني مُسجلاً، فقد تم إرسال رمز التحقق بنجاح' 
-            })
+            toast.success(data.message || 'تم إعادة إرسال رمز التحقق إلي بريدك الإلكتروني بنجاح')
+
         } catch (error) {
-            setApiMessage({ 
-                type: 'error', 
-                text: error.message || 'فشل إعادة إرسال رمز التحقق' 
-            })
+            toast.error(error.message || 'فشل إعادة إرسال رمز التحقق')
         } finally {
+
             setIsResending(false)
         }
     }
@@ -136,23 +145,14 @@ export const VerifyEmailPage = () => {
                                         onChange={(e) => handleChange(e.target, index)}
                                         onKeyDown={(e) => handleKeyDown(e, index)}
                                         className={cn(
-                                            "w-full h-16 md:h-20 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all shadow-sm",
-                                            apiMessage?.type === 'error' ? "border-red-500 bg-red-50/30" : "border-slate-100 focus:border-brand-primary focus:bg-orange-50/30"
+                                            "w-full h-16 md:h-20 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all shadow-sm border-slate-100 focus:border-brand-primary focus:bg-orange-50/30"
+
                                         )}
                                     />
                                 ))}
                             </div>
                         </div>
 
-                        {apiMessage && (
-                            <div className="pt-2">
-                                <StatusAlert
-                                    type={apiMessage.type}
-                                    message={apiMessage.text}
-                                    onClose={() => setApiMessage(null)}
-                                />
-                            </div>
-                        )}
 
                         <div className="space-y-4">
                             <Button

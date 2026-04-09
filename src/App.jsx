@@ -83,7 +83,23 @@ function App() {
     return (
         <>
             <SocketSync />
-            <Toaster position="top-left" reverseOrder={false} />
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+                toastOptions={{
+                    duration: 3000,
+                    style: {
+                        fontFamily: 'Cairo, sans-serif',
+                        fontWeight: '600',
+                    },
+                    success: {
+                        duration: 4000,
+                    },
+                    error: {
+                        duration: 4000,
+                    }
+                }}
+            />
             <Router>
                 <ScrollToTop />
                 <Routes>
