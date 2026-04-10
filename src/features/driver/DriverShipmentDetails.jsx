@@ -3,18 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     MapPin, Truck, Box, Calendar, Weight, Package,
     Maximize, Navigation, CheckCircle2, ShieldCheck,
-    ArrowRight, Loader2, AlertCircle, Phone, Clock, CreditCard, ChevronLeft, Map, Info, Lock,
-    TrendingUp, ArrowLeftRight
+    ArrowRight, Loader2, AlertCircle, Phone, Clock, ChevronLeft, Map, Info, Lock, TrendingUp
 } from 'lucide-react';
-import { Card, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import {
     Dialog, DialogContent, DialogDescription,
     DialogFooter, DialogHeader, DialogTitle
 } from "@/components/ui/Dialog";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { useAuthStore } from '@/store/useAuthStore';
 import { toast } from 'react-hot-toast';
-import { useOfferStore } from '@/store/useOfferStore';
 import { getStatusStyles, getGoodsTypeLabel, mapShipmentData, formatEstimatedTime } from '@/utils/shipmentUtils';
 import { shipmentService } from '@/services/shipmentService';
 import { format } from 'date-fns';
@@ -25,17 +23,23 @@ export const DriverShipmentDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user } = useAuthStore();
-    const { offers, addOffer } = useOfferStore();
 
     const [shipment, setShipment] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [updating, setUpdating] = useState(false);
-
     const [showBidModal, setShowBidModal] = useState(false);
-    const [submittingBid, setSubmittingBid] = useState(false);
-    const [bidForm, setBidForm] = useState({ amount: '', days: '', hours: '', minutes: '', note: null });
+    const [bidForm, setBidForm] = useState({
+        amount: '',
+        days: '',
+        hours: '',
+        minutes: '',
+        note: null
+    });
     const [bidErrors, setBidErrors] = useState({});
+    const [submittingBid, setSubmittingBid] = useState(false);
+    const [showNegotiateInput, setShowNegotiateInput] = useState(false);
+    const [negotiateAmount, setNegotiateAmount] = useState('');
 
 
     useEffect(() => {
@@ -52,15 +56,120 @@ export const DriverShipmentDetails = () => {
         try {
             setLoading(true);
             const data = await shipmentService.getShipmentById(id);
-            console.log(data);
-
             setShipment(data.status_original ? data : mapShipmentData(data));
+            console.log('Shipment Data:', data);
             setError(null);
         } catch (err) {
             console.error('Fetch error:', err);
             setError('خطأ في تحميل تفاصيل الشحنة');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleSubmitBid = async (e) => {
+        if (e) e.preventDefault();
+        const errors = {};
+
+        // Validation Logic
+        const amount = parseFloat(bidForm.amount);
+        const totalMinutes = (parseInt(bidForm.days || 0) * 24 * 60) +
+            (parseInt(bidForm.hours || 0) * 60) +
+            (parseInt(bidForm.minutes || 0));
+
+        if (!bidForm.amount || amount <= 0) {
+            errors.amount = 'يرجى إدخال سعر صحيح';
+        }
+
+        if (totalMinutes <= 0) {
+            errors.time = 'يرجى تحديد وقت التوصيل';
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setBidErrors(errors);
+            toast.error('يرجى إكمال البيانات المطلوبة');
+            return;
+        }
+
+        try {
+            setSubmittingBid(true);
+            setBidErrors({});
+            const bidData = {
+                amount: amount,
+                estimatedTime: totalMinutes,
+                note: bidForm.note || null,
+                shipmentId: Number(id)
+            };
+
+            await shipmentService.submitBid(bidData);
+            toast.success('تم تقديم عرضك بنجاح');
+            setShowBidModal(false);
+            // Reset form
+            setBidForm({ amount: '', days: '', hours: '', minutes: '', note: '' });
+            fetchShipmentDetails();
+        } catch (err) {
+            toast.error(err.message || 'فشل في تقديم العرض');
+        } finally {
+            setSubmittingBid(false);
+        }
+    };
+
+    const handleAcceptNegotiatedPrice = async () => {
+        try {
+            setUpdating(true);
+            await shipmentService.updateBidStatus(myBid.id, 'accepted');
+            toast.success('تم قبول العرض المتفاوض عليه');
+            fetchShipmentDetails();
+        } catch (err) {
+            toast.error('فشل في قبول العرض');
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    const handleNegotiateSubmit = async () => {
+        if (!negotiateAmount || parseFloat(negotiateAmount) <= 0) {
+            toast.error('يرجى إدخال مبلغ صحيح');
+            return;
+        }
+
+        try {
+            setUpdating(true);
+            await shipmentService.negotiateBid(myBid.id, negotiateAmount);
+            toast.success('تم إرسال عرضك الجديد');
+            setShowNegotiateInput(false);
+            setNegotiateAmount('');
+            fetchShipmentDetails();
+        } catch (err) {
+            toast.error(err.message || 'فشل في إرسال العرض');
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    const handleStartNavigation = async () => {
+        try {
+            setUpdating(true);
+            await shipmentService.updateShipmentStatus(id, 'delivery_in_progress');
+            toast.success('تم بدء الرحلة');
+            fetchShipmentDetails();
+        } catch (err) {
+            toast.error('فشل في تحديث الحالة');
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    const handleCompleteDelivery = async () => {
+        try {
+            setUpdating(true);
+            await shipmentService.updateShipmentStatus(id, 'delivered');
+            toast.success('تم إتمام التوصيل بنجاح');
+            fetchShipmentDetails();
+        } catch (err) {
+            toast.error('فشل في إتمام التوصيل');
+        } finally {
+            setUpdating(false);
         }
     };
 
@@ -72,81 +181,6 @@ export const DriverShipmentDetails = () => {
             window.location.reload();
         } catch (err) {
             toast.error('فشل تحديث الحالة');
-        } finally {
-            setUpdating(false);
-        }
-    };
-
-    const handleSubmitBid = async (e) => {
-        e.preventDefault();
-
-        // Validation
-        const errors = {};
-        if (!bidForm.amount || parseFloat(bidForm.amount) <= 0) {
-            errors.amount = 'يرجى إدخال سعر صحيح';
-        }
-
-        const totalMinutes = (parseInt(bidForm.days || 0) * 1440) +
-            (parseInt(bidForm.hours || 0) * 60) +
-            parseInt(bidForm.minutes || 0);
-
-        if (totalMinutes <= 0) {
-            errors.time = 'يرجى تحديد وقت التوصيل المتوقع';
-        }
-
-        if (Object.keys(errors).length > 0) {
-            setBidErrors(errors);
-            toast.error(errors.amount || errors.time);
-            return;
-        }
-
-        setBidErrors({});
-        try {
-            setSubmittingBid(true);
-
-
-            if (myBid?.id) {
-                // If a bid already exists, we are negotiating (counter-offer)
-                await shipmentService.negotiateBid(myBid.id, bidForm.amount);
-                // Relying on Backend Sockets for negotiation notification
-            } else {
-                // Standard initial bid submission
-                const bidData = {
-                    shipmentId: parseInt(id),
-                    amount: parseFloat(bidForm.amount),
-                    estimatedTime: totalMinutes,
-                    note: bidForm.note?.trim() || null
-                };
-                await shipmentService.submitBid(bidData);
-                // Relying on Backend Sockets for submission notification
-
-                addOffer({
-                    id: Math.random().toString(36).substr(2, 9),
-                    shipmentId: id,
-                    driverId: user?.id,
-                    status: 'pending',
-                    createdAt: new Date().toISOString()
-                });
-            }
-
-            setShowBidModal(false);
-            fetchShipmentDetails();
-        } catch (err) {
-            toast.error(err.message || 'فشل إرسال العرض');
-        } finally {
-            setSubmittingBid(false);
-        }
-    };
-
-    const handleAcceptNegotiatedPrice = async () => {
-        if (!myBid?.id) return;
-        try {
-            setUpdating(true);
-            await shipmentService.updateBidStatus(myBid.id, 'accepted');
-            // Relying on Backend Sockets for acceptance notification
-            fetchShipmentDetails(); // Refresh to show assigned status
-        } catch (err) {
-            toast.error(err.message || 'فشل قبول العرض');
         } finally {
             setUpdating(false);
         }
@@ -178,19 +212,13 @@ export const DriverShipmentDetails = () => {
     const rawStatus = shipment.status_original || shipment.status;
     const currentStatusStyle = getStatusStyles(rawStatus);
 
-    // Check if there's any bid at all from any source
-    const hasOffer = (shipment.bids && shipment.bids.length > 0) ||
-        (offers?.some(o => String(o.shipmentId) === String(id)));
-
-    // Find the specific bid for the current user to handle assignment
-    const myBid = shipment.bids?.find(b => {
-        const bidDriverId = b.driver_id || b.driverId || b.createdBy || b.user_id || b.driver?.id;
-        return String(bidDriverId) === String(user?.id);
-    }) || (shipment.bids?.length === 1 ? shipment.bids[0] : null);
-
+    // Check if the current driver has already submitted a bid (Backend only sends this driver's bids)
+    const hasMyBid = shipment.bids && shipment.bids.length > 0;
+    const myBid = hasMyBid ? shipment.bids[0] : null;
     const isOfferAccepted = myBid?.status === 'accepted' || myBid?.status === 'تم قبول العرض';
-    const isAssignedToMe = isOfferAccepted ||
-        (['pickup_in_progress', 'delivery_in_progress', 'delivered', 'accepted'].some(s => rawStatus?.includes(s)) && hasOffer);
+    const isPickupInProgress = rawStatus === 'pickup_in_progress' || rawStatus === 'قيد التنفيذ';
+    const isDeliveryInProgress = rawStatus === 'delivery_in_progress' || rawStatus === 'جاري التوصيل';
+    const isDelivered = rawStatus === 'delivered' || rawStatus === 'تم التوصيل';
 
     return (
         <div className="max-w-5xl mx-auto px-4 pb-24 font-cairo" dir="rtl">
@@ -373,7 +401,7 @@ export const DriverShipmentDetails = () => {
                     <Card className="rounded-[2.5rem] border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] p-6">
                         <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center mb-6">بيانات التواصل</h4>
 
-                        {isAssignedToMe ? (
+                        {(shipment.driver_id === user?.id || shipment.driverId === user?.id) ? (
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
                                     <div>
@@ -418,10 +446,10 @@ export const DriverShipmentDetails = () => {
                         ) : (
                             <div className="space-y-4">
                                 {/* Persistent Offer Summary once bid exists */}
-                                {hasOffer && (
+                                {hasMyBid && (
                                     <div className={cn(
                                         "p-5 rounded-3xl border-none transition-all duration-300",
-                                        isOfferAccepted ? "bg-emerald-50" : (myBid?.negotiatedAmount ? "bg-amber-50" : "bg-emerald-50")
+                                        isOfferAccepted ? "bg-emerald-50" : (myBid?.negotiatedAmount ? "bg-amber-50" : "bg-emerald-50/50")
                                     )}>
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center gap-2">
@@ -435,16 +463,19 @@ export const DriverShipmentDetails = () => {
                                                     "text-[9px] font-black uppercase tracking-widest",
                                                     isOfferAccepted ? "text-emerald-600" : (myBid?.negotiatedAmount ? "text-amber-600" : "text-emerald-600")
                                                 )}>
-                                                    {isOfferAccepted ? 'السعر المتفق عليه' : (myBid?.negotiatedAmount ? 'عرض مقابل' : 'عرضك الحالي')}
+                                                    {(isOfferAccepted && isPickupInProgress) ? 'تم قبول عرضك' : (isOfferAccepted ? 'السعر المتفق عليه' : (myBid?.negotiatedAmount ? 'عرض مقابل من العميل' : 'عرضك الحالي'))}
                                                 </h3>
                                             </div>
                                             <div className="flex items-center gap-1.5 opacity-40">
                                                 <Clock className="h-3 w-3" />
-                                                <span className="text-[9px] font-black">{formatEstimatedTime(myBid?.estimatedTime || myBid?.estimated_time)}</span>
+                                                <span className="text-[9px] font-black">{formatEstimatedTime(myBid?.estimated_time || myBid?.estimatedTime)}</span>
                                             </div>
                                         </div>
                                         <div className="flex items-baseline gap-2">
-                                            <span className="text-2xl font-black text-slate-900">{myBid?.negotiatedAmount || myBid?.amount || '---'}</span>
+                                            <span className={cn(
+                                                "text-2xl font-black",
+                                                myBid?.negotiatedAmount ? "text-amber-600" : "text-slate-900"
+                                            )}>{myBid?.negotiatedAmount || myBid?.amount || '---'}</span>
                                             <span className="text-xs font-bold text-slate-400">ج.م</span>
                                             {myBid?.negotiatedAmount && (
                                                 <span className="ml-2 text-[10px] line-through text-slate-300 font-bold">{myBid.amount} ج.م</span>
@@ -453,68 +484,106 @@ export const DriverShipmentDetails = () => {
                                     </div>
                                 )}
 
-                                {/* Conditional Buttons */}
-                                {rawStatus === 'تم التحميل وفي الطريق' || rawStatus === 'delivery_in_progress' ? (
-                                    <Button
-                                        onClick={() => handleUpdateStatus('delivered')}
-                                        className="w-full h-14 bg-emerald-500 text-white rounded-2xl font-black text-base shadow-lg shadow-emerald-200 transition-all border-none"
-                                    >
-                                        <CheckCircle2 className="ml-2 h-5 w-5" /> إتمام التوصيل
-                                    </Button>
-                                ) : (isOfferAccepted || isAssignedToMe) && rawStatus !== 'تم التوصيل' && rawStatus !== 'delivered' ? (
-                                    <Button
-                                        onClick={() => handleUpdateStatus('delivery_in_progress')}
-                                        className="w-full h-14 bg-brand-primary text-white rounded-2xl font-black text-base shadow-lg shadow-brand-primary/20 transition-all border-none"
-                                    >
-                                        <Navigation className="ml-2 h-5 w-5 fill-white" /> بدأ الملاحة
-                                    </Button>
-                                ) : (rawStatus === 'تم التوصيل' || rawStatus === 'delivered') ? (
-                                    <div className="p-8 bg-emerald-50 border border-emerald-100 rounded-2xl flex flex-col items-center gap-4 text-center">
-                                        <ShieldCheck className="h-10 w-10 text-emerald-500" />
-                                        <div>
-                                            <p className="text-base font-black text-emerald-900 leading-none">مهمة مكتملة</p>
-                                            <p className="text-xs font-bold text-emerald-600 mt-2 leading-relaxed">شكراً لك على مجهودك، نتمنى لك رحلة آمنة قادمة</p>
-                                        </div>
-                                    </div>
-                                ) : !hasOffer ? (
-                                    <Button
-                                        onClick={() => setShowBidModal(true)}
-                                        className="w-full h-14 bg-brand-primary text-white rounded-2xl font-black text-base shadow-lg  hover:scale-[1.01] active:scale-[0.99] transition-all border-none"
-                                    >
-                                        تقديم عرض
-                                    </Button>
-                                ) : myBid?.negotiatedAmount ? (
-                                    <div className="flex items-center gap-2 w-full">
-                                        {(isOfferAccepted || Number(myBid.amount) === Number(myBid.negotiatedAmount)) ? (
+                                {hasMyBid ? (
+                                    <div className="space-y-3">
+                                        {myBid?.negotiatedAmount && !isOfferAccepted ? (
+                                            <div className="space-y-3">
+                                                {!showNegotiateInput ? (
+                                                    <div className="flex items-center gap-2 w-full">
+                                                        <Button
+                                                            onClick={handleAcceptNegotiatedPrice}
+                                                            className="flex-1 h-12 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-200 transition-all border-none"
+                                                        >
+                                                            <CheckCircle2 className="ml-1.5 h-3.5 w-3.5" /> قبول العرض
+                                                        </Button>
+                                                        <Button
+                                                            onClick={() => {
+                                                                setNegotiateAmount(myBid.negotiatedAmount.toString());
+                                                                setShowNegotiateInput(true);
+                                                            }}
+                                                            variant="outline"
+                                                            className="flex-1 h-12 text-amber-600 border-amber-500 hover:bg-amber-50 rounded-xl font-bold text-xs transition-all"
+                                                        >
+                                                            تفاوض مرة أخرى
+                                                        </Button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="space-y-3 p-4 bg-amber-50/50 rounded-2xl border border-amber-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                        <div className="space-y-1.5">
+                                                            <label className="text-[10px] font-black text-amber-600 uppercase pr-1">سعرك الجديد</label>
+                                                            <div className="relative">
+                                                                <input
+                                                                    type="number"
+                                                                    value={negotiateAmount}
+                                                                    autoFocus
+                                                                    onChange={(e) => setNegotiateAmount(e.target.value)}
+                                                                    className="w-full h-11 bg-white border-2 border-amber-100 focus:border-amber-500 rounded-xl px-4 text-sm font-black transition-all outline-none"
+                                                                    placeholder="0.00"
+                                                                />
+                                                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">ج.م</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex gap-2 pt-1">
+                                                            <Button
+                                                                onClick={handleNegotiateSubmit}
+                                                                disabled={updating}
+                                                                className="flex-1 h-10 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-md shadow-amber-200"
+                                                            >
+                                                                {updating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'تأكيد العرض'}
+                                                            </Button>
+                                                            <Button
+                                                                onClick={() => {
+                                                                    setShowNegotiateInput(false);
+                                                                    setNegotiateAmount('');
+                                                                }}
+                                                                variant="ghost"
+                                                                className="h-10 px-3 text-slate-400 font-bold text-[10px] hover:bg-slate-100 rounded-xl"
+                                                            >
+                                                                إلغاء
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : (isOfferAccepted && isPickupInProgress) ? (
                                             <Button
-                                                disabled
-                                                className="w-full h-11 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-xl font-bold text-xs cursor-not-allowed opacity-60"
+                                                onClick={handleStartNavigation}
+                                                disabled={updating}
+                                                className="w-full h-14 bg-slate-900 text-white rounded-2xl font-black text-base shadow-lg hover:bg-slate-800 transition-all border-none flex items-center justify-center gap-2"
                                             >
-                                                <CheckCircle2 className="ml-1.5 h-3.5 w-3.5" /> تم قبول العرض ف انتظار الموافقه
+                                                {updating ? <Loader2 className="h-5 w-5 animate-spin" /> : (
+                                                    <><Navigation className="h-5 w-5" /> بدأ الملاحة</>
+                                                )}
                                             </Button>
+                                        ) : (isOfferAccepted && isDeliveryInProgress) ? (
+                                            <Button
+                                                onClick={handleCompleteDelivery}
+                                                disabled={updating}
+                                                className="w-full h-14 bg-emerald-600 text-white rounded-2xl font-black text-base shadow-lg hover:bg-emerald-700 transition-all border-none flex items-center justify-center gap-2"
+                                            >
+                                                {updating ? <Loader2 className="h-5 w-5 animate-spin" /> : (
+                                                    <><CheckCircle2 className="h-5 w-5" /> إتمام الوصول</>
+                                                )}
+                                            </Button>
+                                        ) : isDelivered ? (
+                                            <div className="w-full h-14 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center gap-2 font-black text-sm shadow-sm transition-all duration-300">
+                                                <ShieldCheck className="h-5 w-5" />
+                                                تم تسليم الشحنة بنجاح
+                                            </div>
                                         ) : (
-                                            <>
-                                                <Button
-                                                    onClick={handleAcceptNegotiatedPrice}
-                                                    className="flex-1 h-11 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-200 transition-all border-none"
-                                                >
-                                                    <CheckCircle2 className="ml-1.5 h-3.5 w-3.5" /> قبول العرض
-                                                </Button>
-                                                <Button
-                                                    onClick={() => setShowBidModal(true)}
-                                                    variant="outline"
-                                                    className="flex-1 h-11 text-amber-600 border-amber-100 hover:bg-amber-50 rounded-xl font-bold text-xs transition-all"
-                                                >
-                                                    تفاوض
-                                                </Button>
-                                            </>
+                                            <div className="w-full h-14 bg-emerald-50/50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center gap-2 font-black text-sm shadow-sm transition-all duration-300">
+                                                <CheckCircle2 className="h-5 w-5" />
+                                                {isOfferAccepted ? 'تم قبول عرضك' : 'تم تقديم عرضك'}
+                                            </div>
                                         )}
                                     </div>
                                 ) : (
-                                    <div className="w-full h-14 bg-emerald-50/50 text-emerald-600 border border-emerald-100/50 rounded-2xl flex items-center justify-center gap-2 font-black text-sm shadow-sm transition-all duration-300">
-                                        <CheckCircle2 className="h-5 w-5" />
-                                        تم تقديم عرضك
-                                    </div>
+                                    <Button
+                                        onClick={() => setShowBidModal(true)}
+                                        className="w-full h-14 bg-brand-primary text-white rounded-2xl font-black text-base shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all border-none"
+                                    >
+                                        تقديم عرض
+                                    </Button>
                                 )}
                             </div>
                         )}
@@ -522,7 +591,7 @@ export const DriverShipmentDetails = () => {
                 </div>
             </div>
 
-            {/* Compact & Centered Bidding Modal */}
+
             <Dialog open={showBidModal} onOpenChange={setShowBidModal}>
                 <DialogContent
                     className="w-[92%] sm:max-w-[440px] rounded-[2.5rem] p-0 overflow-hidden font-cairo shadow-2xl border-none bg-white [&>button]:right-auto [&>button]:left-4"
@@ -531,19 +600,22 @@ export const DriverShipmentDetails = () => {
                     <div className="p-7 pb-3 bg-slate-50/50">
                         <div className="flex items-center gap-4">
                             <div className="h-10 w-10 bg-brand-primary/10 text-brand-primary rounded-xl flex items-center justify-center">
-                                <CreditCard className="h-5 w-5" />
+                                <Clock className="h-5 w-5" />
                             </div>
                             <DialogTitle className="text-xl font-black text-slate-900">تقديم عرض سعر</DialogTitle>
                         </div>
                         <DialogDescription className="text-slate-400 font-bold pr-14 text-xs leading-relaxed">
-                            أرسل تفاصيل عرضك المالي والزمني للعميل.
+                            أدخل تفاصيل عرضك المالي والزمني للعميل.
                         </DialogDescription>
                     </div>
 
                     <form onSubmit={handleSubmitBid} className="p-7 pt-4 space-y-5">
                         {/* Price Input */}
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-[#57534d] block pr-1">السعر المقترح (جنيه)</label>
+                            <label className={cn(
+                                "text-sm font-bold block pr-1",
+                                bidErrors.amount ? "text-red-500" : "text-slate-600"
+                            )}>السعر المقترح (جنيه)</label>
                             <input
                                 type="number"
                                 value={bidForm.amount}
@@ -554,17 +626,18 @@ export const DriverShipmentDetails = () => {
                                 }}
                                 className={cn(
                                     "w-full h-12 bg-white border-2 rounded-xl px-5 text-lg font-black transition-all outline-none",
-                                    bidErrors.amount ? "border-red-500" : "border-slate-100 focus:border-brand-primary"
+                                    bidErrors.amount ? "border-red-500 focus:border-red-500" : "border-slate-100 focus:border-brand-primary"
                                 )}
                                 placeholder="0.00"
                             />
+                            {bidErrors.amount && <p className="text-[10px] font-bold text-red-500 pr-1">{bidErrors.amount}</p>}
                         </div>
 
                         {/* Detailed Time Grid */}
                         <div className="space-y-2">
                             <label className={cn(
                                 "text-sm font-bold block pr-1",
-                                bidErrors.time ? "text-red-500" : "text-[#57534d]"
+                                bidErrors.time ? "text-red-500" : "text-slate-600"
                             )}>الوقت المتوقع للتوصيل</label>
                             <div className="grid grid-cols-3 gap-2">
                                 {[
@@ -575,6 +648,7 @@ export const DriverShipmentDetails = () => {
                                     <div key={t.key} className="space-y-2 text-center group">
                                         <input
                                             type="number"
+                                            min="0"
                                             value={bidForm[t.key]}
                                             onChange={(e) => {
                                                 setBidForm({ ...bidForm, [t.key]: e.target.value });
@@ -582,32 +656,33 @@ export const DriverShipmentDetails = () => {
                                             }}
                                             className={cn(
                                                 "w-full h-10 bg-white border-2 rounded-xl px-2 text-center font-black text-slate-700 outline-none transition-all",
-                                                bidErrors.time ? "border-red-500" : "border-slate-100 focus:border-brand-primary"
+                                                bidErrors.time ? "border-red-500 focus:border-red-500" : "border-slate-100 focus:border-brand-primary"
                                             )}
                                             placeholder="0"
                                         />
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter group-focus-within:text-brand-primary transition-colors">{t.label}</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase group-focus-within:text-brand-primary transition-colors">{t.label}</p>
                                     </div>
                                 ))}
                             </div>
+                            {bidErrors.time && <p className="text-[10px] font-bold text-red-500 pr-1">{bidErrors.time}</p>}
                         </div>
 
-                        {/* Notes - Compact */}
+                        {/* Notes */}
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-[#57534d] block pr-1">ملاحظات إضافية (اختياري)</label>
+                            <label className="text-sm font-bold text-slate-600 block pr-1">ملاحظات إضافية (اختياري)</label>
                             <textarea
                                 value={bidForm.note || ''}
                                 onChange={(e) => setBidForm({ ...bidForm, note: e.target.value })}
-                                className="w-full h-20 bg-white border-2 border-slate-100 focus:border-brand-primary rounded-xl px-5 py-3 font-bold text-xs transition-all outline-none resize-none"
+                                className="w-full h-24 bg-white border-2 border-slate-100 focus:border-brand-primary rounded-xl px-5 py-3 font-bold text-xs transition-all outline-none resize-none"
                                 placeholder="أي ملاحظات إضافية للعميل..."
                             />
                         </div>
 
-                        <DialogFooter className="gap-2 flex-row pt-2 pb-1">
+                        <div className="flex gap-2 pt-2">
                             <Button
                                 type="submit"
                                 disabled={submittingBid}
-                                className="flex-1 h-12 bg-brand-primary text-white rounded-xl font-black text-sm shadow-lg shadow-brand-primary/10 hover:bg-brand-primary/90 transition-all border-none"
+                                className="flex-1 h-12 bg-brand-primary text-white rounded-xl font-black text-sm shadow-lg shadow-brand-primary/10 transition-all border-none"
                             >
                                 {submittingBid ? <Loader2 className="h-4 w-4 animate-spin text-white" /> : 'تقديم العرض'}
                             </Button>
@@ -619,11 +694,10 @@ export const DriverShipmentDetails = () => {
                             >
                                 إلغاء
                             </Button>
-                        </DialogFooter>
+                        </div>
                     </form>
                 </DialogContent>
             </Dialog>
-
         </div>
     );
 };

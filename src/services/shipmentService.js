@@ -62,10 +62,8 @@ export const shipmentService = {
      * @param {string|number} id
      */
     getShipmentById: async (id) => {
-        console.log('[shipmentService] Calling getShipmentById with ID:', id);
         try {
             const response = await axiosClient.get(API_ENDPOINTS.SHIPMENT.GET_DETAILS(id));
-            console.log('[shipmentService] API Response for ID:', id, response.data);
             const result = response.data;
 
             if (result.status && result.data) {
@@ -194,7 +192,6 @@ export const shipmentService = {
     updateBidStatus: async (bidId, status) => {
         try {
             const response = await axiosClient.patch(API_ENDPOINTS.BIDS.UPDATE_STATUS(bidId), { status });
-            // console.log('Update bid status response:', response.data);
             return response.data;
         } catch (error) {
             console.error('Update bid status error:', error.response?.data || error.message);
@@ -208,7 +205,6 @@ export const shipmentService = {
      * @param {number} amount 
      */
     negotiateBid: async (bidId, amount) => {
-        console.log('Negotiation Triggered - BidID:', bidId, 'Amount:', amount);
         try {
             const response = await axiosClient.patch(API_ENDPOINTS.BIDS.NEGOTIATE(bidId),
                 { new_amount: Number(amount) },
@@ -281,7 +277,6 @@ export const shipmentService = {
     getNewBids: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.BIDS.NEW);
-            console.log(response.data);
 
             return response.data;
         } catch (error) {
