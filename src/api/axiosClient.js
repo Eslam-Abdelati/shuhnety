@@ -1,4 +1,4 @@
-import axios from "axios";
+﻿import axios from "axios";
 import Cookies from "js-cookie";
 
 // في بيئة التطوير نستخدم الرابط المباشر من .env
@@ -56,3 +56,4 @@ axiosClient.interceptors.response.use(
 
 export { API_BASE_URL };
 export default axiosClient;
+

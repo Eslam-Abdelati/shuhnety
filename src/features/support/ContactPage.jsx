@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+﻿import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Globe, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -148,7 +148,7 @@ export const ContactPage = () => {
                                         <select className="w-full h-14 bg-slate-50/50 border-2 border-slate-100 rounded-2xl px-6 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right appearance-none cursor-pointer">
                                             <option>استفسار عام</option>
                                             <option>مشكلة تقنية</option>
-                                            <option>شريك لوجستي (سائق/شركة)</option>
+                                            <option>شريك لوجستي (كابتن/شركة)</option>
                                             <option>بلاغ عن شحنة</option>
                                         </select>
                                     </div>
@@ -182,3 +182,4 @@ export const ContactPage = () => {
         </div>
     )
 }
+

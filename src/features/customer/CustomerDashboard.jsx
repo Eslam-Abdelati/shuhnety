@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import { Plus, Package, TrendingUp, ArrowLeftRight, ShieldCheck, Box, AlertCircle, ChevronLeft, Calendar, Truck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -275,7 +275,7 @@ export const CustomerDashboard = () => {
                                         <div key={offer.id} className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-5 hover:bg-white/20 transition-all cursor-pointer group/offer">
                                             <div className="flex justify-between items-start mb-4">
                                                 <div className="min-w-0 pr-2">
-                                                    <p className="text-sm font-black text-white leading-tight truncate">{offer.driver?.full_name || offer.driverName || 'سائق'}</p>
+                                                    <p className="text-sm font-black text-white leading-tight truncate">{offer.driver?.full_name || offer.driverName || 'كابتن'}</p>
                                                     <p className="text-[9px] sm:text-[10px] font-bold text-white/40 mt-1 uppercase tracking-wider truncate">
                                                         {getGoodsTypeLabel(
                                                             offer.shipment?.goods_type || offer.shipment?.goodsType || offer.shipmentDetails?.goodsType,
@@ -334,4 +334,5 @@ export const CustomerDashboard = () => {
         </div>
     )
 }
+
 

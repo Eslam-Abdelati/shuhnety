@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     MapPin, Truck, Box, Calendar, Weight, Package,
     Maximize, Navigation, CheckCircle2, ShieldCheck,
-    ArrowRight, Loader2, AlertCircle, Phone, Clock, ChevronLeft, Map, Info, Lock, TrendingUp
+    ArrowRight, AlertCircle, Phone, Clock, ChevronLeft, Map, Info, Lock, TrendingUp
 } from 'lucide-react';
+import { Loading } from '@/components/ui/Loading';
 import {
     Dialog, DialogContent, DialogDescription,
     DialogFooter, DialogHeader, DialogTitle
@@ -191,12 +192,7 @@ export const DriverShipmentDetails = () => {
         window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
     };
 
-    if (loading) return (
-        <div className="flex flex-col items-center justify-center min-h-[70vh]">
-            <Loader2 className="h-12 w-12 text-brand-primary animate-spin" />
-            <p className="text-sm font-bold text-slate-400 mt-4 animate-pulse">جاري تحميل بيانات الشحنة...</p>
-        </div>
-    );
+    if (loading) return <Loading text="جاري تحميل بيانات الشحنة..." />
 
     if (error || !shipment) return (
         <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-6">
@@ -473,10 +469,7 @@ export const DriverShipmentDetails = () => {
                     {/* Actions Section - Modified for Sticky Mobile UX */}
                     <div className="fixed bottom-0 left-0 right-0 lg:static bg-white/95 dark:bg-slate-900/95 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none border-t lg:border-none border-slate-100 dark:border-slate-800 p-4 lg:p-0 z-[100] lg:z-auto shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)] lg:shadow-none transition-all duration-300">
                         {updating ? (
-                            <div className="flex flex-col items-center justify-center p-8 bg-white/50 rounded-md border-2 border-dashed border-slate-100">
-                                <Loader2 className="h-10 w-10 text-brand-primary animate-spin" />
-                                <p className="text-[10px] font-black text-slate-400 mt-3 uppercase tracking-widest">جاري التنفيذ...</p>
-                            </div>
+                            <Loading section={true} text="جاري التنفيذ..." className="p-8 bg-white/50 rounded-md border-2 border-dashed border-slate-100" />
                         ) : (
                             <div className="space-y-4">
                                 {/* Persistent Offer Summary once bid exists */}
@@ -563,7 +556,7 @@ export const DriverShipmentDetails = () => {
                                                                 disabled={updating}
                                                                 className="flex-1 h-10 bg-amber-500 hover:bg-amber-600 text-white rounded-md font-bold text-xs shadow-md shadow-amber-200"
                                                             >
-                                                                {updating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'تأكيد العرض'}
+                                                                {updating ? <Loading minimal={true} className="text-white" /> : 'تأكيد العرض'}
                                                             </Button>
                                                             <Button
                                                                 onClick={() => {
@@ -585,7 +578,7 @@ export const DriverShipmentDetails = () => {
                                                 disabled={updating}
                                                 className="w-full h-14 bg-slate-900 text-white rounded-md font-black text-base shadow-lg hover:bg-slate-800 transition-all border-none flex items-center justify-center gap-2"
                                             >
-                                                {updating ? <Loader2 className="h-5 w-5 animate-spin" /> : (
+                                                {updating ? <Loading minimal={true} className="text-white" /> : (
                                                     <><Navigation className="h-5 w-5" /> بدأ الملاحة</>
                                                 )}
                                             </Button>
@@ -595,7 +588,7 @@ export const DriverShipmentDetails = () => {
                                                 disabled={updating}
                                                 className="w-full h-14 bg-emerald-600 text-white rounded-md font-black text-base shadow-lg hover:bg-emerald-700 transition-all border-none flex items-center justify-center gap-2"
                                             >
-                                                {updating ? <Loader2 className="h-5 w-5 animate-spin" /> : (
+                                                {updating ? <Loading minimal={true} className="text-white" /> : (
                                                     <><CheckCircle2 className="h-5 w-5" /> إتمام الوصول</>
                                                 )}
                                             </Button>
@@ -718,7 +711,7 @@ export const DriverShipmentDetails = () => {
                                 disabled={submittingBid}
                                 className="flex-1 h-12 bg-brand-primary text-white rounded-md font-black text-sm shadow-lg shadow-brand-primary/10 transition-all border-none"
                             >
-                                {submittingBid ? <Loader2 className="h-4 w-4 animate-spin text-white" /> : 'تقديم العرض'}
+                                {submittingBid ? <Loading minimal={true} className="text-white" /> : 'تقديم العرض'}
                             </Button>
                             <Button
                                 type="button"
@@ -735,3 +728,4 @@ export const DriverShipmentDetails = () => {
         </div>
     );
 };
+

@@ -1,4 +1,4 @@
-import {
+﻿import {
     Truck,
     Users,
     Clock,
@@ -19,7 +19,7 @@ export const FleetManagement = () => {
         { label: 'إجمالي المركبات', value: '24', icon: Truck, color: 'blue' },
         { label: 'نشطة حالياً', value: '18', icon: Truck, color: 'emerald' },
         { label: 'في الصيانة', value: '3', icon: AlertCircle, color: 'amber' },
-        { label: 'سائقين متاحين', value: '15', icon: Users, color: 'purple' },
+        { label: 'كباتن متاحين', value: '15', icon: Users, color: 'purple' },
     ]
 
     const vehicles = [
@@ -34,7 +34,7 @@ export const FleetManagement = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 mb-2">إدارة الأسطول</h1>
-                    <p className="text-slate-500 font-medium">متابعة حالة الشاحنات والسائقين والمهام النشطة</p>
+                    <p className="text-slate-500 font-medium">متابعة حالة الشاحنات والكباتن والمهام النشطة</p>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" className="rounded-xl gap-2 h-12">
@@ -75,7 +75,7 @@ export const FleetManagement = () => {
                         <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                         <input
                             type="text"
-                            placeholder="بحث برقم الشاحنة أو اسم السائق..."
+                            placeholder="بحث برقم الشاحنة أو اسم الكابتن..."
                             className="w-full bg-slate-50 border-none rounded-xl pr-10 pl-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-primary/10 transition-all outline-none"
                         />
                     </div>
@@ -87,7 +87,7 @@ export const FleetManagement = () => {
                                 <th className="px-6 py-4">رقم الشاحنة</th>
                                 <th className="px-6 py-4">النوع</th>
                                 <th className="px-6 py-4">اللوحة</th>
-                                <th className="px-6 py-4">السائق</th>
+                                <th className="px-6 py-4">الكابتن</th>
                                 <th className="px-6 py-4">الحالة</th>
                                 <th className="px-6 py-4">آخر نشاط</th>
                                 <th className="px-6 py-4"></th>
@@ -139,3 +139,4 @@ export const FleetManagement = () => {
         </div>
     )
 }
+

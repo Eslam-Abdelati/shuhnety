@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import { HashLink } from 'react-router-hash-link'
 import { Truck, ChevronLeft, Globe, Heart } from 'lucide-react'
 
@@ -32,7 +32,7 @@ export const SimpleFooter = () => {
                         <ul className="space-y-4 text-sm text-white/60 font-bold">
                             <li><HashLink smooth to="/#about" className="hover:text-white transition-colors">عن المنصة</HashLink></li>
                             <li><HashLink smooth to="/#workflow" className="hover:text-white transition-colors">آلية العمل</HashLink></li>
-                            <li><Link to="/register?role=driver" className="hover:text-white transition-colors">انضم كسائق</Link></li>
+                            <li><Link to="/register?role=driver" className="hover:text-white transition-colors">انضم ككابتن</Link></li>
                             <li><HashLink smooth to="/register" className="hover:text-white transition-colors">تسجيل الشركات</HashLink></li>
                         </ul>
                     </div>
@@ -68,3 +68,4 @@ export const SimpleFooter = () => {
         </footer>
     );
 };
+

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { 
     TrendingUp, 
     TrendingDown, 
@@ -45,7 +45,7 @@ export const AdminReports = () => {
     const stats = [
         { label: 'إجمالي الإيرادات', value: '45,231.89', change: '+20.1%', icon: DollarSign, color: 'emerald' },
         { label: 'شحنات مكتملة', value: '+2,350', change: '+18.5%', icon: Truck, color: 'blue' },
-        { label: 'سائقين نشطين', value: '+12,234', change: '+12.4%', icon: Users, color: 'brand' },
+        { label: 'كباتن نشطين', value: '+12,234', change: '+12.4%', icon: Users, color: 'brand' },
         { label: 'معدل النمو', value: '+573', change: '+20.1%', icon: TrendingUp, color: 'amber' },
     ];
 
@@ -163,3 +163,4 @@ export const AdminReports = () => {
         </div>
     )
 }
+

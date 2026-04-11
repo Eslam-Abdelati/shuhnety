@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
-import { 
-    Wallet, 
-    Briefcase, 
-    TrendingUp, 
+﻿import { useState, useEffect } from 'react'
+import {
+    Wallet,
+    Briefcase,
+    TrendingUp,
     Calendar,
     BarChart3,
     RefreshCcw,
@@ -10,6 +10,8 @@ import {
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { shipmentService } from '@/services/shipmentService'
+
+import { Loading } from '@/components/ui/Loading'
 
 export const DriverReports = () => {
     const [loading, setLoading] = useState(true)
@@ -35,12 +37,7 @@ export const DriverReports = () => {
     }, [])
 
     if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center p-20 text-slate-400">
-                <div className="h-10 w-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p className="font-bold">جاري تحميل التقارير...</p>
-            </div>
-        )
+        return <Loading text="جاري تحليل البيانات المالية وتجهيز التقارير..." />
     }
 
     const reportItems = [
@@ -58,7 +55,7 @@ export const DriverReports = () => {
                     <h1 className="text-2xl font-black text-slate-900">التقارير المالية</h1>
                     <p className="text-xs font-bold text-slate-400 mt-1">نظرة عامة على نشاطك وأرباحك المباشرة</p>
                 </div>
-                <button 
+                <button
                     onClick={fetchStats}
                     className="h-10 w-10 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-slate-900 shadow-sm flex items-center justify-center transition-all active:scale-90"
                     title="تحديث البيانات"
@@ -79,11 +76,10 @@ export const DriverReports = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {reportItems.map((item, idx) => (
                     <Card key={idx} className="border-none shadow-sm rounded-[2rem] overflow-hidden bg-white hover:shadow-md transition-all">
-                        <div className={`p-5 flex items-center justify-between text-white ${
-                            item.color === 'orange' ? 'bg-[#eb6a1d]' : 
-                            item.color === 'emerald' ? 'bg-[#009966]' :
-                            item.color === 'blue' ? 'bg-blue-600' : 'bg-slate-900'
-                        }`}>
+                        <div className={`p-5 flex items-center justify-between text-white ${item.color === 'orange' ? 'bg-[#eb6a1d]' :
+                                item.color === 'emerald' ? 'bg-[#009966]' :
+                                    item.color === 'blue' ? 'bg-blue-600' : 'bg-slate-900'
+                            }`}>
                             <div className="flex items-center gap-3">
                                 <div className="h-9 w-9 rounded-xl bg-white/20 flex items-center justify-center">
                                     {item.icon}
@@ -129,3 +125,4 @@ export const DriverReports = () => {
 }
 
 export default DriverReports
+

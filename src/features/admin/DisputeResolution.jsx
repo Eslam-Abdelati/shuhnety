@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
     ShieldAlert,
     Search,
@@ -25,7 +25,7 @@ export const DisputeResolution = () => {
             shipment: 'SH-2024-501',
             status: 'معلق',
             requester: 'متجر الصفوة (عميل)',
-            against: 'أحمد كمال (سائق)',
+            against: 'أحمد كمال (كابتن)',
             type: 'تأخير في التوصيل',
             time: 'منذ ساعتين'
         },
@@ -33,7 +33,7 @@ export const DisputeResolution = () => {
             id: 'DIS-102',
             shipment: 'SH-2024-505',
             status: 'قيد المراجعة',
-            requester: 'محمود علي (سائق)',
+            requester: 'محمود علي (كابتن)',
             against: 'سوبر ماركت الهدى (عميل)',
             type: 'خلاف على السعر',
             time: 'منذ 5 ساعات'
@@ -43,7 +43,7 @@ export const DisputeResolution = () => {
             shipment: 'SH-2024-610',
             status: 'حرج',
             requester: 'شركة النور (عميل)',
-            against: 'مصطفى سيد (سائق)',
+            against: 'مصطفى سيد (كابتن)',
             type: 'تلف في البضائع',
             time: 'أمس'
         },
@@ -54,7 +54,7 @@ export const DisputeResolution = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 mb-2">مركز حل النزاعات</h1>
-                    <p className="text-slate-500 font-medium font-cairo">إدارة الخلافات بين العملاء والسائقين وضمان الحقوق</p>
+                    <p className="text-slate-500 font-medium font-cairo">إدارة الخلافات بين العملاء والكباتن وضمان الحقوق</p>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" className="rounded-xl gap-2 h-12">
@@ -150,7 +150,7 @@ export const DisputeResolution = () => {
                                         <h5 className="text-xs font-black text-slate-400 uppercase tracking-widest">تواصل سريع</h5>
                                         <div className="flex gap-2">
                                             <Button variant="outline" className="flex-1 rounded-xl h-10 text-xs font-black bg-white">اتصال بالعميل</Button>
-                                            <Button variant="outline" className="flex-1 rounded-xl h-10 text-xs font-black bg-white">اتصال بالسائق</Button>
+                                            <Button variant="outline" className="flex-1 rounded-xl h-10 text-xs font-black bg-white">اتصال بالكابتن</Button>
                                         </div>
                                     </div>
 
@@ -165,7 +165,7 @@ export const DisputeResolution = () => {
                                         <button className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-slate-100 hover:border-blue-500 hover:bg-blue-50 transition-all group">
                                             <div className="flex items-center gap-3">
                                                 <CheckCircle2 className="h-5 w-5 text-blue-500" />
-                                                <span className="text-sm font-bold text-slate-700">حل لصالح السائق</span>
+                                                <span className="text-sm font-bold text-slate-700">حل لصالح الكابتن</span>
                                             </div>
                                         </button>
                                         <button className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-slate-100 hover:border-red-500 hover:bg-red-50 transition-all group">
@@ -194,3 +194,4 @@ export const DisputeResolution = () => {
         </div>
     )
 }
+

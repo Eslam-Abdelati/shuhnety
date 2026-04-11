@@ -1,4 +1,4 @@
-export const GOODS_TYPES = [
+﻿export const GOODS_TYPES = [
     { value: 'electronics', label: 'إلكترونيات' },
     { value: 'appliances', label: 'أجهزة منزلية' },
     { value: 'housewares', label: 'مستلزمات منزلية' },
@@ -113,3 +113,4 @@ export const formatEstimatedTime = (totalMinutes) => {
 
     return parts.join(' و ') || 'أقل من دقيقة';
 };
+

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
     Wallet, 
@@ -262,3 +262,4 @@ export const DriverEarnings = () => {
 }
 
 export default DriverEarnings
+

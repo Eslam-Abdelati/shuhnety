@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { AlertCircle, CheckCircle2, X, Info, AlertTriangle } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -71,3 +71,4 @@ export const StatusAlert = ({ message, type = 'info', onClose }) => {
         </AnimatePresence>
     );
 };
+

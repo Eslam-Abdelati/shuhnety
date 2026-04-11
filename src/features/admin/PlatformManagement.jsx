@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
     Activity,
     Search,
@@ -26,7 +26,7 @@ export const PlatformManagement = () => {
 
     const systemAlerts = [
         { title: 'مزاد منتهي بدون تجاوب', desc: 'تم انتهاء المزاد SH-239407 بدون قبول أي عرض من قبل العميل.', type: 'warning' },
-        { title: 'تأخير في التحميل', desc: 'السائق محمد أحمد متأخر في موقع التحميل لأكثر من ساعتين في شحنة SH-123048.', type: 'danger' },
+        { title: 'تأخير في التحميل', desc: 'الكابتن محمد أحمد متأخر في موقع التحميل لأكثر من ساعتين في شحنة SH-123048.', type: 'danger' },
         { title: 'نجاح تفعيل الربط', desc: 'تم ربط منصة شحنتي بنجاح مع بوابة الدفع الإلكتروني الجديدة.', type: 'success' },
     ]
 
@@ -114,7 +114,7 @@ export const PlatformManagement = () => {
                             <thead>
                                 <tr className="bg-slate-50/30 text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] border-b border-slate-50/50">
                                     <th className="px-8 py-5">المعرف</th>
-                                    <th className="px-8 py-5 text-right">العميل / السائق</th>
+                                    <th className="px-8 py-5 text-right">العميل / الكابتن</th>
                                     <th className="px-8 py-5">المسار</th>
                                     <th className="px-8 py-5">الحالة</th>
                                     <th className="px-8 py-5">القيمة</th>
@@ -182,3 +182,4 @@ export const PlatformManagement = () => {
 const ShieldCheck = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
 )
+

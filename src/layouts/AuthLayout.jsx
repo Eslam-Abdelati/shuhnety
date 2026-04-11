@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import { Truck } from 'lucide-react'
 
 export const AuthLayout = ({ children, title, subtitle }) => {
@@ -40,3 +40,4 @@ export const AuthLayout = ({ children, title, subtitle }) => {
         </div>
     )
 }
+

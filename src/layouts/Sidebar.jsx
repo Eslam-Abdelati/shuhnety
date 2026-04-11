@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+﻿import { Link, useLocation } from 'react-router-dom'
 import {
     BarChart3,
     Package,
@@ -40,7 +40,7 @@ const navigation = {
     ],
     company: [
         { name: 'الأسطول', href: '/company', icon: Truck },
-        { name: 'السائقين', href: '/company/drivers', icon: Users },
+        { name: 'الكباتن', href: '/company/drivers', icon: Users },
         { name: 'العقود الرقمية', href: '/company/contracts', icon: ShieldCheck },
         { name: 'التقارير', href: '/company/reports', icon: BarChart3 },
         { name: 'الإعدادات', href: '/company/settings', icon: Settings },
@@ -53,7 +53,7 @@ const navigation = {
     admin: [
         { name: 'نظرة عامة', href: '/admin', icon: LayoutDashboard },
         { name: 'المستخدمين', href: '/admin/users', icon: Users },
-        { name: 'مراجعة السائقين', href: '/admin/verification', icon: ShieldCheck },
+        { name: 'مراجعة الكباتن', href: '/admin/verification', icon: ShieldCheck },
         { name: 'إدارة العمليات', href: '/admin/operations', icon: Truck },
         { name: 'التقارير', href: '/admin/reports', icon: BarChart3 },
         { name: 'النزاعات', href: '/admin/disputes', icon: AlertTriangle },
@@ -149,3 +149,4 @@ export const Sidebar = () => {
         </aside>
     )
 }
+

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+﻿import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
@@ -22,6 +22,7 @@ import { authService } from '@/services/authService'
 import { locationService } from '@/services/locationService'
 import { API_BASE_URL } from '@/api/axiosClient'
 // import { StatusAlert } from '@/components/ui/StatusAlert'
+import { Loading } from '@/components/ui/Loading'
 
 
 // --- Backend Enums ---
@@ -127,7 +128,7 @@ const driverStep1Schema = step2BaseSchema.extend({
     }, 'يجب أن يكون العمر 21 عاماً على الأقل'),
     licenseNumber: z.string().min(5, 'رقم الرخصة غير صالح'),
     licenseExpiry: z.string().min(1, 'تاريخ انتهاء الرخصة مطلوب'),
-    driverPhoto: z.any().refine(v => !!v, 'صورة السائق مطلوبة'),
+    driverPhoto: z.any().refine(v => !!v, 'صورة الكابتن مطلوبة'),
     licenseFront: z.any().refine(v => !!v, 'صورة وجه الرخصة مطلوبة'),
     licenseBack: z.any().refine(v => !!v, 'صورة ظهر الرخصة مطلوبة'),
     nationalIdFront: z.any().refine(v => !!v, 'صورة وجه البطاقة مطلوبة'),
@@ -587,7 +588,7 @@ export const RegisterPage = () => {
                                             />
                                             <RoleCard
                                                 id="driver"
-                                                title="سائق مستقل"
+                                                title="كابتن مستقل"
                                                 description="أمتلك شاحنة وأرغب في زيادة أرباحي"
                                                 icon={Truck}
                                                 selected={selectedRole === 'driver'}
@@ -675,10 +676,7 @@ export const RegisterPage = () => {
                                     disabled={isLoading}
                                 >
                                     {isLoading ? (
-                                        <div className="flex items-center gap-2">
-                                            <span className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                                            جاري الحفظ...
-                                        </div>
+                                        <Loading minimal={true} className="text-white" text="جاري الحفظ..." />
                                     ) : (
                                         step === 3 ? (selectedRole === 'driver' ? 'تسجيل والانتظار المراجعة' : 'إتمام التسجيل') : 'التالي'
                                     )}
@@ -830,7 +828,7 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
                             />
                         </div>
                     </div>
-                    <span className="text-[10px] font-bold text-slate-400 mt-2">صورة السائق</span>
+                    <span className="text-[10px] font-bold text-slate-400 mt-2">صورة الكابتن</span>
                     {errors.driverPhoto && wasNextAttempted && <p className="text-[9px] text-red-500 font-bold mt-1 text-center">{errors.driverPhoto.message}</p>}
                 </div>
             )}
@@ -1002,7 +1000,7 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
                         <div className="space-y-2">
                             <label className="text-sm font-bold text-slate-600 pr-1 flex items-center gap-2">
                                 المدينة
-                                {isLoadingLocations && <span className="h-3 w-3 border-2 border-brand-primary/30 border-t-brand-primary rounded-full animate-spin"></span>}
+                                {isLoadingLocations && <Loading minimal={true} className="inline-flex mr-2 scale-75" />}
                             </label>
                             <div className="relative">
                                 <select
@@ -1228,7 +1226,7 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-slate-600 pr-1 flex items-center gap-2">
                             المدينة
-                            {isLoadingLocations && <span className="h-3 w-3 border-2 border-brand-primary/30 border-t-brand-primary rounded-full animate-spin"></span>}
+                            {isLoadingLocations && <Loading minimal={true} className="inline-flex mr-2 scale-75" />}
                         </label>
                         <div className="relative">
                             <select
@@ -1296,7 +1294,7 @@ const Input = React.forwardRef(({ label, icon: Icon, error, isTouched, wasNextAt
                 {Icon && <Icon className="absolute right-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-slate-400 group-focus-within:text-brand-primary transition-colors" />}
                 {isLoading && (
                     <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                        <span className="h-4 w-4 border-2 border-brand-primary/30 border-t-brand-primary rounded-full animate-spin block"></span>
+                        <Loading minimal={true} />
                     </div>
                 )}
             </div>
@@ -1327,3 +1325,4 @@ const Checkbox = React.forwardRef(({ label, error, isTouched, wasNextAttempted, 
         </label>
     )
 })
+

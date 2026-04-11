@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import {
     Clock,
-    Loader2,
     User,
     ChevronLeft
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { Loading } from '@/components/ui/Loading'
 import { shipmentService } from '@/services/shipmentService'
 import { formatEstimatedTime, mapShipmentData } from '@/utils/shipmentUtils'
 
@@ -42,12 +42,7 @@ export const IncomingOffersPage = () => {
     }, [])
 
     if (isLoading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh]">
-                <Loader2 className="h-10 w-10 text-brand-primary animate-spin mb-4" />
-                <p className="text-slate-500 font-bold">جاري تحميل قائمة العروض...</p>
-            </div>
-        )
+        return <Loading text="جاري تحميل قائمة العروض..." />
     }
 
     return (
@@ -56,7 +51,7 @@ export const IncomingOffersPage = () => {
             <div className="pb-4 border-b border-slate-100 flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-black text-slate-800">العروض الواردة</h1>
-                    <p className="text-sm font-bold text-slate-400 mt-1">إليك أحدث العروض المقدمة من السائقين</p>
+                    <p className="text-sm font-bold text-slate-400 mt-1">إليك أحدث العروض المقدمة من الكباتن</p>
                 </div>
                 <Button
                     onClick={fetchOffers}
@@ -86,7 +81,7 @@ export const IncomingOffersPage = () => {
                                             )}
                                         </div>
                                         <div>
-                                            <h3 className="font-black text-lg text-slate-800 leading-none mb-1.5">{offer.driver?.full_name || "سائق"}</h3>
+                                            <h3 className="font-black text-lg text-slate-800 leading-none mb-1.5">{offer.driver?.full_name || "كابتن"}</h3>
                                             <p className="text-xs font-bold text-slate-400">مقدم عرض سعر لشحنتك</p>
                                         </div>
                                     </div>
@@ -130,10 +125,11 @@ export const IncomingOffersPage = () => {
                             <Clock className="h-8 w-8 text-slate-200" />
                         </div>
                         <h3 className="text-xl font-black text-slate-800 mb-2">لا توجد عروض حالية</h3>
-                        <p className="text-sm font-bold text-slate-400 max-w-xs mx-auto mb-8">سيظهر هنا فور قيام السائقين بتقديم عروض سعر لشحناتك المتاحة.</p>
+                        <p className="text-sm font-bold text-slate-400 max-w-xs mx-auto mb-8">سيظهر هنا فور قيام الكباتن بتقديم عروض سعر لشحناتك المتاحة.</p>
                     </div>
                 )}
             </div>
         </div>
     )
 }
+

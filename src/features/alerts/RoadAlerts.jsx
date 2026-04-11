@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import {
     AlertTriangle,
     MapPin,
@@ -145,7 +145,7 @@ export const RoadAlerts = () => {
                     <div className="bg-blue-50 p-6 rounded-[2rem] border border-blue-100 flex gap-4">
                         <Eye className="h-6 w-6 text-blue-600 shrink-0" />
                         <p className="text-xs text-blue-700 leading-relaxed font-bold">
-                            تساعد التنبيهات السائقين الآخرين على تجنب التأخير والحفاظ على سلامة الجميع والبضائع.
+                            تساعد التنبيهات الكباتن الآخرين على تجنب التأخير والحفاظ على سلامة الجميع والبضائع.
                         </p>
                     </div>
                 </div>
@@ -264,3 +264,4 @@ export const RoadAlerts = () => {
         </div>
     )
 }
+

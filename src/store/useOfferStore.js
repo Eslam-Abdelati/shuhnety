@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     addOffer as addOfferAction,
@@ -21,3 +21,4 @@ export const useOfferStore = (selector) => {
 
     return selector ? selector(store) : store;
 };
+

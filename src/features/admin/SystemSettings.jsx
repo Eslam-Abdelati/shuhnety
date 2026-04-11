@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
     Settings,
     Shield,
@@ -85,7 +85,7 @@ export const SystemSettings = () => {
                                     <h3 className="text-xl font-black text-slate-900 border-b border-slate-50 pb-4">القواعد المالية والعمولات</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div className="space-y-3">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">عمولة المنصة من السائق (%)</label>
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">عمولة المنصة من الكابتن (%)</label>
                                             <div className="relative">
                                                 <input type="number" defaultValue="10" className="w-full h-14 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black outline-none focus:ring-4 focus:ring-brand-primary/5 transition-all text-right" />
                                                 <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xs">%</span>
@@ -132,7 +132,7 @@ export const SystemSettings = () => {
                                     <div className="space-y-6">
                                         {[
                                             { label: 'تفعيل التحقق بخطوتين (2FA)', desc: 'إجبار مديري النظام والمستخدمين الحساسين على تفعيل رمز الدخول الإضافي', active: true },
-                                            { label: 'تشفير المستندات المرفوعة', desc: 'استخدام تشفير AES-256 لكافة مستندات السائقين والشركات', active: true },
+                                            { label: 'تشفير المستندات المرفوعة', desc: 'استخدام تشفير AES-256 لكافة مستندات الكباتن والشركات', active: true },
                                             { label: 'وضع الصيانة للمنصة', desc: 'إيقاف كافة العمليات مؤقتاً لإجراء تحديثات طارئة أو صيانة مجدولة', active: false },
                                         ].map((setting, i) => (
                                             <div key={i} className="flex items-center justify-between p-6 bg-slate-50 rounded-[2rem] border border-slate-100/50">
@@ -177,3 +177,4 @@ export const SystemSettings = () => {
         </div>
     )
 }
+

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+﻿import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
     MapPin,
@@ -12,13 +12,13 @@ import {
     ChevronLeft,
     Search,
     AlertCircle,
-    XCircle,
-    Loader2
+    XCircle
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/cn'
 import { shipmentService } from '@/services/shipmentService'
+import { Loading } from '@/components/ui/Loading'
 
 export const ShipmentTracking = () => {
     const { id } = useParams()
@@ -45,7 +45,7 @@ export const ShipmentTracking = () => {
                     const accepted = data.bids.find(b => b.status === 'accepted')
                     if (accepted) {
                         setAcceptedOffer({
-                            driverName: accepted.driver?.full_name || 'سائق شحن',
+                            driverName: accepted.driver?.full_name || 'كابتن شحن',
                             driverImage: accepted.driver?.driverDetails?.profile_picture,
                             amount: accepted.amount,
                             estimatedTime: accepted.estimatedTime
@@ -142,12 +142,7 @@ export const ShipmentTracking = () => {
     }, [shipment, acceptedOffer])
 
     if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[400px] bg-white rounded-[2rem] border border-slate-100 shadow-sm font-cairo">
-                <Loader2 className="h-12 w-12 text-brand-primary animate-spin mb-4" />
-                <p className="text-slate-500 font-bold">جاري جلب بيانات التتبع المباشر...</p>
-            </div>
-        )
+        return <Loading text="جاري جلب بيانات التتبع المباشر..." />
     }
 
     if (!id || !shipment) {
@@ -178,7 +173,7 @@ export const ShipmentTracking = () => {
                         {id ? 'الشحنة غير موجودة' : 'تتبع شحنتك الآن'}
                     </h2>
                     <p className="text-slate-500 font-bold mb-6 max-w-xs">
-                        {id ? 'رقم الشحنة الذي أدخلته غير صحيح أو ربما تم حذفها.' : 'أدخل رقم الشحنة في المربع أعلاه لمتابعة حالتها وموقع السائق.'}
+                        {id ? 'رقم الشحنة الذي أدخلته غير صحيح أو ربما تم حذفها.' : 'أدخل رقم الشحنة في المربع أعلاه لمتابعة حالتها وموقع الكابتن.'}
                     </p>
                     {id && (
                         <Button variant="outline" onClick={() => navigate('/customer/shipments')} className="rounded-xl font-bold border-slate-200">
@@ -241,7 +236,7 @@ export const ShipmentTracking = () => {
                 <div className="flex gap-3">
                     <Button variant="outline" className="rounded-xl gap-2 h-12 font-bold border-slate-200" disabled={!acceptedOffer || shipment.status === 'ملغي'}>
                         <Phone className="h-5 w-5" />
-                        اتصال بالسائق
+                        اتصال بالكابتن
                     </Button>
                     <Button className="rounded-xl gap-2 h-12 shadow-xl shadow-brand-primary/20 font-bold bg-brand-primary text-white" disabled={!acceptedOffer || shipment.status === 'ملغي'}>
                         <MessageSquare className="h-5 w-5" />
@@ -260,7 +255,7 @@ export const ShipmentTracking = () => {
                             </div>
                             <h3 className="text-lg font-black text-slate-900 mb-1">خريطة التتبع المباشر</h3>
                             <p className="text-sm text-slate-500 font-black">
-                                {shipment.status || 'في انتظار انطلاق السائق لبدء التتبع.'}
+                                {shipment.status || 'في انتظار انطلاق الكابتن لبدء التتبع.'}
                             </p>
                         </div>
 
@@ -277,7 +272,7 @@ export const ShipmentTracking = () => {
                                     </div>
                                     <div>
                                         <h4 className="font-black text-slate-900">{acceptedOffer.driverName}</h4>
-                                        <p className="text-xs text-slate-500 font-bold">سائق معتمد • ★ 4.9</p>
+                                        <p className="text-xs text-slate-500 font-bold">كابتن معتمد • ★ 4.9</p>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 py-4 border-t border-slate-50 font-cairo">
@@ -339,3 +334,4 @@ export const ShipmentTracking = () => {
         </div>
     )
 }
+

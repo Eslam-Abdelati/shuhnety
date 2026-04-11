@@ -1,4 +1,4 @@
-import { Sidebar } from './Sidebar'
+﻿import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 import { useUIStore } from '@/store/useUIStore'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -7,6 +7,8 @@ import { authService } from '@/services/authService'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useDispatch } from 'react-redux'
 import { updateUser as updateUserAction } from '@/store/slices/authSlice'
+
+import { Loading } from '@/components/ui/Loading'
 
 export const DashboardLayout = ({ children }) => {
     const { isSidebarOpen, closeSidebar } = useUIStore()
@@ -47,12 +49,7 @@ export const DashboardLayout = ({ children }) => {
 
     // Only block the UI if we have absolutely no user data to show
     if (isInitialSync && !user?.id) {
-        return (
-            <div className="h-screen w-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 gap-4" dir="rtl">
-                <div className="h-12 w-12 border-4 border-brand-primary/20 border-t-brand-primary rounded-full animate-spin"></div>
-                <p className="text-sm font-black text-slate-400 font-cairo animate-pulse">جاري تحضير لوحة التحكم...</p>
-            </div>
-        )
+        return <Loading fullScreen={true} text="جاري تحضير لوحة التحكم الخاصة بك..." />
     }
 
     return (
@@ -83,3 +80,4 @@ export const DashboardLayout = ({ children }) => {
         </div>
     )
 }
+

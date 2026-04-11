@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
     FileText,
     PenTool,
@@ -165,3 +165,4 @@ export const DigitalContracts = () => {
         </div>
     )
 }
+

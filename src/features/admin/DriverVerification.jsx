@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { 
     FileText, 
     CheckCircle2, 
@@ -58,9 +58,9 @@ export const DriverVerification = () => {
         setCheckedDocs({})
 
         if (status === 'accepted') {
-            toast.success(`تم تفعيل السائق ${email} بنجاح ومتاح الآن للعمل.`);
+            toast.success(`تم تفعيل الكابتن ${email} بنجاح ومتاح الآن للعمل.`);
         } else {
-            toast.error(`تم رفض طلب السائق ${email} وإرسال السبب.`);
+            toast.error(`تم رفض طلب الكابتن ${email} وإرسال السبب.`);
         }
     }
 
@@ -76,7 +76,7 @@ export const DriverVerification = () => {
             {/* Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 px-4">
                 <div className="space-y-1">
-                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">مركز تدقيق بيانات السائقين</h1>
+                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">مركز تدقيق بيانات الكباتن</h1>
                     <div className="flex items-center gap-2 text-slate-500 text-xs md:text-sm font-bold">
                         <ShieldCheck className="h-4 w-4 text-brand-primary" />
                         <span>نظام التحقق الذكي • {pendingDrivers.length} طلبات معلقة</span>
@@ -321,7 +321,7 @@ export const DriverVerification = () => {
                                             <div className="flex flex-col md:flex-row items-center gap-6">
                                                 <div className="flex-1 space-y-1">
                                                     <h5 className="text-sm font-black text-slate-900">تأكيد حالة الانضمام</h5>
-                                                    <p className="text-[10px] font-bold text-slate-400">بتفعيل السائق، أنت تؤكد صحة البيانات والمستندات المقدمة أعلاه.</p>
+                                                    <p className="text-[10px] font-bold text-slate-400">بتفعيل الكابتن، أنت تؤكد صحة البيانات والمستندات المقدمة أعلاه.</p>
                                                 </div>
                                                 <div className="flex items-center gap-4 w-full md:w-auto">
                                                     <Button 
@@ -341,7 +341,7 @@ export const DriverVerification = () => {
                                                                 : "bg-slate-300 cursor-not-allowed opacity-70"
                                                         )}
                                                     >
-                                                        <ThumbsUp className="ml-2 h-4 w-4" /> تفعيل السائق
+                                                        <ThumbsUp className="ml-2 h-4 w-4" /> تفعيل الكابتن
                                                         {!allDocsChecked && <div className="absolute inset-0 bg-slate-400/5 backdrop-blur-[1px]" />}
                                                     </Button>
                                                 </div>
@@ -357,7 +357,7 @@ export const DriverVerification = () => {
                                 </div>
                                 <h3 className="text-3xl font-black text-slate-900 mb-3 tracking-tighter">مركز التدقيق المركزي</h3>
                                 <p className="text-base font-bold text-slate-400 max-w-sm mx-auto leading-relaxed">
-                                    برجاء تحديد ملف أحد السائقين من القائمة الجانبية لبدء عملية المراجعة القانونية والفنية لمستندات المركبة والقيادة.
+                                    برجاء تحديد ملف أحد الكباتن من القائمة الجانبية لبدء عملية المراجعة القانونية والفنية لمستندات المركبة والقيادة.
                                 </p>
                             </div>
                         )}
@@ -393,7 +393,7 @@ export const DriverVerification = () => {
                                 </div>
                                 <div className="space-y-2">
                                     <h3 className="text-2xl font-black text-slate-900 leading-none">تحديد سبب الرفض</h3>
-                                    <p className="text-sm font-bold text-slate-500">سيتم إرسال هذا السبب للسائق ليتمكن من معالجة المشكلة وإعادة الطلب.</p>
+                                    <p className="text-sm font-bold text-slate-500">سيتم إرسال هذا السبب للكابتن ليتمكن من معالجة المشكلة وإعادة الطلب.</p>
                                 </div>
 
                                 <div className="space-y-4">
@@ -488,3 +488,4 @@ export const DriverVerification = () => {
         </div>
     )
 }
+

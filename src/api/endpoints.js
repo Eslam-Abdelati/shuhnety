@@ -1,4 +1,4 @@
-export const API_ENDPOINTS = {
+﻿export const API_ENDPOINTS = {
     AUTH: {
         REGISTER: '/auth/register',
         LOGIN: '/auth/login',
@@ -14,7 +14,7 @@ export const API_ENDPOINTS = {
     USER: {
         PROFILE: '/users/me',
         // In case update profile is needed, often same as /users/me with PUT/PATCH
-        UPDATE_PROFILE: '/users/me', 
+        UPDATE_PROFILE: '/users/me',
     },
     SHIPMENT: {
         CREATE: '/shipments',

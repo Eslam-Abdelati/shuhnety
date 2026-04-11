@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+﻿import { useParams, useNavigate } from 'react-router-dom'
 import {
     Package,
     MapPin,
@@ -13,12 +13,12 @@ import {
     ArrowLeftRight,
     Star,
     MessageCircle,
-    Loader2,
     TrendingUp,
     ChevronLeft
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { Loading } from '@/components/ui/Loading'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
@@ -62,12 +62,7 @@ export const ShipmentDetailsPage = () => {
     };
 
     if (isLoading) {
-        return (
-            <div className="flex flex-col items-center justify-center p-20 text-center animate-pulse">
-                <Loader2 className="h-10 w-10 text-brand-primary animate-spin mb-4" />
-                <p className="text-slate-400 font-bold">جاري تحميل تفاصيل الشحنة...</p>
-            </div>
-        )
+        return <Loading text="جاري تحميل تفاصيل الشحنة..." />
     }
 
     if (!shipment) {
@@ -158,14 +153,14 @@ export const ShipmentDetailsPage = () => {
                                     {shipment.bidsCount}
                                 </span>
                             </h3>
-                            <p className="text-[10px] md:text-xs font-bold text-slate-500 mt-0.5">هناك أسعار قدمها السائقون بانتظار موافقتك.</p>
+                            <p className="text-[10px] md:text-xs font-bold text-slate-500 mt-0.5">هناك أسعار قدمها الكابتنون بانتظار موافقتك.</p>
                         </div>
                     </div>
                     <button
                         onClick={() => navigate(role === 'customer' ? `/customer/bids/${shipment.id}` : '#')}
                         className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-brand-primary/10 hover:bg-brand-primary text-brand-primary hover:text-white px-5 h-9 md:h-10 rounded-full font-black text-[10px] md:text-[11px] transition-colors duration-300"
                     >
-                        عرض السائقين
+                        عرض الكباتن
                         <ChevronLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
                     </button>
                 </div>
@@ -326,11 +321,11 @@ export const ShipmentDetailsPage = () => {
                             <div className="flex items-center justify-between px-1">
                                 <div className="flex items-center gap-2">
                                     <div className="h-1.5 w-1.5 rounded-full bg-brand-primary animate-pulse"></div>
-                                    <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">بيانات السائق والرحلة</h3>
+                                    <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">بيانات الكابتن والرحلة</h3>
                                 </div>
                                 <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/20 rounded-full">
                                     <ShieldCheck className="h-3 w-3 text-emerald-600" />
-                                    <span className="text-[9px] font-black text-emerald-700 dark:text-emerald-400">سائق معتمد موثق</span>
+                                    <span className="text-[9px] font-black text-emerald-700 dark:text-emerald-400">كابتن معتمد موثق</span>
                                 </div>
                             </div>
 
@@ -518,3 +513,4 @@ export const ShipmentDetailsPage = () => {
         </div>
     )
 }
+

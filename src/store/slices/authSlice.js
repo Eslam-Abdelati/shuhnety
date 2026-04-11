@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+﻿import { createSlice } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
 
 const initialState = {
@@ -50,3 +50,4 @@ const authSlice = createSlice({
 
 export const { login, logout, updateUser } = authSlice.actions;
 export default authSlice.reducer;
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+﻿import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/cn'
 import { authService } from '@/services/authService'
 import { toast } from 'react-hot-toast'
+import { Loading } from '@/components/ui/Loading'
 
 
 
@@ -214,7 +215,7 @@ export const ForgotPasswordPage = () => {
 
 
                                     <Button type="submit" disabled={isLoading} className="w-full h-14 rounded-2xl bg-brand-primary hover:bg-orange-600 text-white font-black shadow-xl shadow-brand-primary/20">
-                                        {isLoading ? <RefreshCw className="h-5 w-5 animate-spin" /> : 'إرسال الرمز'}
+                                        {isLoading ? <Loading minimal={true} className="text-white" /> : 'إرسال الرمز'}
                                     </Button>
                                 </form>
                             </motion.div>
@@ -258,7 +259,7 @@ export const ForgotPasswordPage = () => {
 
                                     <div className="space-y-4">
                                         <Button type="submit" disabled={isLoading} className="w-full h-14 rounded-2xl bg-brand-primary hover:bg-orange-600 text-white font-black shadow-xl shadow-brand-primary/20">
-                                            {isLoading ? <RefreshCw className="h-5 w-5 animate-spin" /> : 'تأكيد الرمز'}
+                                            {isLoading ? <Loading minimal={true} className="text-white" /> : 'تأكيد الرمز'}
                                         </Button>
                                         <button
                                             type="button"
@@ -336,7 +337,7 @@ export const ForgotPasswordPage = () => {
 
 
                                     <Button type="submit" disabled={isLoading} className="w-full h-14 rounded-2xl bg-[#064e3b] hover:bg-[#053a2c] text-white font-black shadow-xl shadow-[#064e3b]/20">
-                                        {isLoading ? <RefreshCw className="h-5 w-5 animate-spin" /> : 'حفظ كلمة المرور'}
+                                        {isLoading ? <Loading minimal={true} className="text-white" /> : 'حفظ كلمة المرور'}
                                     </Button>
                                 </form>
                             </motion.div>
@@ -357,3 +358,4 @@ export const ForgotPasswordPage = () => {
 }
 
 export default ForgotPasswordPage
+

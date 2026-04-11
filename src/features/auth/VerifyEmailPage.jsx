@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+﻿import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Mail, ArrowLeft, Shield, CheckCircle2, RefreshCw } from 'lucide-react'
@@ -8,6 +8,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 
 import { authService } from '@/services/authService'
 import { toast } from 'react-hot-toast'
+import { Loading } from '@/components/ui/Loading'
 
 
 export const VerifyEmailPage = () => {
@@ -161,10 +162,7 @@ export const VerifyEmailPage = () => {
                                 disabled={isLoading}
                             >
                                 {isLoading ? (
-                                    <div className="flex items-center gap-2">
-                                        <RefreshCw className="h-5 w-5 animate-spin" />
-                                        جاري التحقق...
-                                    </div>
+                                    <Loading minimal={true} className="text-white" text="جاري التحقق..." />
                                 ) : 'تأكيد الرمز'}
                             </Button>
 
@@ -178,7 +176,7 @@ export const VerifyEmailPage = () => {
                                 )}
                             >
                                 {isResending ? (
-                                    <RefreshCw className="h-4 w-4 animate-spin text-brand-primary" />
+                                    <Loading minimal={true} className="text-brand-primary" />
                                 ) : null}
                                 {timer > 0 ? (
                                     <>إعادة إرسال الرمز خلال {timer} ثانية</>
@@ -211,3 +209,4 @@ export const VerifyEmailPage = () => {
         </div>
     )
 }
+

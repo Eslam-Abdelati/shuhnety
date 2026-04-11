@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
     Package,
@@ -7,7 +7,6 @@ import {
     ChevronLeft,
     Truck,
     Box,
-    Loader2,
     Calendar,
     ArrowLeftRight,
     Weight,
@@ -16,6 +15,7 @@ import {
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/cn'
+import { Loading } from '@/components/ui/Loading'
 import { shipmentService } from '@/services/shipmentService'
 import { useAuthStore } from '@/store/useAuthStore'
 import { toast } from 'react-hot-toast'
@@ -74,7 +74,7 @@ export const ActiveShipments = () => {
         const timer = setTimeout(() => {
             setPage(1);
             setIsFiltering(false);
-        }, 400); 
+        }, 400);
         return () => clearTimeout(timer);
     }, [filterStatus]);
 
@@ -83,7 +83,7 @@ export const ActiveShipments = () => {
         const timer = setTimeout(() => {
             setPage(1);
             setIsFiltering(false);
-        }, 600); 
+        }, 600);
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
@@ -91,18 +91,18 @@ export const ActiveShipments = () => {
     const filteredShipments = shipments.filter(s => {
         // Status Filter
         const targetStatusOriginal = statusMap[filterStatus];
-        
+
         // Specific check for "في الطريق للاستلام" mapping to "قيد التنفيذ"
         const isPickupProgress = filterStatus === 'في الطريق للاستلام' && s.status === 'قيد التنفيذ';
-        
-        const matchesStatus = filterStatus === 'الكل' || 
-                           s.status_original === targetStatusOriginal || 
-                           s.status === filterStatus ||
-                           isPickupProgress;
+
+        const matchesStatus = filterStatus === 'الكل' ||
+            s.status_original === targetStatusOriginal ||
+            s.status === filterStatus ||
+            isPickupProgress;
 
         // Search Filter
         const searchInput = searchQuery.toLowerCase();
-        const matchesSearch = !searchQuery || 
+        const matchesSearch = !searchQuery ||
             (s.displayId || '').toLowerCase().includes(searchInput) ||
             (s.pickupGovernorate || '').toLowerCase().includes(searchInput) ||
             (s.destinationGovernorate || '').toLowerCase().includes(searchInput) ||
@@ -168,10 +168,7 @@ export const ActiveShipments = () => {
             {/* Shipments List Section */}
             <div className="space-y-4 font-cairo min-h-[300px] relative">
                 {showLoading ? (
-                    <div className="flex flex-col items-center justify-center py-20 bg-white/50 backdrop-blur-sm rounded-[2.5rem] border-2 border-dashed border-slate-100 transition-all">
-                        <Loader2 className="h-10 w-10 text-brand-primary animate-spin mb-4" />
-                        <p className="text-slate-500 font-bold">جاري تحديث القائمة...</p>
-                    </div>
+                    <Loading section={true} text="جاري تحديث القائمة..." className="py-20 bg-white/50 backdrop-blur-sm rounded-[3.5rem] border-2 border-dashed border-slate-100" />
                 ) : paginatedShipments.length > 0 ? (
                     paginatedShipments.map((s) => {
                         const statusStyle = getStatusStyles(s.status)

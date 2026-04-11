@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 const QuickCounter = ({ value, isLoading }) => {
     const [display, setDisplay] = useState('00');
@@ -22,3 +22,4 @@ const QuickCounter = ({ value, isLoading }) => {
 }
 
 export default QuickCounter;
+

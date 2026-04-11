@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+﻿import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     shipments: [],
@@ -40,3 +40,4 @@ const shipmentSlice = createSlice({
 
 export const { addShipment, updateShipmentStatus, updateShipment, deleteShipment, setShipments } = shipmentSlice.actions;
 export default shipmentSlice.reducer;
+

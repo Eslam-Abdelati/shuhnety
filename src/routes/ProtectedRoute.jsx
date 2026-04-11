@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from 'react-router-dom'
+﻿import { Navigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
 
 export const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -15,3 +15,4 @@ export const ProtectedRoute = ({ children, allowedRoles }) => {
 
     return children
 }
+

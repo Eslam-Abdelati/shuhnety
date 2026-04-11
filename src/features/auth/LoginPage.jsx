@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
@@ -13,6 +13,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { cn } from '@/utils/cn'
 import { authService } from '@/services/authService'
 import { toast } from 'react-hot-toast'
+import { Loading } from '@/components/ui/Loading'
 
 
 const loginSchema = z.object({
@@ -203,10 +204,7 @@ export const LoginPage = () => {
                                     disabled={isLoading}
                                 >
                                     {isLoading ? (
-                                        <div className="flex items-center gap-2 justify-center">
-                                            <span className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                                            جاري التحقق...
-                                        </div>
+                                        <Loading minimal={true} className="text-white" text="جاري التحقق..." />
                                     ) : 'تسجيل الدخول'}
                                 </Button>
 
@@ -236,4 +234,5 @@ export const LoginPage = () => {
         </div>
     )
 }
+
 

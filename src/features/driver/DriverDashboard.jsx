@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+﻿import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -14,6 +14,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { toast } from 'react-hot-toast'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { Loading } from '@/components/ui/Loading'
 import { cn } from '@/lib/utils'
 import { shipmentService } from '@/services/shipmentService'
 import { getGoodsTypeLabel, getStatusStyles } from '@/utils/shipmentUtils'
@@ -30,12 +31,7 @@ export const DriverDashboard = () => {
     const [isFetchingAvailable, setIsFetchingAvailable] = useState(false)
     const [isOnline, setIsOnline] = useState(true)
     const [loading, setLoading] = useState(true)
-    const [stats, setStats] = useState({
-        totalEarnings: 12450,
-        monthlyGrowth: 15.4,
-        target: 20000,
-        completedTrips: 42
-    })
+    const [stats, setStats] = useState(null)
 
     const fetchDashboardData = async () => {
         setIsFetchingAvailable(true)
@@ -48,17 +44,18 @@ export const DriverDashboard = () => {
             const assignedList = assignedResponse.data?.shipments || (Array.isArray(assignedResponse.data) ? assignedResponse.data : [])
             setAssignedShipments(assignedList)
 
-            // Log Bidding Dashboard Stats as requested
+            // Fetch Bidding Dashboard Stats
             try {
-                const bidStats = await shipmentService.getBidDashboardStats();
-                console.log('--- Bidding Dashboard Stats LOG ---', bidStats);
+                const bidStatsRes = await shipmentService.getBidDashboardStats();
+                setStats(bidStatsRes.data || bidStatsRes);
             } catch (err) {
-                console.warn('--- Bidding Dashboard Stats LOG (FAIL) ---', err.message);
+                console.warn('Failed to fetch bid stats:', err);
             }
         } catch (error) {
             console.error('Failed to fetch dashboard data:', error)
         } finally {
             setIsFetchingAvailable(false)
+            setLoading(false)
         }
     }
 
@@ -72,7 +69,12 @@ export const DriverDashboard = () => {
         s.status !== 'cancelled' &&
         s.status !== 'ملغي'
     )
-    const earningsProgress = (stats.totalEarnings / stats.target) * 100
+
+    // Earnings data from API
+    const totalEarnings = stats?.total?.earnings || stats?.totalEarnings || 0
+    const monthlyGrowth = stats?.monthly?.growth || stats?.monthlyGrowth || 0
+    const target = stats?.target || 20000 // If API doesn't provide target, use a sensible default or hide
+    const earningsProgress = (totalEarnings / target) * 100
 
     const handleStartNavigation = async (shipmentId) => {
         try {
@@ -94,26 +96,30 @@ export const DriverDashboard = () => {
         }
     };
 
+    if (loading) {
+        return <Loading fullScreen={true} text="جاري تحميل البيانات..." />
+    }
+
     return (
-        <div className="pb-32 overflow-x-hidden" dir="rtl">
+        <div className="overflow-x-hidden" dir="rtl">
             {/* --- Unified Master Header --- */}
-            <header className="pb-4">
-                <div className="bg-white rounded-[2.5rem] p-7 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.06)] border border-slate-50 relative overflow-hidden">
+            <div className="pb-2">
+                <div className="bg-white rounded-[2rem] p-5 md:p-6 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.06)] border border-slate-50 relative overflow-hidden">
                     {/* Decorative aura */}
                     <div className="absolute top-0 right-0 w-40 h-40 bg-[#eb6a1d]/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
 
-                    <div className="relative z-10 space-y-8">
+                    <div className="relative z-10 space-y-6 md:space-y-8">
                         {/* Top Section: Greeting & Toggle */}
                         <div className="flex items-start justify-between">
                             <div className="space-y-1.5">
                                 <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                                    مرحباً، {user?.full_name?.split(' ')[0]}
+                                    مرحبا {user?.full_name?.split(' ')[0]}
                                 </h1>
                                 <p className={cn(
                                     "text-sm font-bold leading-tight",
                                     (activeTrip || isOnline) ? "text-[#009966]" : "text-slate-400"
                                 )}>
-                                    {activeTrip ? "أنت في رحلة نشطة الآن 🚚" : (isOnline ? "جاهز لاستقبال شحنات جديدة" : "غير متاح حالياً")}
+                                    {activeTrip ? "أنت في رحلة نشطة الآن" : (isOnline ? "جاهز لاستقبال شحنات جديدة" : "غير متاح حالياً")}
                                 </p>
                             </div>
 
@@ -140,45 +146,45 @@ export const DriverDashboard = () => {
                         </div>
 
                         {/* Bottom Section: Primary Controls */}
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <Button
                                 onClick={() => navigate('/driver/available')}
                                 className="h-14 bg-[#eb6a1d] hover:bg-[#d45a16] text-white rounded-2xl font-black text-xs shadow-lg shadow-orange-200/40 transition-all active:scale-95 flex items-center justify-center gap-2"
                             >
-                                <Search className="h-5 w-5" /> عرض الشحنات
+                                عرض الشحنات
                             </Button>
                             <Button
                                 variant="outline"
                                 onClick={() => navigate('/driver/active')}
                                 className="h-14 border-slate-100 text-slate-600 rounded-2xl font-black text-xs hover:bg-slate-50 bg-white transition-all active:scale-95 flex items-center justify-center gap-2"
                             >
-                                <LayoutGrid className="h-5 w-5" /> الطلبات النشطة
+                                الطلبات النشطة
                             </Button>
                         </div>
                     </div>
                 </div>
-            </header>
+            </div>
 
-            <main className="px-4 space-y-8 relative z-20">
+            <div className="space-y-4 md:space-y-6 relative z-20">
                 {/* --- Earnings Card (Gamified) --- */}
                 <motion.section
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
                 >
-                    <Card className="rounded-[2.5rem] border-none shadow-2xl shadow-slate-200/50 overflow-hidden bg-white">
-                        <CardContent className="p-8">
+                    <Card className="rounded-[2rem] border-none shadow-2xl shadow-slate-200/50 overflow-hidden bg-white">
+                        <CardContent className="p-6 md:p-8">
                             <div className="flex justify-between items-start mb-6">
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">إجمالي الأرباح</p>
                                     <div className="flex items-baseline gap-2">
-                                        <h2 className="text-4xl font-black text-slate-900">{stats.totalEarnings.toLocaleString()}</h2>
+                                        <h2 className="text-4xl font-black text-slate-900">{totalEarnings.toLocaleString()}</h2>
                                         <span className="text-xs font-bold text-slate-400">ج.م</span>
                                     </div>
                                 </div>
                                 <div className="bg-emerald-50 text-[#009966] px-3 py-1.5 rounded-xl flex items-center gap-1">
                                     <ArrowUpRight className="h-3.5 w-3.5" />
-                                    <span className="text-[10px] font-black">+{stats.monthlyGrowth}%</span>
+                                    <span className="text-[10px] font-black">+{monthlyGrowth}%</span>
                                 </div>
                             </div>
 
@@ -322,7 +328,7 @@ export const DriverDashboard = () => {
                                 </div>
                                 <div className="space-y-1">
                                     <h4 className="font-black text-slate-900 text-sm">لا توجد رحلات نشطة حالياً</h4>
-                                    <p className="text-[10px] font-bold text-slate-400">ابدأ بالبحث عن شحنات جديدة وابدأ الربح الآن 🚚</p>
+                                    <p className="text-[10px] font-bold text-slate-400">ابدأ بالبحث عن شحنات جديدة وابدأ الربح الآن</p>
                                 </div>
                                 <Button
                                     onClick={() => navigate('/driver/available')}
@@ -431,8 +437,9 @@ export const DriverDashboard = () => {
                         </AnimatePresence>
                     </div>
                 </section>
-            </main>
+            </div>
 
         </div>
     )
 }
+

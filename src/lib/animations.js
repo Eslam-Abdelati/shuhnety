@@ -1,4 +1,4 @@
-// Framer Motion Animation Presets for Shahnti Platform
+﻿// Framer Motion Animation Presets for Shahnti Platform
 
 export const fadeIn = {
     initial: { opacity: 0 },
@@ -116,3 +116,4 @@ export const modalContent = {
     exit: { opacity: 0, scale: 0.98 },
     transition: { duration: 0.2, ease: 'easeOut' }
 }
+

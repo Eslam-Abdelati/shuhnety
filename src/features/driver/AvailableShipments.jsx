@@ -10,7 +10,6 @@ import {
     Weight,
     Maximize,
     Box,
-    Loader2,
     Search,
     Filter,
     X,
@@ -20,6 +19,7 @@ import {
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
+import { Loading } from '@/components/ui/Loading'
 import { shipmentService } from '@/services/shipmentService'
 import { locationService } from '@/services/locationService'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -86,16 +86,11 @@ export const AvailableShipments = () => {
     }
 
     if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] py-12">
-                <Loader2 className="h-10 w-10 text-brand-primary animate-spin mb-4" />
-                <p className="text-slate-500 font-bold">جاري تحميل الشحنات المتاحة...</p>
-            </div>
-        )
+        return <Loading text="جاري تحميل الشحنات المتاحة..." />
     }
 
     return (
-        <div className="space-y-6 pb-20 max-w-4xl mx-auto" dir="rtl">
+        <div className="space-y-6 max-w-4xl mx-auto" dir="rtl">
             {/* Header */}
             <div className="flex flex-col gap-1 items-start mb-6">
                 <h1 className="text-2xl font-black text-slate-800 tracking-tight">شحنات متاحة للمزايدة</h1>
@@ -181,100 +176,118 @@ export const AvailableShipments = () => {
                                 key={s.id}
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="group relative bg-white dark:bg-slate-900 rounded-[1.5rem] border border-slate-100 dark:border-slate-800 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_-8px_rgba(0,0,0,0.08)] transition-all duration-300 overflow-hidden"
+                                className={cn(
+                                    "group relative bg-white dark:bg-slate-900 rounded-[2rem] border-2 transition-all duration-300 overflow-hidden",
+                                    submitted 
+                                        ? "border-emerald-100 dark:border-emerald-900/30 shadow-lg shadow-emerald-900/5" 
+                                        : "border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/40 hover:border-[#eb6a1d]/20 hover:shadow-orange-900/5"
+                                )}
                             >
-                                <div className="p-4 md:p-5">
+                                <div className="p-5 md:p-6 lg:p-7">
                                     {/* Header Row: Type, ID & Date */}
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-8 w-8 bg-slate-50 dark:bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-brand-primary group-hover:text-white transition-all duration-300">
-                                                <Package className="h-4 w-4" />
+                                    <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className={cn(
+                                                "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-inner",
+                                                submitted ? "bg-emerald-500 text-white" : "bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-[#eb6a1d] group-hover:text-white"
+                                            )}>
+                                                <Package className="h-6 w-6" />
                                             </div>
-                                            <div>
-                                                <h4 className="text-xs font-black text-slate-900 dark:text-white leading-tight">{getGoodsTypeLabel(s.goodsType)}</h4>
-                                                <div className="flex items-center gap-2 mt-0.5">
-                                                    <span className="text-[9px] font-bold text-slate-400">{s.displayId}</span>
-                                                    <span className="h-0.5 w-0.5 rounded-full bg-slate-200"></span>
-                                                    <span className="text-[9px] font-bold text-slate-400">
+                                            <div className="space-y-1">
+                                                <h4 className="text-sm font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tight">
+                                                    {getGoodsTypeLabel(s.goodsType)}
+                                                </h4>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] font-black text-[#eb6a1d] bg-orange-50 px-1.5 py-0.5 rounded-md">{s.displayId}</span>
+                                                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400">
+                                                        <Clock className="h-3 w-3" />
                                                         {s.createdAt ? formatDistanceToNow(new Date(s.createdAt), { locale: ar, addSuffix: true }) : 'الآن'}
-                                                    </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                         <div className="flex items-center gap-3">
-                                            <div className="hidden sm:flex items-center gap-2 px-2 py-1 bg-blue-50/50 dark:bg-blue-900/20 rounded-md text-[9px] font-black text-blue-600 dark:text-blue-400">
-                                                <Weight className="h-2.5 w-2.5" />
-                                                <span>{s.weight || '--'} كجم</span>
+                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-[10px] font-black text-blue-600 dark:text-blue-400 border border-blue-100/50">
+                                                <Weight className="h-3 w-3" />
+                                                <span>{s.weight || '0'} كجم</span>
                                             </div>
-                                            <button
-                                                onClick={() => navigate(`/driver/available/${s.id}`)}
-                                                className="text-[10px] font-black text-slate-400 hover:text-brand-primary transition-colors"
-                                            >
-                                                التفاصيل
-                                            </button>
                                         </div>
                                     </div>
 
-                                    {/* Middle Section: Route & Description Inlined */}
-                                    <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 bg-slate-50/50 dark:bg-slate-800/40 p-3 rounded-2xl border border-slate-50 dark:border-slate-800/50 mb-4">
-                                        {/* Route Part */}
-                                        <div className="flex-1 flex items-center gap-3 min-w-0">
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-1 mb-0.5">
-                                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
-                                                    <span className="text-[10px] font-black text-slate-900 dark:text-white truncate">{s.pickupGovernorate}</span>
+                                    {/* Middle Section: Route (Visual Timeline Pattern) */}
+                                    <div className="relative mb-6">
+                                        <div className="absolute right-[11px] top-4 bottom-4 w-0.5 bg-slate-100 dark:bg-slate-800 md:hidden"></div>
+                                        
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12 relative">
+                                            {/* Pickup */}
+                                            <div className="flex items-start gap-4">
+                                                <div className="h-6 w-6 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0 z-10 border-2 border-white dark:border-slate-900">
+                                                    <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
                                                 </div>
-                                                <p className="text-[8.5px] font-bold text-slate-400 truncate pr-2.5">{s.pickupCity || '---'}</p>
+                                                <div className="min-w-0">
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">مكان التحميل</p>
+                                                    <h5 className="text-xs font-black text-slate-900 dark:text-white truncate">{s.pickupGovernorate}</h5>
+                                                    <p className="text-[10px] font-bold text-slate-500 truncate">{s.pickupCity || '---'}</p>
+                                                </div>
                                             </div>
 
-                                            <ArrowRight className="h-3 w-3 text-slate-300 shrink-0" />
-
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-1 mb-0.5">
-                                                    <span className="text-[10px] font-black text-slate-900 dark:text-white truncate">{s.destinationGovernorate}</span>
-                                                    <div className="h-1.5 w-1.5 rounded-full bg-red-500"></div>
+                                            {/* Destination */}
+                                            <div className="flex items-start gap-4">
+                                                <div className="h-6 w-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0 z-10 border-2 border-white dark:border-slate-900">
+                                                    <div className="h-2.5 w-2.5 rounded-full bg-red-500"></div>
                                                 </div>
-                                                <p className="text-[8.5px] font-bold text-slate-400 truncate pr-2.5">{s.destinationCity || '---'}</p>
+                                                <div className="min-w-0">
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">مكان التسليم</p>
+                                                    <h5 className="text-xs font-black text-slate-900 dark:text-white truncate">{s.destinationGovernorate}</h5>
+                                                    <p className="text-[10px] font-bold text-slate-500 truncate">{s.destinationCity || '---'}</p>
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        {/* Divider (Desktop Only) */}
-                                        <div className="hidden md:block w-px h-8 bg-slate-200 dark:bg-slate-700 mx-1"></div>
-
-                                        {/* Description Part */}
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-[9.5px] font-bold text-slate-500 dark:text-slate-400 line-clamp-2 italic leading-relaxed">
-                                                {s.description || s.note ? `"${s.description || s.note}"` : "لا يوجد وصف إضافي"}
-                                            </p>
+                                            
+                                            {/* Connector (Desktop) */}
+                                            <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[1px] w-8 bg-slate-100 dark:bg-slate-800"></div>
                                         </div>
                                     </div>
 
                                     {/* Action Footer (Inlined) */}
-                                    <div className="flex items-center justify-between pt-3 border-t border-slate-50 dark:border-slate-800 gap-4">
-                                        <div className="flex flex-col">
-                                            <span className="text-[8px] font-black text-slate-400 tracking-wider">السعر التقديري</span>
-                                            <div className="flex items-center gap-1">
-                                                <span className="text-sm font-black text-brand-secondary dark:text-emerald-500">
-                                                    {submitted ? `${bidPrice}` : (s.price > 0 ? `${s.price}` : 'قيد التفاوض')}
-                                                </span>
-                                                <span className="text-[8px] font-bold text-slate-400">جنيه</span>
+                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between pt-5 border-t border-slate-50 dark:border-slate-800 gap-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="h-10 w-10 rounded-xl bg-orange-50 dark:bg-[#eb6a1d]/10 flex items-center justify-center text-[#eb6a1d]">
+                                                <Box className="h-5 w-5" />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[9px] font-black text-slate-400 tracking-wider uppercase">سعر المزاد الحالي</span>
+                                                <div className="flex items-baseline gap-1.5">
+                                                    <span className="text-2xl font-black text-slate-900 dark:text-white">
+                                                        {submitted ? `${bidPrice}` : (s.price > 0 ? `${s.price}` : 'مزايدة')}
+                                                    </span>
+                                                    <span className="text-xs font-bold text-slate-400">ج.م</span>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        {submitted ? (
-                                            <div className="h-10 px-6 rounded-xl flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-black text-[10px]">
-                                                <CheckCircle2 className="h-3.5 w-3.5" />
-                                                تم التقديم
-                                            </div>
-                                        ) : (
+                                        <div className="flex items-center gap-3">
                                             <button
                                                 onClick={() => navigate(`/driver/available/${s.id}`)}
-                                                className="h-10 px-8 bg-brand-primary hover:bg-orange-600 text-white rounded-xl flex items-center justify-center gap-2 text-[11px] font-black shadow-lg shadow-orange-500/10 transition-all hover:-translate-y-0.5 active:scale-95 group/btn"
+                                                className="px-4 text-[11px] font-black text-slate-400 hover:text-[#eb6a1d] transition-colors hidden md:block"
                                             >
-                                                دخول المزاد
-                                                <ChevronLeft className="h-3 w-3 group-hover:-translate-x-0.5 transition-transform" />
+                                                التفاصيل
                                             </button>
-                                        )}
+                                            {submitted ? (
+                                                <div className="h-13 px-8 rounded-2xl flex items-center justify-center gap-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black text-xs border border-emerald-100 dark:border-emerald-500/20">
+                                                    <CheckCircle2 className="h-4.5 w-4.5" />
+                                                    تم تقديم عرضك
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={() => navigate(`/driver/available/${s.id}`)}
+                                                    className="h-13 px-10 bg-[#eb6a1d] hover:bg-orange-600 text-white rounded-2xl flex items-center justify-center gap-2 text-xs font-black shadow-xl shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-95 group/btn"
+                                                >
+                                                    دخول المزاد
+                                                    <ChevronLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </motion.div>
@@ -285,11 +298,12 @@ export const AvailableShipments = () => {
                         <div className="h-24 w-24 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6">
                             <Package className="h-10 w-10 text-slate-300" />
                         </div>
-                        <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">لا توجد شحنات متاحة</h3>
-                        <p className="text-slate-400 font-bold max-w-xs text-center">انتظر قليلاً حتى تظهر شحنات جديدة تتناسب مع مسارك.</p>
+                        <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">لا توجد شحنات متاحة تطابق بحثك</h3>
+                        <p className="text-slate-400 font-bold max-w-xs text-center leading-relaxed">انتظر قليلاً حتى تظهر شحنات جديدة تتناسب مع مسارك، أو وسع نطاق البحث للحصول على نتائج أكثر.</p>
                     </div>
                 )}
             </div>
         </div>
     )
 }
+

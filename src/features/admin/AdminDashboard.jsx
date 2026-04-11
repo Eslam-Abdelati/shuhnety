@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+﻿import { useState, useEffect, useMemo, useCallback } from 'react'
 import {
     Users,
     ShieldAlert,
@@ -73,7 +73,7 @@ export const AdminDashboard = () => {
 
     const kpis = [
         { label: 'إجمالي المستخدمين', value: users.length, icon: Users, color: 'blue', change: '+5 اليوم' },
-        { label: 'سائقين بانتظار التفعيل', value: users.filter(u => u.role === 'driver' && u.status === 'pending').length, icon: Truck, color: 'amber', change: 'هام للغاية' },
+        { label: 'كباتن بانتظار التفعيل', value: users.filter(u => u.role === 'driver' && u.status === 'pending').length, icon: Truck, color: 'amber', change: 'هام للغاية' },
         { label: 'نزاعات نشطة', value: '12', icon: ShieldAlert, color: 'red', change: '2 حرجة' },
         { label: 'كفاءة النظام', value: '99.9%', icon: Activity, color: 'emerald', change: 'مثالي' },
     ]
@@ -143,7 +143,7 @@ export const AdminDashboard = () => {
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                 <div className="space-y-1">
                                     <h3 className="text-xl font-black text-slate-900">إدارة المستخدمين</h3>
-                                    <p className="text-xs font-bold text-slate-400">التحقق من بيانات السائقين والشركات والعملاء</p>
+                                    <p className="text-xs font-bold text-slate-400">التحقق من بيانات الكباتن والشركات والعملاء</p>
                                 </div>
 
                                 <div className="flex flex-wrap items-center gap-3">
@@ -151,7 +151,7 @@ export const AdminDashboard = () => {
                                     <div className="flex p-1 bg-slate-50 rounded-xl border border-slate-200/50">
                                         {[
                                             { id: 'all', label: 'الكل' },
-                                            { id: 'driver', label: 'السائقين' },
+                                            { id: 'driver', label: 'الكباتن' },
                                             { id: 'customer', label: 'العملاء' },
                                             { id: 'company', label: 'الشركات' }
                                         ].map(t => (
@@ -296,3 +296,4 @@ export const AdminDashboard = () => {
         </div>
     )
 }
+

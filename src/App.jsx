@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+﻿import { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { DashboardLayout } from './layouts/DashboardLayout'
@@ -215,3 +215,4 @@ function App() {
 }
 
 export default App
+

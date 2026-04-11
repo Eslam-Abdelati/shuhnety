@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme as toggleThemeAction, setTheme as setThemeAction } from './slices/themeSlice';
 
@@ -14,3 +14,4 @@ export const useThemeStore = (selector) => {
 
     return selector ? selector(store) : store;
 };
+

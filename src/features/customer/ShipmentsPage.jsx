@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import {
     Package,
     CheckCircle,
@@ -16,8 +16,8 @@ import {
     ShieldCheck,
     Edit,
     Trash2,
-    Loader2
 } from 'lucide-react'
+import { Loading } from '@/components/ui/Loading'
 import { toast } from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -249,15 +249,7 @@ export const ShipmentsPage = () => {
             <div className="grid grid-cols-1 gap-5 md:gap-6">
                 <AnimatePresence mode="popLayout">
                     {isLoading ? (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="flex flex-col items-center justify-center py-20 bg-white/50 dark:bg-slate-900/50 rounded-[2rem] backdrop-blur-sm"
-                        >
-                            <Loader2 className="h-12 w-12 text-brand-primary animate-spin mb-4" />
-                            <p className="text-slate-500 font-black animate-pulse">جاري تحميل شحناتك الرائعة...</p>
-                        </motion.div>
+                        <Loading section={true} text="جاري تحميل شحناتك الرائعة..." className="py-20 bg-white/50 dark:bg-slate-900/50 rounded-[2rem] backdrop-blur-sm" />
                     ) : shipments.length > 0 ? (
                         shipments.map((shipment, i) => {
                             const styles = getStatusStyles(shipment.status);
@@ -381,7 +373,7 @@ export const ShipmentsPage = () => {
                                                                     <Link to={`/customer/bids/${shipment.id}`} className="flex flex-col items-center sm:items-start text-center sm:text-right group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 px-3 py-1.5 rounded-xl transition-all border border-transparent hover:border-brand-primary/20 hover:shadow-sm">
                                                                         <p className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase mb-0.5 flex items-center gap-1.5">
                                                                             <TrendingUp className="h-2.5 w-2.5 md:h-3 md:w-3 group-hover:text-brand-primary transition-colors" />
-                                                                            عروض السائقين
+                                                                            عروض الكباتن
                                                                         </p>
                                                                         <div className="flex items-baseline gap-1.5">
                                                                             <span className="text-lg md:text-xl font-black text-slate-900 dark:text-white group-hover:text-brand-primary transition-colors">
@@ -477,3 +469,4 @@ export const ShipmentsPage = () => {
         </div>
     )
 }
+

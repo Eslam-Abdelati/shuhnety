@@ -1,4 +1,4 @@
-import { ChevronRight, ChevronLeft } from 'lucide-react'
+﻿import { ChevronRight, ChevronLeft } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
 /**
@@ -50,3 +50,4 @@ export const Pagination = ({
         </div>
     )
 }
+

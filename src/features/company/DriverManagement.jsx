@@ -1,4 +1,4 @@
-import {
+﻿import {
     Users,
     Search,
     Plus,
@@ -53,8 +53,8 @@ export const DriverManagement = () => {
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 mb-2">إدارة السائقين</h1>
-                    <p className="text-slate-500 font-medium">متابعة أداء السائقين، التقييمات، والمهام المسندة</p>
+                    <h1 className="text-3xl font-black text-slate-900 mb-2">إدارة الكباتن</h1>
+                    <p className="text-slate-500 font-medium">متابعة أداء الكباتن، التقييمات، والمهام المسندة</p>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="outline" className="rounded-xl gap-2 h-12">
@@ -63,7 +63,7 @@ export const DriverManagement = () => {
                     </Button>
                     <Button className="rounded-xl gap-2 h-12 shadow-xl shadow-brand-primary/20">
                         <Plus className="h-5 w-5" />
-                        إضافة سائق جديد
+                        إضافة كابتن جديد
                     </Button>
                 </div>
             </div>
@@ -133,8 +133,8 @@ export const DriverManagement = () => {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
                 <CardContent className="p-10 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                     <div className="text-center md:text-right">
-                        <h3 className="text-2xl font-black text-white mb-2">هل تبحث عن سائقين جدد؟</h3>
-                        <p className="text-slate-400 font-medium">قم بدعوة سائقين للانضمام لشركة الشحن الخاصة بك وإدارتهم بسهولة تامة.</p>
+                        <h3 className="text-2xl font-black text-white mb-2">هل تبحث عن كباتن جدد؟</h3>
+                        <p className="text-slate-400 font-medium">قم بدعوة كباتن للانضمام لشركة الشحن الخاصة بك وإدارتهم بسهولة تامة.</p>
                     </div>
                     <Button size="lg" className="rounded-full px-10 h-14 text-lg bg-brand-secondary text-brand-primary hover:bg-amber-400 hover:scale-105 transition-all shadow-xl shadow-amber-500/10">
                         <Plus className="h-6 w-6 ml-2" />
@@ -145,3 +145,4 @@ export const DriverManagement = () => {
         </div>
     )
 }
+

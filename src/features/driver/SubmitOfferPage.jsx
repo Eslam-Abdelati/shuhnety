@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
     Package,
@@ -11,7 +11,6 @@ import {
     ShieldCheck,
     CreditCard,
     AlertCircle,
-    Loader2,
     Ruler,
     Maximize,
     ChevronDown,
@@ -27,6 +26,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useOfferStore } from '@/store/useOfferStore'
 import { toast } from 'react-hot-toast'
 import { getGoodsTypeLabel } from '@/utils/shipmentUtils'
+import { Loading } from '@/components/ui/Loading'
 import { formatDistanceToNow } from 'date-fns'
 import { ar } from 'date-fns/locale'
 
@@ -119,12 +119,7 @@ export const SubmitOfferPage = () => {
     }
 
     if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[70vh] py-12">
-                <Loader2 className="h-10 w-10 text-brand-primary animate-spin mb-4" />
-                <p className="text-slate-500 font-bold">جاري تحميل تفاصيل الشحنة...</p>
-            </div>
-        )
+        return <Loading text="جاري تحميل تفاصيل الشحنة..." />
     }
 
     if (error || !shipment) {
@@ -299,7 +294,7 @@ export const SubmitOfferPage = () => {
                                     className="w-full h-14 bg-brand-primary text-white rounded-2xl font-black text-sm shadow-lg shadow-brand-primary/20 hover:bg-brand-primary/90 transition-all flex items-center justify-center gap-3 disabled:opacity-70"
                                 >
                                     {submitting ? (
-                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                        <Loading minimal={true} className="text-white" />
                                     ) : (
                                         <>
                                             تأكيد تقديم العرض
@@ -315,3 +310,4 @@ export const SubmitOfferPage = () => {
         </div>
     )
 }
+

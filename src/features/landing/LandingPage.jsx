@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import { HashLink } from 'react-router-hash-link'
 import { motion } from 'framer-motion'
 import {
@@ -79,7 +79,7 @@ export const LandingPage = () => {
                     <motion.div className="flex-1 text-center lg:text-right" {...fadeIn}>
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[#57534d] text-[9px] font-black tracking-widest uppercase mb-6 border border-slate-200/50">
                             <Zap className="h-3 w-3 text-brand-primary" />
-                            منصة ذكية تربط بين أصحاب الشحنات والسائقين في مكان واحد
+                            منصة ذكية تربط بين أصحاب الشحنات والكباتن في مكان واحد
                         </div>
 
                         <h1 className="text-xl lg:text-5xl font-black leading-[1.40] tracking-tight mb-6 text-brand-secondary">
@@ -89,7 +89,7 @@ export const LandingPage = () => {
                         </h1>
 
                         <p className="max-w-lg lg:mr-0 mx-auto text-base text-[#57534d] font-bold leading-relaxed mb-10 opacity-80">
-                            سواء كنت عميل عايز تشحن، أو سائق بتدور على شغل —
+                            سواء كنت عميل عايز تشحن، أو كابتن بتدور على شغل —
                             شحنتي بتوصلك للطرف المناسب بسرعة وبأفضل سعر.
                         </p>
 
@@ -99,7 +99,7 @@ export const LandingPage = () => {
                             </Button>
                             <Button variant="outline" size="lg" asChild className="rounded-2xl px-10 h-12 text-sm font-black border-slate-200 hover:bg-slate-50 hover:border-brand-primary hover:text-brand-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 group cursor-pointer">
                                 <Link to="/register" className="flex items-center gap-2">
-                                    انضم كسائق
+                                    انضم ككابتن
                                 </Link>
                             </Button>
                         </div>
@@ -117,7 +117,7 @@ export const LandingPage = () => {
                                 <div className="flex items-center gap-1 text-brand-primary mb-0.5 scale-90 origin-right">
                                     {[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-3 w-3 fill-current" />)}
                                 </div>
-                                <p className="text-[10px] font-black text-[#57534d]/60 uppercase tracking-widest"> ينضم إلينا عملاء / سائقين جدد يوميًا </p>
+                                <p className="text-[10px] font-black text-[#57534d]/60 uppercase tracking-widest"> ينضم إلينا عملاء / كباتن جدد يوميًا </p>
                             </div>
                         </div>
                     </motion.div>
@@ -194,10 +194,10 @@ export const LandingPage = () => {
 
                         <div className="space-y-6">
                             <p className="text-lg text-[#57534d] font-bold leading-relaxed">
-                                شحنتي هي منصة لوجستية رقمية تهدف إلى تطوير قطاع النقل والشحن داخل مصر، من خلال ربط التجار والمزارعين بالسائقين وشركات النقل في نظام واحد ذكي وسهل الاستخدام.
+                                شحنتي هي منصة لوجستية رقمية تهدف إلى تطوير قطاع النقل والشحن داخل مصر، من خلال ربط التجار والمزارعين بالكباتن وشركات النقل في نظام واحد ذكي وسهل الاستخدام.
                             </p>
                             <p className="text-base text-[#57534d] font-medium leading-relaxed bg-brand-primary/5 p-6 rounded-3xl border-r-4 border-brand-primary">
-                                نعتمد على نظام <strong>المزايدة الحي</strong>، حيث يمكن للعميل استقبال عدة عروض أسعار من مختلف السائقين، مع إمكانية <strong>التفاوض المباشر</strong> للوصول إلى السعر العادل الذي يضمن حقوق جميع الأطراف ويحقق أعلى كفاءة اقتصادية.
+                                نعتمد على نظام <strong>المزايدة الحي</strong>، حيث يمكن للعميل استقبال عدة عروض أسعار من مختلف الكباتن، مع إمكانية <strong>التفاوض المباشر</strong> للوصول إلى السعر العادل الذي يضمن حقوق جميع الأطراف ويحقق أعلى كفاءة اقتصادية.
                             </p>
                         </div>
 
@@ -231,7 +231,7 @@ export const LandingPage = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[
                             { title: 'للعملاء', desc: 'تحكم كامل في شحناتك مع نظام مزايدة يضمن لك أفضل سعر وأسرع تنفيذ.', icon: Box },
-                            { title: 'للسائقين', desc: 'فرص عمل يومية مع ضمان التحصيل الفوري.', icon: Truck },
+                            { title: 'للكباتن', desc: 'فرص عمل يومية مع ضمان التحصيل الفوري.', icon: Truck },
                             { title: 'للشركات', desc: 'إدارة أسطول كامل مع تقارير أداء دقيقة.', icon: Building2 },
                             { title: 'للمحافظات', desc: 'رقابة رقمية شاملة وتحصيل آمن للرسوم.', icon: Globe },
                         ].map((item, i) => (
@@ -256,7 +256,7 @@ export const LandingPage = () => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
-                            { title: 'غياب الثقة', desc: 'صعوبة التحقق من هوية السائق أو جودة الخدمة قبل شحنتي', icon: ShieldCheck },
+                            { title: 'غياب الثقة', desc: 'صعوبة التحقق من هوية الكابتن أو جودة الخدمة قبل شحنتي', icon: ShieldCheck },
                             { title: 'عشوائية الرسوم', desc: 'مفيش نظام واضح لتحديد السعر. وغالبًا بتدفع أكتر من اللازم', icon: Wallet },
                             { title: 'ضياع الشحنات', desc: 'انعدام تكنولوجيا التتبع اللحظي مما عرض بضاعتك للخطر.', icon: MapPin },
                         ].map((item, i) => (
@@ -314,7 +314,7 @@ export const LandingPage = () => {
                     <div className="grid grid-cols-2 gap-4">
                         {[
                             { name: 'العلاء / التجار', icon: Users },
-                            { name: 'السائقين', icon: Truck },
+                            { name: 'الكباتن', icon: Truck },
                             { name: 'الشركات', icon: Building2 },
                             { name: 'المحافظات', icon: Globe },
                         ].map((b, i) => (
@@ -334,3 +334,4 @@ export const LandingPage = () => {
 }
 
 export default LandingPage;
+

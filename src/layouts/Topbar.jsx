@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+﻿import { useState, useRef, useEffect } from 'react'
 import {
     Bell,
     Search,
@@ -67,7 +67,7 @@ export const Topbar = () => {
     const getRoleName = (r) => {
         const roles = {
             'client': 'عميل',
-            'driver': 'سائق',
+            'driver': 'كابتن',
             'governorate': 'المحافظة',
             'admin': 'مدير النظام',
             'company': 'شركة',
@@ -242,12 +242,6 @@ export const Topbar = () => {
                             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                             className="flex items-center gap-3 cursor-pointer group hover:bg-slate-50/80 dark:hover:bg-slate-800/80 p-1.5 rounded-2xl transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-700"
                         >
-                            <div className="text-left hidden lg:block mr-1">
-                                <p className="text-[12px] font-black text-slate-900 dark:text-slate-100 leading-none group-hover:text-brand-primary transition-colors">
-                                    {user?.full_name || 'مستخدم النظام'}
-                                </p>
-                                <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tight">{getRoleName(user?.role || role)}</p>
-                            </div>
                             <div className="relative">
                                 <div className="h-10 w-10 bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center text-brand-primary dark:text-brand-primary group-hover:border-brand-primary shadow-sm overflow-hidden text-sm font-bold transition-all">
                                     {(user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar || user?.image) ? (
@@ -262,6 +256,12 @@ export const Topbar = () => {
                                     )}
                                 </div>
                                 <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+                            </div>
+                            <div className="text-right hidden lg:block ml-1">
+                                <p className="text-[12px] font-black text-slate-900 dark:text-slate-100 leading-none group-hover:text-brand-primary transition-colors">
+                                    {user?.full_name || 'مستخدم النظام'}
+                                </p>
+                                <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tight">{getRoleName(user?.role || role)}</p>
                             </div>
                         </div>
 
@@ -350,3 +350,4 @@ export const Topbar = () => {
         </header>
     )
 }
+

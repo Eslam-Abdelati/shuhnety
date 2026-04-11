@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
     Box,
     MapPin,
@@ -16,7 +16,7 @@ import {
     Phone,
     FileText,
     Upload,
-    Loader2,
+    Camera,
     Plus,
     X
 } from 'lucide-react'
@@ -34,6 +34,7 @@ import { shipmentService } from '@/services/shipmentService'
 import { authService } from '@/services/authService'
 import { API_BASE_URL } from '@/api/axiosClient'
 import { GOODS_TYPES, getGoodsTypeLabel } from '@/utils/shipmentUtils'
+import { Loading } from '@/components/ui/Loading'
 
 const steps = ['تفاصيل المنتج', 'المسار', 'التأمين', 'المراجعة']
 const IS_PRICING_ENABLED = false; // قم بتغيير هذه القيمة إلى true لتفعيل التنسيق الأخير
@@ -328,6 +329,10 @@ export const CreateShipmentPage = () => {
         }
     }
 
+    if (isInitialLoading) {
+        return <Loading text="جاري تحضير بيانات الشحنة..." />
+    }
+
     return (
         <div className="max-w-4xl mx-auto">
             <div className="mb-8">
@@ -335,7 +340,7 @@ export const CreateShipmentPage = () => {
                     {isEditMode ? `تعديل شحنة: ${displayId}` : 'إنشاء شحنة جديدة'}
                 </h1>
                 <p className="text-sm sm:text-base lg:text-md text-[#57534d] dark:text-slate-400 font-bold">
-                    {isEditMode ? 'يمكنك تعديل تفاصيل شحنتك قبل قبول أي عرض' : 'اتبع الخطوات التالية لنشر شحنتك وتلقي عروض السائقين'}
+                    {isEditMode ? 'يمكنك تعديل تفاصيل شحنتك قبل قبول أي عرض' : 'اتبع الخطوات التالية لنشر شحنتك وتلقي عروض الكباتن'}
                 </p>
             </div>
 
@@ -487,7 +492,7 @@ export const CreateShipmentPage = () => {
                                     value={formData.additionalNotes}
                                     onChange={(e) => handleChange('additionalNotes', e.target.value)}
                                     className="w-full bg-white border border-slate-100 rounded-xl px-4 py-3 text-sm focus:border-brand-primary outline-none transition-all h-20"
-                                    placeholder="أي تعليمات خاصة للسائق..."
+                                    placeholder="أي تعليمات خاصة للكابتن..."
                                 ></textarea>
                             </div>
 
@@ -502,12 +507,8 @@ export const CreateShipmentPage = () => {
                                     )}
                                 >
                                     {isUploading ? (
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm z-20">
-                                            <div className="relative">
-                                                <Loader2 className="h-12 w-12 text-brand-primary animate-spin" />
-                                                <div className="absolute inset-0 blur-xl bg-brand-primary/20 animate-pulse"></div>
-                                            </div>
-                                            <p className="text-sm font-black text-slate-700 mt-4 animate-pulse">جاري رفع صورتك الرائعة...</p>
+                                        <div className="absolute inset-0 z-20">
+                                            <Loading section={true} text="جاري رفع الصورة..." className="h-full bg-white/80 backdrop-blur-sm border-none" />
                                         </div>
                                     ) : formData.shipmentImage ? (
                                         <div className="relative h-[280px] w-full group/img bg-slate-50 flex items-center justify-center overflow-hidden">
@@ -559,7 +560,7 @@ export const CreateShipmentPage = () => {
                                                 </div>
                                             </div>
                                             <p className="text-md font-black text-slate-700 tracking-tight mb-2">ارفع صورة واضحة لشحنتك</p>
-                                            <p className="text-xs text-slate-400 font-bold max-w-[200px] text-center leading-relaxed">الصور تزيد من ثقة السائقين وتسرّع وصول العروض إليك</p>
+                                            <p className="text-xs text-slate-400 font-bold max-w-[200px] text-center leading-relaxed">الصور تزيد من ثقة الكباتن وتسرّع وصول العروض إليك</p>
                                         </div>
                                     )}
                                     <input
@@ -760,7 +761,7 @@ export const CreateShipmentPage = () => {
                                                 <span className="px-2 py-0.5 bg-slate-200 text-slate-500 rounded-lg text-[10px] font-black">غير مفعلة حالياً</span>
                                             </div>
                                             <p className="text-sm text-slate-600 leading-relaxed">
-                                                يتم احتساب رسوم المحافظة تلقائياً بناءً على نوع المنتج ونقاط المرور. يقوم <b>السائق</b> بدفع هذه الرسوم من خلال المنصة لضمان الامتثال القانوني، ولا يتحمل العميل أي رسوم إضافية.
+                                                يتم احتساب رسوم المحافظة تلقائياً بناءً على نوع المنتج ونقاط المرور. يقوم <b>الكابتن</b> بدفع هذه الرسوم من خلال المنصة لضمان الامتثال القانوني، ولا يتحمل العميل أي رسوم إضافية.
                                             </p>
                                         </div>
                                     </div>
@@ -903,7 +904,7 @@ export const CreateShipmentPage = () => {
                                         <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4">
                                             <div className="flex justify-between items-center mb-1">
                                                 <span className="text-sm font-bold text-blue-800">الرسوم السيادية</span>
-                                                <span className="text-[10px] font-black text-blue-600 bg-blue-100 px-2 py-0.5 rounded-md">يدفعها السائق</span>
+                                                <span className="text-[10px] font-black text-blue-600 bg-blue-100 px-2 py-0.5 rounded-md">يدفعها الكابتن</span>
                                             </div>
                                             <p className="text-[11px] text-blue-600 font-bold">يتم احتساب الرسوم بدقة فور قبول العرض</p>
                                         </div>
@@ -933,7 +934,7 @@ export const CreateShipmentPage = () => {
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? (
-                                    <>جاري النشر...</>
+                                    <Loading minimal={true} text="جاري النشر..." className="text-white" />
                                 ) : (
                                     <>
                                         {isEditMode ? 'حفظ التعديلات' : 'نشر الشحنة الآن'}
@@ -978,3 +979,4 @@ const FormInput = ({ label, icon: Icon, error, wasNextAttempted, className, requ
         </div>
     )
 }
+

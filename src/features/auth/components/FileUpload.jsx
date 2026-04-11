@@ -1,4 +1,4 @@
-import { Upload } from 'lucide-react'
+﻿import { Upload } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
 export const FileUpload = ({
@@ -42,3 +42,4 @@ export const FileUpload = ({
         </div>
     )
 }
+

@@ -1,4 +1,4 @@
-import * as z from 'zod'
+﻿import * as z from 'zod'
 
 // --- Step 2: Personal Info Base ---
 export const step2BaseSchema = z.object({
@@ -14,7 +14,7 @@ export const driverStep1Schema = step2BaseSchema.extend({
     dob: z.string().min(1, 'تاريخ الميلاد مطلوب').refine(date => {
         const age = new Date().getFullYear() - new Date(date).getFullYear()
         return age >= 21
-    }, 'يجب أن يكون عمر السائق 21 سنة على الأقل'),
+    }, 'يجب أن يكون عمر الكابتن 21 سنة على الأقل'),
     personalPhoto: z.string().min(1, 'الصورة الشخصية مطلوبة'),
 })
 
@@ -50,3 +50,4 @@ export const customerSchema = z.object({
 // --- Final Combined Schemas ---
 export const finalDriverSchema = driverStep1Schema.merge(driverStep2Schema)
 export const finalCustomerSchema = step2BaseSchema.merge(customerSchema)
+

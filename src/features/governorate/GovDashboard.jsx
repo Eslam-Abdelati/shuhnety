@@ -1,4 +1,4 @@
-import {
+﻿import {
     BarChart3,
     Wallet,
     ShieldCheck,
@@ -79,7 +79,7 @@ export const GovDashboard = () => {
                                 <thead>
                                     <tr className="bg-slate-50/50 text-slate-400 text-[10px] font-black uppercase tracking-widest">
                                         <th className="px-6 py-4">رقم الشحنة</th>
-                                        <th className="px-6 py-4">السائق</th>
+                                        <th className="px-6 py-4">الكابتن</th>
                                         <th className="px-6 py-4">المبلغ</th>
                                         <th className="px-6 py-4">وسيلة الدفع</th>
                                         <th className="px-6 py-4">التوقيت</th>
@@ -142,3 +142,4 @@ export const GovDashboard = () => {
         </div>
     )
 }
+

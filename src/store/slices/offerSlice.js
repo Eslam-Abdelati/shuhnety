@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+﻿import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     offers: [],
@@ -53,3 +53,4 @@ const offerSlice = createSlice({
 
 export const { addOffer, updateOffer, handleOfferAction, respondToCounterOffer } = offerSlice.actions;
 export default offerSlice.reducer;
+

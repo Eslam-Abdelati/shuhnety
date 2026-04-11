@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     User, Mail, Phone, MapPin, Shield, Camera,
@@ -385,3 +385,4 @@ export const ProfilePage = () => {
         </div>
     );
 };
+
