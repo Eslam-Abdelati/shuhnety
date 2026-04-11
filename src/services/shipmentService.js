@@ -277,11 +277,24 @@ export const shipmentService = {
     getNewBids: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.BIDS.NEW);
-
+            console.log('Get new bids response:', response.data);
             return response.data;
         } catch (error) {
             console.error('Get new bids error:', error.response?.data || error.message);
             throw new Error(error.response?.data?.message || 'فشل في تحميل العروض الجديدة');
+        }
+    },
+    /**
+     * Get bidding dashboard statistics
+     */
+    getBidDashboardStats: async () => {
+        try {
+            const response = await axiosClient.get(API_ENDPOINTS.BIDS.DASHBOARD_STATS);
+            console.log('Bid Dashboard Stats:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error('Get bid dashboard stats error:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'فشل في تحميل إحصائيات المزايدات');
         }
     }
 };

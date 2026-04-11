@@ -1,23 +1,12 @@
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
-    Wallet,
-    TrendingUp,
-    MapPin,
-    Truck,
-    Clock,
-    Package,
-    ChevronLeft,
-    ArrowRightLeft,
-    Bell,
-    Navigation,
-    Phone,
-    User as UserIcon,
-    MessageSquare,
-    CheckCircle2,
-    Eye,
-    Weight,
-    Box,
-    AlertTriangle
+    Wallet, TrendingUp, MapPin, Truck, Clock, Package,
+    ChevronLeft, Navigation, Phone, User as UserIcon,
+    MessageSquare, CheckCircle2, Box, Bell, Zap,
+    Star, ArrowUpRight, Search, LayoutGrid, Timer,
+    Weight, ArrowRightLeft, AlertTriangle, Eye
 } from 'lucide-react'
 import { useShipmentStore } from '@/store/useShipmentStore'
 import { useOfferStore } from '@/store/useOfferStore'
@@ -25,39 +14,47 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { toast } from 'react-hot-toast'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { cn } from '@/utils/cn'
-import { useState, useEffect } from 'react'
+import { cn } from '@/lib/utils'
 import { shipmentService } from '@/services/shipmentService'
-import { getGoodsTypeLabel, getStatusStyles, formatEstimatedTime } from '@/utils/shipmentUtils'
-import { formatDistanceToNow } from 'date-fns'
+import { getGoodsTypeLabel, getStatusStyles } from '@/utils/shipmentUtils'
+import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
-
-
 
 export const DriverDashboard = () => {
     const navigate = useNavigate()
-    const { shipments = [], updateShipmentStatus } = useShipmentStore()
-    const { offers = [] } = useOfferStore()
     const { user } = useAuthStore()
+    const { offers = [] } = useOfferStore()
+
     const [availableShipments, setAvailableShipments] = useState([])
     const [assignedShipments, setAssignedShipments] = useState([])
     const [isFetchingAvailable, setIsFetchingAvailable] = useState(false)
-    const [stats, setStats] = useState({ totalEarnings: 0, monthlyGrowth: 0 })
+    const [isOnline, setIsOnline] = useState(true)
+    const [loading, setLoading] = useState(true)
+    const [stats, setStats] = useState({
+        totalEarnings: 12450,
+        monthlyGrowth: 15.4,
+        target: 20000,
+        completedTrips: 42
+    })
 
     const fetchDashboardData = async () => {
         setIsFetchingAvailable(true)
         try {
-            // Fetch available shipments
             const availableResponse = await shipmentService.searchAvailableShipments({ skip: 0, take: 3 })
             const availableList = availableResponse.data?.shipments || (Array.isArray(availableResponse.data) ? availableResponse.data : [])
             setAvailableShipments(availableList)
-            console.log(availableList);
 
-            // Fetch assigned shipments for the driver
             const assignedResponse = await shipmentService.getAssignedShipments({ skip: 0, take: 5 })
             const assignedList = assignedResponse.data?.shipments || (Array.isArray(assignedResponse.data) ? assignedResponse.data : [])
             setAssignedShipments(assignedList)
 
+            // Log Bidding Dashboard Stats as requested
+            try {
+                const bidStats = await shipmentService.getBidDashboardStats();
+                console.log('--- Bidding Dashboard Stats LOG ---', bidStats);
+            } catch (err) {
+                console.warn('--- Bidding Dashboard Stats LOG (FAIL) ---', err.message);
+            }
         } catch (error) {
             console.error('Failed to fetch dashboard data:', error)
         } finally {
@@ -69,15 +66,19 @@ export const DriverDashboard = () => {
         fetchDashboardData()
     }, [])
 
-    // we consider the first assigned shipment as the active trip for the driver
-    const activeTrip = assignedShipments.find(s => s.status !== 'تم التوصيل' && s.status !== 'ملغي') || assignedShipments[0]
+    const activeTrip = assignedShipments.find(s =>
+        s.status !== 'delivered' &&
+        s.status !== 'تم التوصيل' &&
+        s.status !== 'cancelled' &&
+        s.status !== 'ملغي'
+    )
+    const earningsProgress = (stats.totalEarnings / stats.target) * 100
 
     const handleStartNavigation = async (shipmentId) => {
         try {
             await shipmentService.updateShipmentStatus(shipmentId, 'delivery_in_progress');
             toast.success('تم بدء الرحلة بنجاح');
-            // Full reload to sync state as requested
-            window.location.reload();
+            fetchDashboardData();
         } catch (error) {
             console.error('Failed to start navigation:', error);
         }
@@ -87,353 +88,351 @@ export const DriverDashboard = () => {
         try {
             await shipmentService.updateShipmentStatus(shipmentId, 'delivered');
             toast.success('تم إتمام التوصيل بنجاح');
-            // Full reload to sync state as requested
-            window.location.reload();
+            fetchDashboardData();
         } catch (error) {
             console.error('Failed to complete delivery:', error);
         }
     };
 
     return (
-        <div className="space-y-8 pb-20">
-            {/* Driver Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-black text-slate-900">مرحباً {user?.full_name}</h1>
-                    <p className="text-sm text-slate-500 font-medium mt-1">حالتك الحالية: <span className="text-emerald-600 font-bold">{activeTrip ? 'في رحلة نشطة' : 'متاح للعمل'}</span></p>
-                </div>
+        <div className="pb-32 overflow-x-hidden" dir="rtl">
+            {/* --- Unified Master Header --- */}
+            <header className="pb-4">
+                <div className="bg-white rounded-[2.5rem] p-7 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.06)] border border-slate-50 relative overflow-hidden">
+                    {/* Decorative aura */}
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-[#eb6a1d]/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
 
-            </div>
-
-
-
-
-            {/* Earnings Overview */}
-            <Card className="bg-brand-primary text-white border-none shadow-2xl relative overflow-hidden transition-all duration-500">
-                <div className="absolute top-0 left-0 w-32 h-32 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-                <CardContent className="p-8 relative z-10">
-                    <div className="flex justify-between items-start mb-6">
-                        <div className="h-12 w-12 bg-white/10 rounded-xl flex items-center justify-center">
-                            <Wallet className="h-6 w-6 text-white" />
-                        </div>
-                        {stats?.monthlyGrowth > 0 && (
-                            <div className="flex items-center gap-1 bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-lg text-xs font-black">
-                                <TrendingUp className="h-3 w-3" />
-                                <span>+{stats.monthlyGrowth}% هذا الشهر</span>
+                    <div className="relative z-10 space-y-8">
+                        {/* Top Section: Greeting & Toggle */}
+                        <div className="flex items-start justify-between">
+                            <div className="space-y-1.5">
+                                <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+                                    مرحباً، {user?.full_name?.split(' ')[0]}
+                                </h1>
+                                <p className={cn(
+                                    "text-sm font-bold leading-tight",
+                                    (activeTrip || isOnline) ? "text-[#009966]" : "text-slate-400"
+                                )}>
+                                    {activeTrip ? "أنت في رحلة نشطة الآن 🚚" : (isOnline ? "جاهز لاستقبال شحنات جديدة" : "غير متاح حالياً")}
+                                </p>
                             </div>
-                        )}
-                    </div>
 
-                    {stats?.totalEarnings > 0 ? (
-                        <>
-                            <p className="text-sm font-bold opacity-70 mb-1">إجمالي الأرباح</p>
-                            <div className="flex items-baseline gap-2">
-                                <h2 className="text-4xl font-black">
-                                    {stats.totalEarnings.toLocaleString()}
-                                </h2>
-                                <span className="text-lg font-bold opacity-60">EGP</span>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="space-y-1">
-                            <p className="text-xl font-black mb-1">ابدأ رحلتك الأولى الآن!</p>
-                            <p className="text-xs font-bold opacity-60">عروضك المقبولة ستظهر أرباحها هنا مباشرة.</p>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-
-            {/* Available Shipments Section */}
-            <div>
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-
-                        <h3 className="text-xl font-black text-slate-900 tracking-tight"> أحدث الشحنات المتاحة</h3>
-                    </div>
-                    <Button variant="ghost" size="sm" className="text-brand-primary font-black hover:bg-brand-primary/5 px-4 rounded-xl transition-all" onClick={() => navigate('/driver/available')}>
-                        عرض الكل
-                        <ChevronLeft className="h-4 w-4 mr-1" />
-                    </Button>
-                </div>
-
-                <div className="space-y-6">
-                    {availableShipments.length > 0 ? (
-                        availableShipments.filter(s => String(s.id) !== String(activeTrip?.id)).map((s, i) => {
-                            // Check if I have a bid in the API data or local store
-                            const apiBid = s.bids && s.bids.length > 0 ? s.bids[0] : null;
-                            const localOffer = (offers || []).find(o => String(o.shipmentId) === String(s.id) && String(o.driverId) === String(user?.id || 'doc-driver-id'));
-
-                            const hasBid = apiBid || localOffer;
-                            const displayPrice = apiBid ? (apiBid.negotiatedAmount || apiBid.amount) : localOffer?.price;
-                            const displayTime = apiBid ? apiBid.estimatedTime : (localOffer?.expectedTime || localOffer?.estimatedTime);
-
-                            return (
-                                <div
-                                    key={s.id}
-                                    onClick={() => navigate(`/driver/available/${s.id}`)}
+                            {/* Status Toggle (Left Aligned) */}
+                            <div className="flex flex-col items-center gap-1.5 bg-slate-50 p-2 rounded-2xl border border-slate-100/50">
+                                <button
+                                    onClick={() => setIsOnline(!isOnline)}
                                     className={cn(
-                                        "group relative bg-white dark:bg-slate-900 rounded-3xl p-5 border transition-all duration-300 cursor-pointer overflow-hidden flex items-center gap-5",
-                                        hasBid
-                                            ? "border-[#009966] bg-[#009966]/5 shadow-lg shadow-[#009966]/5"
-                                            : "border-slate-100 dark:border-slate-800 hover:border-brand-primary/30 hover:shadow-xl hover:shadow-brand-primary/5"
+                                        "w-10 h-5.5 rounded-full p-0.5 transition-all duration-500 relative flex items-center shadow-inner",
+                                        isOnline ? "bg-[#009966]" : "bg-slate-300"
                                     )}
                                 >
-                                    {/* Left Accent Bar */}
-                                    <div className={cn(
-                                        "absolute right-0 top-0 bottom-0 w-1.5",
-                                        hasBid ? "bg-[#009966]" : "bg-brand-primary opacity-20 group-hover:opacity-100 transition-opacity"
-                                    )}></div>
-
-                                    {/* Goods Icon */}
-                                    <div className={cn(
-                                        "h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-colors",
-                                        hasBid
-                                            ? "bg-[#009966] text-white"
-                                            : "bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-brand-primary/10 group-hover:text-brand-primary"
-                                    )}>
-                                        <Package className="h-6 w-6" />
-                                    </div>
-
-                                    {/* Main Info */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <h4 className={cn(
-                                                "font-black text-sm truncate",
-                                                hasBid ? "text-[#009966]" : "text-slate-900 dark:text-white"
-                                            )}>
-                                                {getGoodsTypeLabel(s.goodsType)}
-                                            </h4>
-                                            {hasBid && (
-                                                <span className="text-[8px] font-black bg-[#009966] text-white px-2 py-0.5 rounded-full uppercase">تم المزايدة</span>
-                                            )}
-                                        </div>
-                                        <div className="flex items-center gap-3 text-[10px] font-bold text-slate-400">
-                                            <div className="flex items-center gap-1">
-                                                <MapPin className={cn("h-3 w-3", hasBid ? "text-[#009966]/60" : "text-emerald-500")} />
-                                                <span>من {s.pickupCity}</span>
-                                            </div>
-                                            <ArrowRightLeft className="h-3 w-3 opacity-30" />
-                                            <div className="flex items-center gap-1">
-                                                <MapPin className="h-3 w-3 text-red-500" />
-                                                <span>إلى {s.destinationCity}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Right Action/Price */}
-                                    <div className="text-left shrink-0">
-                                        <p className="text-[10px] font-black text-slate-400 mb-0.5 uppercase tracking-tighter">
-                                            {hasBid ? (apiBid?.negotiatedAmount ? 'عرض السعر الجديد' : 'عرضك / الوقت') : 'الوزن'}
-                                        </p>
-                                        <p className={cn(
-                                            "text-xs font-black",
-                                            hasBid ? "text-[#009966]" : "text-brand-primary"
-                                        )}>
-                                            {hasBid ? (
-                                                <>
-                                                    {apiBid?.negotiatedAmount ? (
-                                                        <span className="flex flex-col items-end">
-                                                            <span className="text-[10px] line-through opacity-40 -mb-1">{apiBid.amount}</span>
-                                                            <span>{apiBid.negotiatedAmount} ج.م</span>
-                                                        </span>
-                                                    ) : (
-                                                        <>{displayPrice} ج.م</>
-                                                    )}
-                                                    <span className="mx-1 text-[8px] opacity-20">/</span>
-                                                    <span className="opacity-70 text-[9px]">{formatEstimatedTime(displayTime)}</span>
-                                                </>
-                                            ) : `${s.weight} كجم`}
-                                        </p>
-                                    </div>
-
-                                    {/* Hover Arrow */}
-                                    <div className={cn(
-                                        "h-8 w-8 rounded-full flex items-center justify-center transition-all transform group-hover:translate-x-1",
-                                        hasBid
-                                            ? "bg-[#009966] text-white"
-                                            : "bg-slate-50 dark:bg-slate-800 text-slate-300 group-hover:bg-brand-primary group-hover:text-white"
-                                    )}>
-                                        <ChevronLeft className="h-4 w-4" />
-                                    </div>
-                                </div>
-                            )
-                        })
-                    ) : (
-                        <Card className="p-12 text-center bg-white dark:bg-slate-900 rounded-[2.5rem] border-2 border-dashed border-slate-100 dark:border-slate-800 shadow-sm">
-                            <div className="h-20 w-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <Box className="h-10 w-10 text-slate-300" />
+                                    <motion.div
+                                        initial={false}
+                                        animate={{ x: isOnline ? 0 : -18 }}
+                                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                        className="h-4 w-4 bg-white rounded-full shadow-sm z-10"
+                                    />
+                                </button>
+                                <span className={cn("text-[9px] font-black uppercase tracking-tighter", isOnline ? "text-[#009966]" : "text-slate-400")}>
+                                    {isOnline ? 'متاح' : 'مغلق'}
+                                </span>
                             </div>
-                            <h4 className="text-xl font-black text-slate-900 dark:text-white mb-2">لا توجد شحنات متاحة حالياً</h4>
-                            <p className="text-sm font-bold text-slate-400 mb-8 max-w-[280px] mx-auto">ترقب ظهور شحنات جديدة في منطقتك لتقديم عروض أسعارك.</p>
-                            <Button variant="outline" className="rounded-xl font-black border-slate-200 dark:border-slate-700" onClick={fetchDashboardData}>
-                                تحديث القائمة
+                        </div>
+
+                        {/* Bottom Section: Primary Controls */}
+                        <div className="grid grid-cols-2 gap-3">
+                            <Button
+                                onClick={() => navigate('/driver/available')}
+                                className="h-14 bg-[#eb6a1d] hover:bg-[#d45a16] text-white rounded-2xl font-black text-xs shadow-lg shadow-orange-200/40 transition-all active:scale-95 flex items-center justify-center gap-2"
+                            >
+                                <Search className="h-5 w-5" /> عرض الشحنات
                             </Button>
-                        </Card>
-                    )}
+                            <Button
+                                variant="outline"
+                                onClick={() => navigate('/driver/active')}
+                                className="h-14 border-slate-100 text-slate-600 rounded-2xl font-black text-xs hover:bg-slate-50 bg-white transition-all active:scale-95 flex items-center justify-center gap-2"
+                            >
+                                <LayoutGrid className="h-5 w-5" /> الطلبات النشطة
+                            </Button>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </header>
 
-            {/* Active Trip Section */}
-            <div>
-                <h3 className="text-lg font-black text-slate-900 mb-4 flex items-center justify-between">
-                    <span>الرحلة النشطة</span>
-                    {activeTrip && <span className="text-xs text-brand-primary font-bold animate-pulse">تحديث حي</span>}
-                </h3>
-
-                {activeTrip ? (
-                    <Card className="border-r-4 border-r-brand-primary overflow-hidden">
-                        <CardContent className="p-0">
-                            {/* Trip Header Status */}
-                            <div className="bg-slate-50 p-4 border-b border-slate-100 flex justify-between items-center font-cairo">
-                                <div className="flex items-center gap-2.5">
-                                    <span className={cn(
-                                        "h-2 w-2 rounded-full animate-pulse",
-                                        getStatusStyles(activeTrip.status).dot
-                                    )} />
-                                    <span className={cn(
-                                        "text-[10px] font-black uppercase tracking-wider",
-                                        getStatusStyles(activeTrip.status).text
-                                    )}>
-                                        {activeTrip.status}
-                                    </span>
+            <main className="px-4 space-y-8 relative z-20">
+                {/* --- Earnings Card (Gamified) --- */}
+                <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                >
+                    <Card className="rounded-[2.5rem] border-none shadow-2xl shadow-slate-200/50 overflow-hidden bg-white">
+                        <CardContent className="p-8">
+                            <div className="flex justify-between items-start mb-6">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">إجمالي الأرباح</p>
+                                    <div className="flex items-baseline gap-2">
+                                        <h2 className="text-4xl font-black text-slate-900">{stats.totalEarnings.toLocaleString()}</h2>
+                                        <span className="text-xs font-bold text-slate-400">ج.م</span>
+                                    </div>
                                 </div>
-                                <span className="text-[10px] font-black text-slate-400">{activeTrip.displayId}</span>
+                                <div className="bg-emerald-50 text-[#009966] px-3 py-1.5 rounded-xl flex items-center gap-1">
+                                    <ArrowUpRight className="h-3.5 w-3.5" />
+                                    <span className="text-[10px] font-black">+{stats.monthlyGrowth}%</span>
+                                </div>
                             </div>
 
-                            <div className="p-6">
-                                <div className="flex items-start justify-between mb-8">
-                                    <div className="flex items-center gap-4">
-                                        <div className="h-14 w-14 bg-brand-primary/10 rounded-2xl flex items-center justify-center text-brand-primary shadow-inner">
-                                            <Package className="h-7 w-7" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-black text-slate-900 dark:text-white text-lg">{getGoodsTypeLabel(activeTrip.goodsType)}</h4>
-                                            <p className="text-xs text-slate-500 font-bold flex items-center gap-1.5 flex-wrap">
-                                                <span>{activeTrip.weight} كجم</span>
-                                                <span className="opacity-20 text-[10px]">•</span>
-                                                {activeTrip.bids?.[0]?.negotiatedAmount ? (
-                                                    <span className="flex items-center gap-1">
-                                                        <span className="line-through text-slate-300 text-[11px]">{activeTrip.bids[0].amount}</span>
-                                                        <span className="text-brand-primary bg-brand-primary/5 px-2 py-0.5 rounded-lg text-[11px]">سعر معدل: {activeTrip.bids[0].negotiatedAmount} ج.م</span>
-                                                    </span>
-                                                ) : (
-                                                    <span>{activeTrip.bids?.[0]?.amount || activeTrip.price || '---'} EGP</span>
-                                                )}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <Button size="sm" variant="ghost" className="h-10 w-10 p-0 rounded-xl text-slate-400 hover:bg-slate-50 underline text-[10px] font-bold" onClick={() => navigate(`/driver/available/${activeTrip.id}`)}>التفاصيل</Button>
+                            <div className="space-y-3">
+                                <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                                    <span>هدف الشهر</span>
+                                    <span className="text-slate-900">{Math.round(earningsProgress)}%</span>
                                 </div>
-
-                                {/* Main Points */}
-                                <div className="relative pb-8 mb-8 border-b border-slate-50">
-                                    <div className="absolute top-2 right-2 bottom-6 w-0.5 bg-slate-100 border-dashed border-r"></div>
-                                    <div className="space-y-8 relative">
-                                        <div className="flex items-start gap-5 mr-1">
-                                            <div className="h-3 w-3 rounded-full bg-brand-primary ring-4 ring-brand-primary/10 z-10 mt-1"></div>
-                                            <div className="flex-1 text-right">
-                                                <h5 className="text-[10px] font-black text-slate-400 mb-1 tracking-widest uppercase text-right">نقطة التحميل (العميل)</h5>
-                                                <p className="text-sm font-bold text-slate-800 mb-0.5">{activeTrip.pickupGovernorate}، {activeTrip.pickupCity}</p>
-                                                <p className="text-[10px] text-slate-500 font-medium mb-4">{activeTrip.pickupAddress}</p>
-                                                <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100/50">
-                                                    <div className="h-10 w-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400">
-                                                        <UserIcon className="h-5 w-5" />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <p className="text-xs font-black text-slate-900">{activeTrip.customerName || 'اسم العميل غير متوفر'}</p>
-                                                        <p className="text-[10px] font-bold text-slate-400">{activeTrip.customerPhone || 'رقم هاتف العميل غير متوفر'}</p>
-                                                    </div>
-                                                    <a href={`tel:${activeTrip.customerPhone}`} className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-200">
-                                                        <Phone className="h-4 w-4" />
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-start gap-5 mr-1">
-                                            <div className="h-3 w-3 rounded-full bg-red-500 ring-4 ring-red-100 z-10 mt-1"></div>
-                                            <div className="flex-1 text-right">
-                                                <h5 className="text-[10px] font-black text-slate-400 mb-1 tracking-widest uppercase text-right">نقطة التوصيل (المستلم)</h5>
-                                                <p className="text-sm font-bold text-slate-800 mb-0.5">{activeTrip.destinationGovernorate}، {activeTrip.destinationCity}</p>
-                                                <p className="text-[10px] text-slate-500 font-medium mb-3">{activeTrip.destinationAddress}</p>
-                                                <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100/50">
-                                                    <div className="h-10 w-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400">
-                                                        <UserIcon className="h-5 w-5" />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <p className="text-xs font-black text-slate-900">{activeTrip.recipientName || 'اسم المستلم غير متوفر'}</p>
-                                                        <p className="text-[10px] font-bold text-slate-400">{activeTrip.recipientPhone || 'رقم هاتف المستلم غير متوفر'}</p>
-                                                    </div>
-                                                    <a href={`tel:${activeTrip.recipientPhone}`} className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-200">
-                                                        <Phone className="h-4 w-4" />
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${earningsProgress}%` }}
+                                        transition={{ duration: 1, ease: "easeOut" }}
+                                        className="h-full bg-gradient-to-l from-[#eb6a1d] to-[#ff9d5c] rounded-full"
+                                    />
                                 </div>
+                            </div>
 
-                                <div className="grid grid-cols-2 gap-3 mt-6">
-                                    <Button variant="outline" className="h-14 rounded-2xl gap-2 font-black border-slate-200">
-                                        <MessageSquare className="h-5 w-5 text-blue-500" />
-                                        محادثة
-                                    </Button>
-                                    {(activeTrip.status === 'delivery_in_progress' || activeTrip.status?.includes('في الطريق') || activeTrip.status?.includes('تم الاستلام') || activeTrip.status?.includes('جاري التوصيل')) ? (
-                                        <Button
-                                            onClick={() => handleCompleteDelivery(activeTrip.id)}
-                                            className="h-14 rounded-2xl gap-2 font-black bg-emerald-500 text-white shadow-lg shadow-emerald-200 hover:bg-emerald-600 transition-all animate-in zoom-in-95 duration-300"
-                                        >
-                                            <CheckCircle2 className="h-5 w-5" />
-                                            إتمام الوصول
-                                        </Button>
-                                    ) : activeTrip.status === 'delivered' || activeTrip.status === 'تم التوصيل' ? (
-                                        <div
-                                            className="h-14 rounded-2xl gap-2 font-black bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center opacity-90 animate-in fade-in duration-500"
-                                        >
-                                            <CheckCircle2 className="h-5 w-5" />
-                                            تم التوصيل
-                                        </div>
-                                    ) : (
-                                        <Button
-                                            onClick={() => handleStartNavigation(activeTrip.id)}
-                                            className="h-14 rounded-2xl gap-2 font-black bg-brand-primary shadow-lg shadow-brand-primary/20 hover:shadow-brand-primary/40 transition-all"
-                                        >
-                                            <Navigation className="h-5 w-5" />
-                                            بدء الملاحة
-                                        </Button>
-                                    )}
+                            <div className="mt-6 p-4 bg-[#14532d]/5 rounded-2xl border border-[#14532d]/10 flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-lg bg-[#14532d] text-white flex items-center justify-center">
+                                    <Star className="h-4 w-4 fill-current text-white" />
                                 </div>
+                                <p className="text-[11px] font-bold text-[#14532d] leading-relaxed">
+                                    رائع! أنت تقترب من هدفك. أنجز <span className="font-black underline">5 رحلات</span> إضافية للحصول على مكافأة.
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
+                </motion.section>
+
+                {/* --- Active Trip (Rich Details) --- */}
+                {activeTrip ? (
+                    <motion.section
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="sticky top-4 z-50 mb-8"
+                    >
+                        <Card className="rounded-[2.5rem] border-[#eb6a1d]/20 shadow-2xl shadow-orange-200/40 bg-white/95 backdrop-blur-sm overflow-hidden border-2">
+                            <div className="bg-[#eb6a1d]/10 px-6 py-3 border-b border-[#eb6a1d]/5 flex justify-between items-center">
+                                <div className="flex items-center gap-2">
+                                    <div className="h-2 w-2 rounded-full bg-[#eb6a1d] animate-ping"></div>
+                                    <span className="text-[10px] font-black text-[#eb6a1d] uppercase tracking-[0.2em]">رحلة نشطة حالياً</span>
+                                </div>
+                                <span className="text-[10px] font-black text-slate-400">{activeTrip.displayId}</span>
+                            </div>
+                            <CardContent className="p-6">
+                                <div className="space-y-6">
+                                    {/* Corrected Hyper-Horizontal Header */}
+                                    <div className="flex items-center gap-3 overflow-hidden">
+                                        <div className="h-10 w-10 rounded-xl bg-[#eb6a1d]/10 flex items-center justify-center text-[#eb6a1d] shrink-0 shadow-inner">
+                                            <Package className="h-5 w-5" />
+                                        </div>
+                                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                                            <h4 className="font-black text-slate-900 text-sm whitespace-nowrap shrink-0">{getGoodsTypeLabel(activeTrip.goodsType)}</h4>
+                                            <div className="h-4 w-px bg-slate-100 shrink-0" />
+
+                                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                {/* Customer Tag */}
+                                                <div className="flex items-center gap-1.5 shrink-0 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
+                                                    <span className="text-[8px] font-black text-slate-400 uppercase">العميل:</span>
+                                                    <a href={`tel:${activeTrip.customerPhone}`} className="text-[10px] font-black text-slate-900 hover:text-[#eb6a1d] flex items-center gap-1">
+                                                        {activeTrip.customerName || '---'}
+                                                        <span className="text-[8px] font-bold text-slate-400">({activeTrip.customerPhone || '---'})</span>
+                                                    </a>
+                                                </div>
+
+                                                <div className="h-3 w-px bg-slate-100 shrink-0" />
+
+                                                {/* Recipient Tag */}
+                                                <div className="flex items-center gap-1.5 shrink-0 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
+                                                    <span className="text-[8px] font-black text-slate-400 uppercase">المستلم:</span>
+                                                    <a href={`tel:${activeTrip.recipientPhone}`} className="text-[10px] font-black text-slate-900 hover:text-[#009966] flex items-center gap-1">
+                                                        {activeTrip.recipientName || '---'}
+                                                        <span className="text-[8px] font-bold text-slate-400">({activeTrip.recipientPhone || '---'})</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="pt-2">
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <Button variant="outline" className="h-14 rounded-2xl gap-2 font-black border-slate-100 hover:bg-slate-50">
+                                                <MessageSquare className="h-5 w-5 text-blue-500" />
+                                                محادثة
+                                            </Button>
+
+                                            {/* Dynamic Button States */}
+                                            {(() => {
+                                                if (activeTrip.status === 'delivered' || activeTrip.status === 'تم التوصيل') {
+                                                    return (
+                                                        <Button
+                                                            disabled
+                                                            className="h-14 bg-emerald-50 text-[#009966] border border-emerald-100 rounded-2xl font-black gap-2 opacity-100 cursor-default"
+                                                        >
+                                                            <CheckCircle2 className="h-5 w-5" />
+                                                            تم تسليم الشحنة بنجاح
+                                                        </Button>
+                                                    );
+                                                }
+
+                                                if (activeTrip.status === 'delivery_in_progress' || activeTrip.status === 'جاري التوصيل' || activeTrip.status?.includes('جاري')) {
+                                                    return (
+                                                        <Button
+                                                            onClick={() => handleCompleteDelivery(activeTrip.id)}
+                                                            className="h-14 bg-[#009966] text-white rounded-2xl font-black gap-2 transition-all hover:bg-[#007a52] shadow-lg shadow-emerald-200/50 active:scale-95"
+                                                        >
+                                                            <CheckCircle2 className="h-5 w-5" />
+                                                            إتمام الوصول
+                                                        </Button>
+                                                    );
+                                                }
+
+                                                return (
+                                                    <Button
+                                                        onClick={() => handleStartNavigation(activeTrip.id)}
+                                                        className="h-14 bg-slate-900 text-white rounded-2xl font-black gap-2 transition-all hover:bg-slate-800 shadow-lg shadow-slate-200 active:scale-95"
+                                                    >
+                                                        <Navigation className="h-5 w-5 text-orange-400" />
+                                                        بدء الملاحة
+                                                    </Button>
+                                                );
+                                            })()}
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </motion.section>
                 ) : (
-                    <div className="p-12 text-center bg-white rounded-[2.5rem] border-2 border-dashed border-slate-100">
-                        <div className="h-20 w-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <Truck className="h-10 w-10 text-slate-300" />
-                        </div>
-                        <h4 className="text-lg font-black text-slate-900 mb-2">لا توجد رحلة نشطة حالياً</h4>
-                        <p className="text-sm font-bold text-slate-400 mb-6">ابدأ بتقديم عروض أسعار على الشحنات المتاحة للبدء في العمل.</p>
-                        <Button onClick={() => navigate('/driver/available')} className="rounded-xl font-black bg-brand-primary px-8">عرض الشحنات المتاحة</Button>
-                    </div>
+                    <motion.section
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-8"
+                    >
+                        <Card className="rounded-[2.5rem] border-none shadow-xl shadow-slate-100 bg-white/50 backdrop-blur-sm border border-slate-50/50">
+                            <CardContent className="p-8 flex flex-col items-center text-center space-y-3">
+                                <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300">
+                                    <Truck className="h-6 w-6 opacity-50" />
+                                </div>
+                                <div className="space-y-1">
+                                    <h4 className="font-black text-slate-900 text-sm">لا توجد رحلات نشطة حالياً</h4>
+                                    <p className="text-[10px] font-bold text-slate-400">ابدأ بالبحث عن شحنات جديدة وابدأ الربح الآن 🚚</p>
+                                </div>
+                                <Button
+                                    onClick={() => navigate('/driver/available')}
+                                    variant="ghost"
+                                    className="text-[#eb6a1d] font-black text-xs hover:bg-orange-50 rounded-xl gap-2 h-10 px-6"
+                                >
+                                    عرض الشحنات المتاحة <ChevronLeft className="h-4 w-4" />
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </motion.section>
                 )}
-            </div>
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button variant="outline" className="h-24 rounded-[2rem] flex-col gap-2 border-slate-100 bg-white hover:bg-slate-50 shadow-sm" onClick={() => navigate('/driver/available')}>
-                    <div className="h-10 w-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
-                        <Clock className="h-5 w-5" />
+                {/* --- Available Shipments --- */}
+                <section className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-black text-slate-900">شحنات متاحة لك</h3>
+                        <Button variant="ghost" onClick={() => navigate('/driver/available')} className="text-[#eb6a1d] font-black text-xs hover:bg-orange-50 rounded-xl">عرض الكل</Button>
                     </div>
-                    <span className="text-sm font-bold m-0 p-0">شحنات متاحة</span>
-                </Button>
-                <Button variant="outline" className="h-24 rounded-[2rem] flex-col gap-2 border-slate-100 bg-white hover:bg-slate-50 shadow-sm" onClick={() => navigate('/driver/active')}>
-                    <div className="h-10 w-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
-                        <Truck className="h-5 w-5" />
-                    </div>
-                    <span className="text-sm font-bold m-0 p-0">سجل الرحلات</span>
-                </Button>
 
-            </div>
+                    <div className="space-y-4">
+                        <AnimatePresence>
+                            {availableShipments.length > 0 ? availableShipments.filter(s => String(s.id) !== String(activeTrip?.id)).map((s, idx) => {
+                                const apiBid = s.bids && s.bids.length > 0 ? s.bids[0] : null;
+                                const localOffer = (offers || []).find(o => String(o.shipmentId) === String(s.id) && String(o.driverId) === String(user?.id || 'doc-driver-id'));
+                                const hasBid = apiBid || localOffer;
+                                const displayPrice = apiBid ? (apiBid.negotiatedAmount || apiBid.amount) : localOffer?.price;
+
+                                return (
+                                    <motion.div
+                                        key={s.id}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: idx * 0.1 }}
+                                        onClick={() => navigate(`/driver/available/${s.id}`)}
+                                        whileHover={{ scale: 1.01, y: -2 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        className={cn(
+                                            "group relative rounded-[2rem] p-5 border transition-all cursor-pointer overflow-hidden",
+                                            hasBid
+                                                ? "border-[#009966] bg-[#009966]/5 shadow-md shadow-[#009966]/5"
+                                                : "bg-white border-slate-100 shadow-sm hover:shadow-xl hover:shadow-orange-900/5 transition-all"
+                                        )}
+                                    >
+                                        <div className="flex items-start justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className={cn(
+                                                    "h-10 w-10 rounded-xl flex items-center justify-center transition-colors",
+                                                    hasBid ? "bg-[#009966] text-white" : "bg-slate-50 text-slate-400 group-hover:bg-[#eb6a1d]/10 group-hover:text-[#eb6a1d]"
+                                                )}>
+                                                    <Package className="h-5 w-5" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-black text-sm text-slate-900">{getGoodsTypeLabel(s.goodsType)}</h4>
+                                                    <span className="text-[10px] font-bold text-slate-400">{s.weight} كجم</span>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className={cn(
+                                                    "text-lg font-black",
+                                                    hasBid ? "text-[#009966]" : "text-[#eb6a1d]"
+                                                )}>
+                                                    {hasBid ? (
+                                                        <span className="flex items-baseline gap-1 font-cairo">
+                                                            {apiBid?.negotiatedAmount ? (
+                                                                <>
+                                                                    <span className="text-[9px] line-through opacity-40 ml-1">{apiBid.amount}</span>
+                                                                    {apiBid.negotiatedAmount}
+                                                                </>
+                                                            ) : displayPrice}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="font-cairo">{s.price > 0 ? s.price : 'مزايدة'}</span>
+                                                    )}
+                                                </div>
+                                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">جنيه مصري</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-3">
+                                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[9px] sm:text-[10px] font-bold text-slate-500">
+                                                <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                                                    <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", hasBid ? "bg-[#009966]" : "bg-emerald-500")}></div>
+                                                    <span className="truncate">من {s.pickupGovernorate}، {s.pickupCity} ({s.pickupAddress || '---'})</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 min-w-0 flex-1 sm:text-right">
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-red-500 shrink-0"></div>
+                                                    <span className="truncate">إلى {s.destinationGovernorate}، {s.destinationCity} ({s.destinationAddress || '---'})</span>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </motion.div>
+                                );
+                            }) : (
+                                <Card className="p-12 text-center bg-white rounded-[2.5rem] border-2 border-dashed border-slate-100 shadow-sm">
+                                    <div className="h-20 w-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <Box className="h-10 w-10 text-slate-300" />
+                                    </div>
+                                    <h4 className="text-lg font-black text-slate-900 mb-2">لا توجد شحنات متاحة حالياً</h4>
+                                    <p className="text-sm font-bold text-slate-400 mb-6">ابدأ بتقديم عروض أسعار على الشحنات المتاحة للبدء في العمل.</p>
+                                    <Button onClick={() => navigate('/driver/available')} className="rounded-xl font-black bg-[#eb6a1d] px-8">عرض الشحنات المتاحة</Button>
+                                </Card>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </section>
+            </main>
+
         </div>
     )
 }

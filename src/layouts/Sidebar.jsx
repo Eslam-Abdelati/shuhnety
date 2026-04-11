@@ -35,7 +35,7 @@ const navigation = {
         { name: 'شحنات متاحة', href: '/driver/available', icon: FileSearch },
         { name: 'سجل رحلاتي', href: '/driver/active', icon: Truck },
         { name: 'تنبيهات الطريق', href: '/driver/alerts', icon: AlertTriangle },
-        { name: 'الأرباح', href: '/driver/earnings', icon: Wallet },
+        { name: 'التقارير', href: '/driver/reports', icon: BarChart3 },
         { name: 'الحساب', href: '/driver/profile', icon: Users },
     ],
     company: [

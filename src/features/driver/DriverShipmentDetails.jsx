@@ -205,7 +205,7 @@ export const DriverShipmentDetails = () => {
             </div>
             <h3 className="text-xl font-black text-slate-900 mb-2">تعذر الوصول للبيانات</h3>
             <p className="text-slate-500 font-bold mb-8 max-w-xs mx-auto leading-relaxed">{error || 'لم نتمكن من العثور على هذه الشحنة'}</p>
-            <Button onClick={() => navigate(-1)} className="min-w-[200px] h-14 bg-slate-900 text-white rounded-2xl font-black shadow-lg">العودة للخلف</Button>
+            <Button onClick={() => navigate(-1)} className="min-w-[200px] h-14 bg-slate-900 text-white rounded-md font-black shadow-lg">العودة للخلف</Button>
         </div>
     );
 
@@ -221,38 +221,71 @@ export const DriverShipmentDetails = () => {
     const isDelivered = rawStatus === 'delivered' || rawStatus === 'تم التوصيل';
 
     return (
-        <div className="max-w-5xl mx-auto px-4 pb-24 font-cairo" dir="rtl">
-            {/* --- Standard Simplified Header --- */}
-            <div className="pb-4 space-y-6">
-
-                <div className="flex flex-row md:flex-col gap-2">
-                    <h3 className="text-2xl font-black text-slate-900 flex items-center gap-3">
-
-                        تفاصيل الشحنة
-                    </h3>
-                    <p className="text-xs font-bold text-slate-400">{shipment.displayId}</p>
-
+        <div className="max-w-5xl mx-auto pb-8 lg:pb-10 font-cairo" dir="rtl">
+            {/* --- Standard Header --- */}
+            <div className=" pb-5">
+                <div className="flex flex-col gap-1">
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-900">تفاصيل الشحنة</h1>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-400">{getGoodsTypeLabel(shipment.goodsType)}</span>
+                        <div className="h-1 w-1 bg-slate-200 rounded-full"></div>
+                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{shipment.displayId}</span>
+                    </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Mobile-only Price Summary - Right under header */}
+            {hasMyBid && (
+                <div className="lg:hidden mb-4 p-5 rounded-md bg-emerald-50 border border-emerald-100/50 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                            <div className={cn(
+                                "h-7 w-7 rounded-lg flex items-center justify-center",
+                                myBid?.negotiatedAmount ? "bg-amber-100 text-amber-600" : "bg-emerald-100 text-emerald-600"
+                            )}>
+                                {myBid?.negotiatedAmount ? <TrendingUp className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                            </div>
+                            <h3 className={cn(
+                                "text-[10px] font-black uppercase tracking-widest",
+                                isOfferAccepted ? "text-emerald-600" : (myBid?.negotiatedAmount ? "text-amber-600" : "text-emerald-600")
+                            )}>
+                                {(isOfferAccepted && isPickupInProgress) ? 'تم قبول عرضك' : (isOfferAccepted ? 'السعر المتفق عليه' : (myBid?.negotiatedAmount ? 'عرض جديد' : 'عرضك الحالي'))}
+                            </h3>
+                        </div>
+                        <div className="flex items-center gap-1.5 opacity-40">
+                            <Clock className="h-3 w-3" />
+                            <span className="text-[10px] font-black">{formatEstimatedTime(myBid?.estimated_time || myBid?.estimatedTime)}</span>
+                        </div>
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                        <span className={cn(
+                            "text-3xl font-black",
+                            myBid?.negotiatedAmount ? "text-amber-600" : "text-slate-900"
+                        )}>{myBid?.negotiatedAmount || myBid?.amount || '---'}</span>
+                        <span className="text-sm font-bold text-slate-400">ج.م</span>
+                        {myBid?.negotiatedAmount && (
+                            <span className="ml-2 text-xs line-through text-slate-300 font-bold">{myBid.amount} ج.م</span>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* --- Main Content (Right Column) --- */}
-                <div className="lg:col-span-2 space-y-8">
-
-
+                <div className="lg:col-span-2 space-y-4">
                     {/* Path & Map Section */}
-                    <Card className="rounded-[2.5rem] border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
-                        <CardContent className="p-8">
+                    <Card className="rounded-md border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
+                        <CardContent className="p-4">
                             <div className="flex items-center gap-4 mb-10">
-                                <div className="h-8 w-8 bg-emerald-50 text-emerald-500 rounded-lg flex items-center justify-center">
+                                <div className="h-8 w-8 bg-emerald-50 text-emerald-500 rounded-md flex items-center justify-center">
                                     <MapPin className="h-5 w-5" />
                                 </div>
                                 <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">مسار الشحنة</h3>
                             </div>
 
-                            <div className="relative space-y-12 before:absolute before:right-[15px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-50 before:border-dashed before:border-r-2 before:border-slate-100">
+                            <div className="relative space-y-4 before:absolute before:right-[15px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-50 before:border-dashed before:border-r-2 before:border-slate-100">
                                 {/* Pickup Point */}
-                                <div className="relative flex items-start gap-8 mr-1">
+                                <div className="relative flex items-start gap-4 mr-1">
                                     <div className="h-7 w-7 rounded-full bg-white border-4 border-emerald-500 shadow-lg shadow-emerald-500/20 z-10 flex items-center justify-center">
                                         <div className="h-1.5 w-1.5 bg-emerald-500 rounded-full"></div>
                                     </div>
@@ -272,7 +305,7 @@ export const DriverShipmentDetails = () => {
                                 </div>
 
                                 {/* Destination Point */}
-                                <div className="relative flex items-start gap-8 mr-1">
+                                <div className="relative flex items-start gap-4 mr-1">
                                     <div className="h-7 w-7 rounded-full bg-white border-4 border-brand-primary shadow-lg shadow-brand-primary/20 z-10 flex items-center justify-center">
                                         <div className="h-1.5 w-1.5 bg-brand-primary rounded-full"></div>
                                     </div>
@@ -295,39 +328,54 @@ export const DriverShipmentDetails = () => {
                     </Card>
 
                     {/* Specifications Section */}
-                    <Card className="rounded-[2.5rem] border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] p-8">
+                    <Card className="rounded-md border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] p-4">
                         <div className="flex items-center gap-4 mb-10">
-                            <div className="h-12 w-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400">
+                            <div className="h-12 w-12 bg-slate-50 dark:bg-slate-800 rounded-md flex items-center justify-center text-slate-400">
                                 <Box className="h-6 w-6" />
                             </div>
                             <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">مواصفات الشحنة</h3>
                         </div>
 
-                        <div className="p-0 space-y-8 mb-10">
-                            {/* Row 1: Core Info */}
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                        <div className="p-0 space-y-6 mb-6">
+                            {/* Row 1: Core Info + Image */}
+                            <div className="grid grid-cols-3 md:grid-cols-4 gap-4 items-start">
+                                {(shipment.shipment_image || shipment.shipmentImage) && (
+                                    <div className="space-y-1">
+                                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">الصورة</p>
+                                        <div
+                                            onClick={() => window.open(shipment.shipment_image || shipment.shipmentImage, '_blank')}
+                                            className="h-14 w-14 rounded-md overflow-hidden border-2 border-slate-50 shadow-sm cursor-zoom-in active:scale-95 transition-all bg-white"
+                                        >
+                                            <img
+                                                src={shipment.shipment_image || shipment.shipmentImage}
+                                                alt="Shipment"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                                 <div className="space-y-1">
                                     <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">نوع الشحنة</p>
-                                    <span className="text-xs md:text-sm font-black text-slate-800 dark:text-white whitespace-nowrap">{getGoodsTypeLabel(shipment.goodsType)}</span>
+                                    <span className="text-[11px] md:text-sm font-black text-slate-800 dark:text-white truncate block">{getGoodsTypeLabel(shipment.goodsType)}</span>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">الوزن</p>
-                                    <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
-                                        <Weight className="h-3.5 w-3.5 text-brand-primary" />
+                                    <div className="flex items-center gap-1.5 text-[11px] md:text-sm font-black text-slate-800 dark:text-white">
+                                        <Weight className="h-3.5 w-3.5 text-brand-primary shrink-0" />
                                         <span className="whitespace-nowrap">{formatDimension(shipment.weight)} كجم</span>
                                     </div>
                                 </div>
-                                <div className="space-y-1">
+                                <div className="hidden md:block space-y-1">
                                     <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">تاريخ النشر</p>
-                                    <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
-                                        <Calendar className="h-3.5 w-3.5 text-brand-primary" />
-                                        <span className="whitespace-nowrap">{shipment.createdAt ? format(new Date(shipment.createdAt), 'dd MMMM yyyy', { locale: ar }) : '---'}</span>
+                                    <div className="flex items-center gap-1.5 text-[11px] md:text-sm font-black text-slate-800 dark:text-white">
+                                        <Calendar className="h-3.5 w-3.5 text-brand-primary shrink-0" />
+                                        <span className="whitespace-nowrap">{shipment.createdAt ? format(new Date(shipment.createdAt), 'dd MMMM', { locale: ar }) : '---'}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Row 2: Dimensions & Others */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50 dark:border-slate-800/50">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 pt-4 border-t border-slate-50 dark:border-slate-800/50">
                                 {(shipment.length || shipment.width || shipment.height || shipment.dimensions?.length || shipment.dimensions?.width || shipment.dimensions?.height) && (
                                     <div className="space-y-1">
                                         <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">الأبعاد (سم)</p>
@@ -346,12 +394,19 @@ export const DriverShipmentDetails = () => {
                                         <span className="whitespace-nowrap">{shipment.truckType || 'أي نوع متوفر'}</span>
                                     </div>
                                 </div>
+                                <div className="md:hidden space-y-1">
+                                    <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">تاريخ النشر</p>
+                                    <div className="flex items-center gap-1.5 text-xs md:text-sm font-black text-slate-800 dark:text-white">
+                                        <Calendar className="h-3.5 w-3.5 text-brand-primary shrink-0" />
+                                        <span className="whitespace-nowrap">{shipment.createdAt ? format(new Date(shipment.createdAt), 'dd MMMM', { locale: ar }) : '---'}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div className="space-y-6">
                             {shipment.description && (
-                                <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800/50 rounded-[2rem] flex items-start gap-4">
+                                <div className="p-4 bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800/50 rounded-md flex items-start gap-4">
                                     <Info className="h-5 w-5 text-slate-400 mt-1 shrink-0" />
                                     <div className="space-y-1">
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">وصف وتفاصيل الحمولة</span>
@@ -361,32 +416,11 @@ export const DriverShipmentDetails = () => {
                             )}
 
                             {shipment.note && shipment.note !== "لا يوجد ملاحظات" && (
-                                <div className="p-6 bg-brand-primary/5 border border-brand-primary/10 rounded-[2rem] flex items-start gap-4">
+                                <div className="p-4 bg-brand-primary/5 border border-brand-primary/10 rounded-md flex items-start gap-4">
                                     <AlertCircle className="h-5 w-5 text-brand-primary mt-1 shrink-0" />
                                     <div className="space-y-1">
                                         <span className="text-[10px] font-black text-brand-primary uppercase tracking-widest">ملاحظات إضافية وهامة</span>
                                         <p className="text-sm font-bold text-slate-700 dark:text-slate-300 leading-relaxed">{shipment.note}</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {(shipment.shipment_image || shipment.shipmentImage) && (
-                                <div className="space-y-3">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">صورة الشحنة</span>
-                                    <div className="relative rounded-[2rem] overflow-hidden border border-slate-100 dark:border-slate-800 group/img bg-slate-50 dark:bg-slate-900/50">
-                                        <img
-                                            src={shipment.shipment_image || shipment.shipmentImage}
-                                            alt="Shipment"
-                                            className="w-full h-auto max-h-[500px] object-contain transition-transform duration-700 group-hover/img:scale-105"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                                            <button
-                                                onClick={() => window.open(shipment.shipment_image || shipment.shipmentImage, '_blank')}
-                                                className="bg-white text-slate-900 px-6 py-3 rounded-2xl text-xs font-black shadow-2xl active:scale-95 transition-transform"
-                                            >
-                                                عرض الصورة بالكامل
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -395,37 +429,37 @@ export const DriverShipmentDetails = () => {
                 </div>
 
                 {/* --- Sidebar (Left Column) --- */}
-                <div className="space-y-8">
+                <div className="space-y-4">
 
                     {/* Contacts Section (Conditional) */}
-                    <Card className="rounded-[2.5rem] border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] p-6">
+                    <Card className="rounded-md border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] p-6">
                         <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center mb-6">بيانات التواصل</h4>
 
                         {(shipment.driver_id === user?.id || shipment.driverId === user?.id) ? (
                             <div className="space-y-6">
-                                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-md">
                                     <div>
                                         <p className="text-[9px] font-black text-slate-400 mb-1 uppercase">العميل</p>
                                         <p className="text-sm font-black text-slate-900">{shipment.customerName}</p>
                                         <p className="text-xs font-bold text-slate-500">{shipment.customerPhone}</p>
                                     </div>
-                                    <button onClick={() => window.open(`tel:${shipment.customerPhone}`)} className="h-10 w-10 bg-emerald-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 active:scale-90 transition-transform">
+                                    <button onClick={() => window.open(`tel:${shipment.customerPhone}`)} className="h-10 w-10 bg-emerald-500 text-white rounded-md flex items-center justify-center shadow-lg shadow-emerald-500/20 active:scale-90 transition-transform">
                                         <Phone className="h-5 w-5" />
                                     </button>
                                 </div>
-                                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-md">
                                     <div>
                                         <p className="text-[9px] font-black text-slate-400 mb-1 uppercase">المستلم</p>
                                         <p className="text-sm font-black text-slate-900">{shipment.recipientName}</p>
                                         <p className="text-xs font-bold text-slate-500">{shipment.recipientPhone}</p>
                                     </div>
-                                    <button onClick={() => window.open(`tel:${shipment.recipientPhone}`)} className="h-10 w-10 bg-blue-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 active:scale-90 transition-transform">
+                                    <button onClick={() => window.open(`tel:${shipment.recipientPhone}`)} className="h-10 w-10 bg-blue-500 text-white rounded-md flex items-center justify-center shadow-lg shadow-blue-500/20 active:scale-90 transition-transform">
                                         <Phone className="h-5 w-5" />
                                     </button>
                                 </div>
                             </div>
                         ) : (
-                            <div className="p-8 bg-amber-50/50 border border-amber-100/50 rounded-[2rem] text-center space-y-3">
+                            <div className="p-8 bg-amber-50/50 border border-amber-100/50 rounded-md text-center space-y-3">
                                 <div className="h-12 w-12 bg-amber-500/10 text-amber-600 rounded-full flex items-center justify-center mx-auto">
                                     <Lock className="h-6 w-6" />
                                 </div>
@@ -436,10 +470,10 @@ export const DriverShipmentDetails = () => {
                         )}
                     </Card>
 
-                    {/* Actions Section - Pure Logic-Driven UI with API linkage */}
-                    <div className="space-y-4 pt-4">
+                    {/* Actions Section - Modified for Sticky Mobile UX */}
+                    <div className="fixed bottom-0 left-0 right-0 lg:static bg-white/95 dark:bg-slate-900/95 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none border-t lg:border-none border-slate-100 dark:border-slate-800 p-4 lg:p-0 z-[100] lg:z-auto shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)] lg:shadow-none transition-all duration-300">
                         {updating ? (
-                            <div className="flex flex-col items-center justify-center p-8 bg-white/50 rounded-2xl border-2 border-dashed border-slate-100">
+                            <div className="flex flex-col items-center justify-center p-8 bg-white/50 rounded-md border-2 border-dashed border-slate-100">
                                 <Loader2 className="h-10 w-10 text-brand-primary animate-spin" />
                                 <p className="text-[10px] font-black text-slate-400 mt-3 uppercase tracking-widest">جاري التنفيذ...</p>
                             </div>
@@ -448,7 +482,7 @@ export const DriverShipmentDetails = () => {
                                 {/* Persistent Offer Summary once bid exists */}
                                 {hasMyBid && (
                                     <div className={cn(
-                                        "p-5 rounded-3xl border-none transition-all duration-300",
+                                        "hidden lg:block p-5 rounded-md border-none transition-all duration-300",
                                         isOfferAccepted ? "bg-emerald-50" : (myBid?.negotiatedAmount ? "bg-amber-50" : "bg-emerald-50/50")
                                     )}>
                                         <div className="flex items-center justify-between mb-4">
@@ -492,7 +526,7 @@ export const DriverShipmentDetails = () => {
                                                     <div className="flex items-center gap-2 w-full">
                                                         <Button
                                                             onClick={handleAcceptNegotiatedPrice}
-                                                            className="flex-1 h-12 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-200 transition-all border-none"
+                                                            className="flex-1 h-12 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md font-bold text-xs shadow-md shadow-emerald-200 transition-all border-none"
                                                         >
                                                             <CheckCircle2 className="ml-1.5 h-3.5 w-3.5" /> قبول العرض
                                                         </Button>
@@ -502,13 +536,13 @@ export const DriverShipmentDetails = () => {
                                                                 setShowNegotiateInput(true);
                                                             }}
                                                             variant="outline"
-                                                            className="flex-1 h-12 text-amber-600 border-amber-500 hover:bg-amber-50 rounded-xl font-bold text-xs transition-all"
+                                                            className="flex-1 h-12 text-amber-600 border-amber-500 hover:bg-amber-50 rounded-md font-bold text-xs transition-all"
                                                         >
                                                             تفاوض مرة أخرى
                                                         </Button>
                                                     </div>
                                                 ) : (
-                                                    <div className="space-y-3 p-4 bg-amber-50/50 rounded-2xl border border-amber-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                    <div className="space-y-3 p-4 bg-amber-50/50 rounded-md border border-amber-100 animate-in fade-in slide-in-from-top-2 duration-300">
                                                         <div className="space-y-1.5">
                                                             <label className="text-[10px] font-black text-amber-600 uppercase pr-1">سعرك الجديد</label>
                                                             <div className="relative">
@@ -517,7 +551,7 @@ export const DriverShipmentDetails = () => {
                                                                     value={negotiateAmount}
                                                                     autoFocus
                                                                     onChange={(e) => setNegotiateAmount(e.target.value)}
-                                                                    className="w-full h-11 bg-white border-2 border-amber-100 focus:border-amber-500 rounded-xl px-4 text-sm font-black transition-all outline-none"
+                                                                    className="w-full h-11 bg-white border-2 border-amber-100 focus:border-amber-500 rounded-md px-4 text-sm font-black transition-all outline-none"
                                                                     placeholder="0.00"
                                                                 />
                                                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">ج.م</span>
@@ -527,7 +561,7 @@ export const DriverShipmentDetails = () => {
                                                             <Button
                                                                 onClick={handleNegotiateSubmit}
                                                                 disabled={updating}
-                                                                className="flex-1 h-10 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-md shadow-amber-200"
+                                                                className="flex-1 h-10 bg-amber-500 hover:bg-amber-600 text-white rounded-md font-bold text-xs shadow-md shadow-amber-200"
                                                             >
                                                                 {updating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'تأكيد العرض'}
                                                             </Button>
@@ -537,7 +571,7 @@ export const DriverShipmentDetails = () => {
                                                                     setNegotiateAmount('');
                                                                 }}
                                                                 variant="ghost"
-                                                                className="h-10 px-3 text-slate-400 font-bold text-[10px] hover:bg-slate-100 rounded-xl"
+                                                                className="h-10 px-3 text-slate-400 font-bold text-[10px] hover:bg-slate-100 rounded-md"
                                                             >
                                                                 إلغاء
                                                             </Button>
@@ -549,7 +583,7 @@ export const DriverShipmentDetails = () => {
                                             <Button
                                                 onClick={handleStartNavigation}
                                                 disabled={updating}
-                                                className="w-full h-14 bg-slate-900 text-white rounded-2xl font-black text-base shadow-lg hover:bg-slate-800 transition-all border-none flex items-center justify-center gap-2"
+                                                className="w-full h-14 bg-slate-900 text-white rounded-md font-black text-base shadow-lg hover:bg-slate-800 transition-all border-none flex items-center justify-center gap-2"
                                             >
                                                 {updating ? <Loader2 className="h-5 w-5 animate-spin" /> : (
                                                     <><Navigation className="h-5 w-5" /> بدأ الملاحة</>
@@ -559,19 +593,19 @@ export const DriverShipmentDetails = () => {
                                             <Button
                                                 onClick={handleCompleteDelivery}
                                                 disabled={updating}
-                                                className="w-full h-14 bg-emerald-600 text-white rounded-2xl font-black text-base shadow-lg hover:bg-emerald-700 transition-all border-none flex items-center justify-center gap-2"
+                                                className="w-full h-14 bg-emerald-600 text-white rounded-md font-black text-base shadow-lg hover:bg-emerald-700 transition-all border-none flex items-center justify-center gap-2"
                                             >
                                                 {updating ? <Loader2 className="h-5 w-5 animate-spin" /> : (
                                                     <><CheckCircle2 className="h-5 w-5" /> إتمام الوصول</>
                                                 )}
                                             </Button>
                                         ) : isDelivered ? (
-                                            <div className="w-full h-14 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center gap-2 font-black text-sm shadow-sm transition-all duration-300">
+                                            <div className="w-full h-14 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-md flex items-center justify-center gap-2 font-black text-sm shadow-sm transition-all duration-300">
                                                 <ShieldCheck className="h-5 w-5" />
                                                 تم تسليم الشحنة بنجاح
                                             </div>
                                         ) : (
-                                            <div className="w-full h-14 bg-emerald-50/50 text-emerald-600 border border-emerald-100 rounded-2xl flex items-center justify-center gap-2 font-black text-sm shadow-sm transition-all duration-300">
+                                            <div className="w-full h-14 bg-emerald-50/50 text-emerald-600 border border-emerald-100 rounded-md flex items-center justify-center gap-2 font-black text-sm shadow-sm transition-all duration-300">
                                                 <CheckCircle2 className="h-5 w-5" />
                                                 {isOfferAccepted ? 'تم قبول عرضك' : 'تم تقديم عرضك'}
                                             </div>
@@ -580,7 +614,7 @@ export const DriverShipmentDetails = () => {
                                 ) : (
                                     <Button
                                         onClick={() => setShowBidModal(true)}
-                                        className="w-full h-14 bg-brand-primary text-white rounded-2xl font-black text-base shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all border-none"
+                                        className="w-full h-14 bg-brand-primary text-white rounded-md font-black text-base shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all border-none"
                                     >
                                         تقديم عرض
                                     </Button>
@@ -594,12 +628,12 @@ export const DriverShipmentDetails = () => {
 
             <Dialog open={showBidModal} onOpenChange={setShowBidModal}>
                 <DialogContent
-                    className="w-[92%] sm:max-w-[440px] rounded-[2.5rem] p-0 overflow-hidden font-cairo shadow-2xl border-none bg-white [&>button]:right-auto [&>button]:left-4"
+                    className="w-[92%] sm:max-w-[440px] rounded-md p-0 overflow-hidden font-cairo shadow-2xl border-none bg-white [&>button]:right-auto [&>button]:left-4"
                     dir="rtl"
                 >
                     <div className="p-7 pb-3 bg-slate-50/50">
                         <div className="flex items-center gap-4">
-                            <div className="h-10 w-10 bg-brand-primary/10 text-brand-primary rounded-xl flex items-center justify-center">
+                            <div className="h-10 w-10 bg-brand-primary/10 text-brand-primary rounded-md flex items-center justify-center">
                                 <Clock className="h-5 w-5" />
                             </div>
                             <DialogTitle className="text-xl font-black text-slate-900">تقديم عرض سعر</DialogTitle>
@@ -625,7 +659,7 @@ export const DriverShipmentDetails = () => {
                                     if (bidErrors.amount) setBidErrors({ ...bidErrors, amount: null });
                                 }}
                                 className={cn(
-                                    "w-full h-12 bg-white border-2 rounded-xl px-5 text-lg font-black transition-all outline-none",
+                                    "w-full h-12 bg-white border-2 rounded-md px-5 text-lg font-black transition-all outline-none",
                                     bidErrors.amount ? "border-red-500 focus:border-red-500" : "border-slate-100 focus:border-brand-primary"
                                 )}
                                 placeholder="0.00"
@@ -655,7 +689,7 @@ export const DriverShipmentDetails = () => {
                                                 if (bidErrors.time) setBidErrors({ ...bidErrors, time: null });
                                             }}
                                             className={cn(
-                                                "w-full h-10 bg-white border-2 rounded-xl px-2 text-center font-black text-slate-700 outline-none transition-all",
+                                                "w-full h-10 bg-white border-2 rounded-md px-2 text-center font-black text-slate-700 outline-none transition-all",
                                                 bidErrors.time ? "border-red-500 focus:border-red-500" : "border-slate-100 focus:border-brand-primary"
                                             )}
                                             placeholder="0"
@@ -673,7 +707,7 @@ export const DriverShipmentDetails = () => {
                             <textarea
                                 value={bidForm.note || ''}
                                 onChange={(e) => setBidForm({ ...bidForm, note: e.target.value })}
-                                className="w-full h-24 bg-white border-2 border-slate-100 focus:border-brand-primary rounded-xl px-5 py-3 font-bold text-xs transition-all outline-none resize-none"
+                                className="w-full h-24 bg-white border-2 border-slate-100 focus:border-brand-primary rounded-md px-5 py-3 font-bold text-xs transition-all outline-none resize-none"
                                 placeholder="أي ملاحظات إضافية للعميل..."
                             />
                         </div>
@@ -682,7 +716,7 @@ export const DriverShipmentDetails = () => {
                             <Button
                                 type="submit"
                                 disabled={submittingBid}
-                                className="flex-1 h-12 bg-brand-primary text-white rounded-xl font-black text-sm shadow-lg shadow-brand-primary/10 transition-all border-none"
+                                className="flex-1 h-12 bg-brand-primary text-white rounded-md font-black text-sm shadow-lg shadow-brand-primary/10 transition-all border-none"
                             >
                                 {submittingBid ? <Loader2 className="h-4 w-4 animate-spin text-white" /> : 'تقديم العرض'}
                             </Button>
@@ -690,7 +724,7 @@ export const DriverShipmentDetails = () => {
                                 type="button"
                                 variant="ghost"
                                 onClick={() => setShowBidModal(false)}
-                                className="flex-1 h-12 text-slate-400 font-bold hover:bg-slate-50 rounded-xl transition-all text-sm"
+                                className="flex-1 h-12 text-slate-400 font-bold hover:bg-slate-50 rounded-md transition-all text-sm"
                             >
                                 إلغاء
                             </Button>

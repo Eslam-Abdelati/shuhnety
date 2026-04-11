@@ -250,7 +250,16 @@ export const Topbar = () => {
                             </div>
                             <div className="relative">
                                 <div className="h-10 w-10 bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center text-brand-primary dark:text-brand-primary group-hover:border-brand-primary shadow-sm overflow-hidden text-sm font-bold transition-all">
-                                    {user?.full_name?.charAt(0) || <User className="h-5 w-5" />}
+                                    {(user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar || user?.image) ? (
+                                        <img 
+                                            src={user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar || user?.image} 
+                                            alt={user?.full_name} 
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => { e.target.onerror = null; e.target.src = ''; e.target.parentElement.innerHTML = user?.full_name?.charAt(0) || '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>'; }}
+                                        />
+                                    ) : (
+                                        user?.full_name?.charAt(0) || <User className="h-5 w-5" />
+                                    )}
                                 </div>
                                 <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
                             </div>
@@ -266,8 +275,12 @@ export const Topbar = () => {
                                 >
                                     <div className="p-6 border-b border-slate-50 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
                                         <div className="flex items-center gap-4 mb-4">
-                                            <div className="h-12 w-12 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl flex items-center justify-center font-black text-brand-primary shadow-sm">
-                                                {user?.full_name?.charAt(0) || 'U'}
+                                            <div className="h-12 w-12 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl flex items-center justify-center font-black text-brand-primary shadow-sm overflow-hidden">
+                                                {(user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar || user?.image) ? (
+                                                    <img src={user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar || user?.image} alt={user?.full_name} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    user?.full_name?.charAt(0) || 'U'
+                                                )}
                                             </div>
                                             <div className="min-w-0">
                                                 <h5 className="font-black text-slate-900 dark:text-white text-sm leading-none mb-1.5 truncate max-w-[140px]">{user?.full_name || 'المستخدم'}</h5>

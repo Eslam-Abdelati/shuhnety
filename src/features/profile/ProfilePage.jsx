@@ -46,20 +46,19 @@ export const ProfilePage = () => {
     };
 
     return (
-        <div className="min-h-screen font-cairo text-right py-6 md:py-10" dir="rtl">
+        <div className="font-cairo text-right" dir="rtl">
             <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="max-w-6xl mx-auto px-4"
+                className="max-w-6xl mx-auto"
             >
                 {/* Main Page Title */}
-                <div className="mb-8 pr-2">
+                <div className="mb-6">
                     <h1 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-3">
-                        <div className="h-2 w-8 bg-brand-primary rounded-full"></div>
                         الصفحة الشخصية
                     </h1>
-                    <p className="text-sm font-bold text-slate-400 mt-1 mr-11">إدارة معلوماتك الشخصية وتفضيلات الحساب</p>
+                    <p className="text-sm font-bold text-slate-400 mt-1">إدارة معلوماتك الشخصية وتفضيلات الحساب</p>
                 </div>
 
                 {/* Modern Unified Profile Container */}
@@ -315,7 +314,7 @@ export const ProfilePage = () => {
                                                     <span className="text-[11px] font-black text-brand-primary">٧٠٪ - جيد جداً</span>
                                                 </div>
                                                 <div className="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                                    <motion.div 
+                                                    <motion.div
                                                         initial={{ width: 0 }}
                                                         animate={{ width: '70%' }}
                                                         transition={{ duration: 1, ease: "easeOut" }}

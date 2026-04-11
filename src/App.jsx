@@ -21,6 +21,7 @@ import { DriverDashboard } from './features/driver/DriverDashboard'
 import { AvailableShipments } from './features/driver/AvailableShipments'
 import { DriverShipmentDetails } from './features/driver/DriverShipmentDetails'
 import { ActiveShipments } from './features/driver/ActiveShipments'
+import { DriverReports } from './features/driver/DriverReports'
 import { FleetManagement } from './features/fleet/FleetManagement'
 import { GovDashboard } from './features/governorate/GovDashboard'
 import { AdminDashboard } from './features/admin/AdminDashboard'
@@ -146,7 +147,7 @@ function App() {
                                                     <Route path="/available/:id" element={<DriverShipmentDetails />} />
                                                     <Route path="/active" element={<ActiveShipments />} />
                                                     <Route path="/alerts" element={<RoadAlerts />} />
-                                                    <Route path="/earnings" element={<Placeholder title="الأرباح والمدفوعات" />} />
+                                                    <Route path="/reports" element={<DriverReports />} />
                                                     <Route path="/profile" element={<ProfilePage />} />
                                                     <Route path="*" element={<Placeholder title="قيد التطوير" />} />
 

@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { useShipmentStore } from '@/store/useShipmentStore'
-import { useOfferStore } from '@/store/useOfferStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { ar } from 'date-fns/locale'
 import { useState, useEffect, useRef } from 'react'
@@ -15,14 +14,12 @@ import DashboardStats from './components/DashboardStats'
 
 export const CustomerDashboard = () => {
     const { shipments = [], setShipments } = useShipmentStore()
-    const { offers = [] } = useOfferStore()
     const { user } = useAuthStore()
     const [isLoading, setIsLoading] = useState(false)
     const [apiStats, setApiStats] = useState({
         total: 0,
         in_progress: 0,
-        completed: 0,
-        new_bids: 0
+        completed: 0
     })
     const [apiNewBids, setApiNewBids] = useState([])
     const [apiError, setApiError] = useState(null)
@@ -63,8 +60,7 @@ export const CustomerDashboard = () => {
                 setApiStats({
                     total: statsData.totalShipments || 0,
                     in_progress: statsData.inProgressShipments || 0,
-                    completed: statsData.completedShipments || 0,
-                    new_bids: statsData.newOffers || 0
+                    completed: statsData.completedShipments || 0
                 })
             }
 
@@ -99,9 +95,6 @@ export const CustomerDashboard = () => {
         };
     }, []);
 
-    // الحصول على العروض النشطة (في انتظار الرد أو عروض مقابلة)
-    const activeOffers = (offers || []).filter(o => o.status === 'pending' || o.status === 'counter_offered')
-    const recentOffers = activeOffers.slice(0, 3)
     return (
         <div className="space-y-10 font-cairo">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative">
@@ -109,21 +102,12 @@ export const CustomerDashboard = () => {
 
                 <div className="relative z-10">
                     <h1 className="text-2xl sm:text-3xl xl:text-[36px] font-black text-[#1c1919] dark:text-white tracking-tight mb-2">
-                        لوحة التحكم
-                    </h1>
-
-                    <p className="text-sm sm:text-base text-[#57534d] dark:text-slate-400 font-medium flex flex-wrap items-center gap-2">
-
-                        <span>
-                            مرحبًا{" "}
-                            <span className="text-brand-primary font-semibold">
-                                {user?.full_name || "المستخدم"}
-                            </span>
+                        مرحبًا <span className="text-brand-primary font-semibold">
+                            {user?.full_name || "المستخدم"}
                         </span>
-
-                        <span className="block h-1.5 w-1.5 rounded-full bg-brand-secondary"></span>
-
-                        <span>دارة شحناتك أصبحت أسهل وأسرع من أي وقت مضى</span>
+                    </h1>
+                    <p className="text-sm sm:text-base text-[#57534d] dark:text-slate-400 font-medium flex flex-wrap items-center gap-2">
+                        <span>إدارة شحناتك أصبحت أسهل وأسرع من أي وقت مضى</span>
                     </p>
                 </div>
 
@@ -166,7 +150,7 @@ export const CustomerDashboard = () => {
                             </div>
                             <div>
                                 <h3 className="text-lg sm:text-xl font-black text-[#1c1919] dark:text-white mb-0.5 tracking-tight">أحدث الشحنات</h3>
-                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none border-r-2 border-brand-primary/30 pr-2">متابعة شحناتك النشطة</p>
+                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none pr-2">متابعة شحناتك النشطة</p>
                             </div>
                         </div>
                         <Link to="/customer/shipments" className="text-[10px] font-black text-brand-primary hover:text-brand-secondary transition-colors px-4 py-2 bg-brand-primary/5 rounded-xl border border-brand-primary/10">
@@ -193,10 +177,7 @@ export const CustomerDashboard = () => {
                                             <div>
                                                 <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2">
                                                     <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">{shipment.displayId}</span>
-                                                    <span className="hidden sm:block h-1 w-1 rounded-full bg-slate-300"></span>
-                                                    <span className="text-[9px] sm:text-[10px] font-bold text-slate-400">
-                                                        {shipment.createdAt ? new Date(shipment.createdAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' }) : '---'}
-                                                    </span>
+
                                                 </div>
                                                 <p className="text-[9px] sm:text-[10px] font-black text-brand-primary uppercase tracking-widest mt-0.5">{getGoodsTypeLabel(shipment.goodsType)}</p>
                                             </div>
@@ -214,14 +195,14 @@ export const CustomerDashboard = () => {
                                     {/* Middle Row: Route */}
                                     <div className="flex items-center gap-3 sm:gap-4 bg-slate-50/50 dark:bg-slate-800/50 p-3 sm:p-4 rounded-2xl border border-slate-100 dark:border-slate-800 relative z-10 transition-colors group-hover:bg-white dark:group-hover:bg-slate-800">
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-[8px] sm:text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">المنشأ</p>
+                                            <p className="text-[8px] sm:text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1"> نقطة الإنطلاق </p>
                                             <p className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 truncate">{shipment.pickupGovernorate}، {shipment.pickupCity}</p>
                                         </div>
                                         <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center shrink-0 shadow-sm">
                                             <ArrowLeftRight className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-slate-300 group-hover:text-brand-primary transition-colors" />
                                         </div>
                                         <div className="flex-1 min-w-0 text-left">
-                                            <p className="text-[8px] sm:text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">الوجهة</p>
+                                            <p className="text-[8px] sm:text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1"> نقطة التسليم </p>
                                             <p className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 truncate">{shipment.destinationGovernorate}، {shipment.destinationCity}</p>
                                         </div>
                                     </div>
@@ -274,7 +255,7 @@ export const CustomerDashboard = () => {
                     </div>
                 </Card>
 
-                {/* Sidebar Widget: Active Offers */}
+                {/* Sidebar Widget: Info */}
                 <div className="space-y-6 sm:space-y-10">
                     <Card className="bg-gradient-to-br from-brand-primary to-blue-900 border-none p-0.5 shadow-2xl shadow-brand-primary/30 dark:shadow-brand-primary/10 rounded-[2.5rem]">
                         <CardContent className="p-6 sm:p-8 text-white">
