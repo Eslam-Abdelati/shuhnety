@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
@@ -71,7 +71,6 @@ export const LoginPage = () => {
             // Pass RAW data to store to be saved in cookies
             login(apiData, uiRole);
 
-            await new Promise(resolve => setTimeout(resolve, 800))
             navigate(`/${uiRole === 'governorate' ? 'gov' : uiRole}`)
 
         } catch (error) {
@@ -111,8 +110,8 @@ export const LoginPage = () => {
                         </motion.div>
 
                         <div className="space-y-4">
-                            <h2 className="text-[30px] font-bold text-brand-secondary tracking-tight">منصة شحنتي الذكية</h2>
-                            <p className="text-[#57534d]  text-[16px]">إدارة احترافية للشحنات والخدمات اللوجستية</p>
+                            <h2 className="text-[30px] font-bold text-brand-secondary tracking-tight"> سيطر على شحناتك بسهولة وذكاء </h2>
+                            <p className="text-[#57534d]  text-[16px]"> آلاف شركاء النقل مستعدين لخدمتك — اختر العرض المناسب وابدأ رحلتك فورًا. </p>
 
                             <div className="pt-2 flex items-center justify-center gap-6">
                                 <span className="flex items-center gap-1.5 text-xs font-black text-brand-secondary bg-brand-secondary/5 px-3 py-1.5 rounded-full">

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -172,7 +172,7 @@ export const DriverDashboard = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
                 >
-                    <Card className="rounded-[2rem] border-none shadow-2xl shadow-slate-200/50 overflow-hidden bg-white">
+                <Card className="rounded-[2rem] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden bg-white">
                         <CardContent className="p-6 md:p-8">
                             <div className="flex justify-between items-start mb-6">
                                 <div className="space-y-1">
@@ -214,6 +214,145 @@ export const DriverDashboard = () => {
                         </CardContent>
                     </Card>
                 </motion.section>
+
+                {/* --- Trips Overview Section --- */}
+                <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15 }}
+                >
+                    <div className="flex items-center justify-between mb-4 px-1">
+                        <h3 className="text-xl font-black text-slate-900">نظرة عامة على اليوم</h3>
+                    </div>
+                    <Card className="rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 bg-white overflow-hidden">
+                        <CardContent className="p-6 space-y-4">
+                            <div className="flex items-center justify-between border-b border-slate-50 pb-3">
+                                <div className="flex items-center gap-3">
+                                   
+                                    <span className="text-sm font-bold text-slate-600">إجمالي الرحلات</span>
+                                </div>
+                                <span className="text-lg font-black text-slate-900">---</span>
+                            </div>
+                            
+                            <div className="flex items-center justify-between border-b border-slate-50 pb-3">
+                                <div className="flex items-center gap-3">
+                                    
+                                    <span className="text-sm font-bold text-slate-600"> قيد الوصول</span>
+                                </div>
+                                <span className="text-lg font-black text-slate-900">---</span>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                   
+                                    <span className="text-sm font-bold text-slate-600"> بدأ الملاحة</span>
+                                </div>
+                                <span className="text-lg font-black text-slate-900">---</span>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                   
+                                    <span className="text-sm font-bold text-slate-600">رحلات مكتملة</span>
+                                </div>
+                                <span className="text-lg font-black text-slate-900">---</span>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </motion.section>
+                {/* --- Available Shipments --- */}
+                <section className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-black text-slate-900">شحنات متاحة لك</h3>
+                        <Button variant="ghost" onClick={() => navigate('/driver/available')} className="text-[#eb6a1d] font-black text-xs hover:bg-orange-50 rounded-xl">عرض الكل</Button>
+                    </div>
+
+                    <div className="space-y-4">
+                        <AnimatePresence>
+                            {availableShipments.length > 0 ? availableShipments.filter(s => String(s.id) !== String(activeTrip?.id)).map((s, idx) => {
+                                const apiBid = s.bids && s.bids.length > 0 ? s.bids[0] : null;
+                                const localOffer = (offers || []).find(o => String(o.shipmentId) === String(s.id) && String(o.driverId) === String(user?.id || 'doc-driver-id'));
+                                const hasBid = apiBid || localOffer;
+                                const displayPrice = apiBid ? (apiBid.negotiatedAmount || apiBid.amount) : localOffer?.price;
+
+                                return (
+                                    <motion.div
+                                        key={s.id}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: idx * 0.1 }}
+                                        onClick={() => navigate(`/driver/available/${s.id}`)}
+                                        className={cn(
+                                            "group relative rounded-[2rem] p-5 border transition-all cursor-pointer overflow-hidden backdrop-blur-sm",
+                                            hasBid
+                                                ? "border-[#009966] bg-[#009966]/5 shadow-md shadow-[#009966]/5"
+                                                : "bg-white border-slate-100 shadow-sm hover:shadow-xl hover:shadow-orange-900/5 hover:bg-slate-50/50 hover:border-[#eb6a1d]/20 transition-all duration-300"
+                                        )}
+                                    >
+                                        <div className="flex items-start justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className={cn(
+                                                    "h-10 w-10 rounded-xl flex items-center justify-center transition-colors",
+                                                    hasBid ? "bg-[#009966] text-white" : "bg-slate-50 text-slate-400 group-hover:bg-[#eb6a1d]/10 group-hover:text-[#eb6a1d]"
+                                                )}>
+                                                    <Package className="h-5 w-5" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-black text-sm text-slate-900">{getGoodsTypeLabel(s.goodsType)}</h4>
+                                                    <span className="text-[10px] font-bold text-slate-400">{s.weight} كجم</span>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className={cn(
+                                                    "text-lg font-black",
+                                                    hasBid ? "text-[#009966]" : "text-[#eb6a1d]"
+                                                )}>
+                                                    {hasBid ? (
+                                                        <span className="flex items-baseline gap-1 font-cairo">
+                                                            {apiBid?.negotiatedAmount ? (
+                                                                <>
+                                                                    <span className="text-[9px] line-through opacity-40 ml-1">{apiBid.amount}</span>
+                                                                    {apiBid.negotiatedAmount}
+                                                                </>
+                                                            ) : displayPrice}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="font-cairo">{s.price > 0 ? s.price : 'مزايدة'}</span>
+                                                    )}
+                                                </div>
+                                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">جنيه مصري</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-3">
+                                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[9px] sm:text-[10px] font-bold text-slate-500">
+                                                <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                                                    <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", hasBid ? "bg-[#009966]" : "bg-emerald-500")}></div>
+                                                    <span className="truncate">من {s.pickupGovernorate}، {s.pickupCity} ({s.pickupAddress || '---'})</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 min-w-0 flex-1 sm:text-right">
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-red-500 shrink-0"></div>
+                                                    <span className="truncate">إلى {s.destinationGovernorate}، {s.destinationCity} ({s.destinationAddress || '---'})</span>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </motion.div>
+                                );
+                            }) : (
+                                <Card className="p-12 text-center bg-white rounded-[2.5rem] border border-slate-100 shadow-sm border-dashed">
+                                    <div className="h-20 w-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <Box className="h-10 w-10 text-slate-300" />
+                                    </div>
+                                    <h4 className="text-lg font-black text-slate-900 mb-2">لا توجد شحنات متاحة حالياً</h4>
+                                    <p className="text-sm font-bold text-slate-400 mb-6">ابدأ بتقديم عروض أسعار على الشحنات المتاحة للبدء في العمل.</p>
+                                    <Button onClick={() => navigate('/driver/available')} className="rounded-xl font-black bg-[#eb6a1d] px-8">عرض الشحنات المتاحة</Button>
+                                </Card>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </section>
 
                 {/* --- Active Trip (Rich Details) --- */}
                 {activeTrip ? (
@@ -321,7 +460,7 @@ export const DriverDashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="mb-8"
                     >
-                        <Card className="rounded-[2.5rem] border-none shadow-xl shadow-slate-100 bg-white/50 backdrop-blur-sm border border-slate-50/50">
+                        <Card className="rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-100 bg-white/50 backdrop-blur-sm">
                             <CardContent className="p-8 flex flex-col items-center text-center space-y-3">
                                 <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300">
                                     <Truck className="h-6 w-6 opacity-50" />
@@ -342,101 +481,7 @@ export const DriverDashboard = () => {
                     </motion.section>
                 )}
 
-                {/* --- Available Shipments --- */}
-                <section className="space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-black text-slate-900">شحنات متاحة لك</h3>
-                        <Button variant="ghost" onClick={() => navigate('/driver/available')} className="text-[#eb6a1d] font-black text-xs hover:bg-orange-50 rounded-xl">عرض الكل</Button>
-                    </div>
 
-                    <div className="space-y-4">
-                        <AnimatePresence>
-                            {availableShipments.length > 0 ? availableShipments.filter(s => String(s.id) !== String(activeTrip?.id)).map((s, idx) => {
-                                const apiBid = s.bids && s.bids.length > 0 ? s.bids[0] : null;
-                                const localOffer = (offers || []).find(o => String(o.shipmentId) === String(s.id) && String(o.driverId) === String(user?.id || 'doc-driver-id'));
-                                const hasBid = apiBid || localOffer;
-                                const displayPrice = apiBid ? (apiBid.negotiatedAmount || apiBid.amount) : localOffer?.price;
-
-                                return (
-                                    <motion.div
-                                        key={s.id}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: idx * 0.1 }}
-                                        onClick={() => navigate(`/driver/available/${s.id}`)}
-                                        whileHover={{ scale: 1.01, y: -2 }}
-                                        whileTap={{ scale: 0.98 }}
-                                        className={cn(
-                                            "group relative rounded-[2rem] p-5 border transition-all cursor-pointer overflow-hidden",
-                                            hasBid
-                                                ? "border-[#009966] bg-[#009966]/5 shadow-md shadow-[#009966]/5"
-                                                : "bg-white border-slate-100 shadow-sm hover:shadow-xl hover:shadow-orange-900/5 transition-all"
-                                        )}
-                                    >
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className={cn(
-                                                    "h-10 w-10 rounded-xl flex items-center justify-center transition-colors",
-                                                    hasBid ? "bg-[#009966] text-white" : "bg-slate-50 text-slate-400 group-hover:bg-[#eb6a1d]/10 group-hover:text-[#eb6a1d]"
-                                                )}>
-                                                    <Package className="h-5 w-5" />
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-black text-sm text-slate-900">{getGoodsTypeLabel(s.goodsType)}</h4>
-                                                    <span className="text-[10px] font-bold text-slate-400">{s.weight} كجم</span>
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <div className={cn(
-                                                    "text-lg font-black",
-                                                    hasBid ? "text-[#009966]" : "text-[#eb6a1d]"
-                                                )}>
-                                                    {hasBid ? (
-                                                        <span className="flex items-baseline gap-1 font-cairo">
-                                                            {apiBid?.negotiatedAmount ? (
-                                                                <>
-                                                                    <span className="text-[9px] line-through opacity-40 ml-1">{apiBid.amount}</span>
-                                                                    {apiBid.negotiatedAmount}
-                                                                </>
-                                                            ) : displayPrice}
-                                                        </span>
-                                                    ) : (
-                                                        <span className="font-cairo">{s.price > 0 ? s.price : 'مزايدة'}</span>
-                                                    )}
-                                                </div>
-                                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">جنيه مصري</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex flex-col gap-3">
-                                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[9px] sm:text-[10px] font-bold text-slate-500">
-                                                <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                                                    <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", hasBid ? "bg-[#009966]" : "bg-emerald-500")}></div>
-                                                    <span className="truncate">من {s.pickupGovernorate}، {s.pickupCity} ({s.pickupAddress || '---'})</span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5 min-w-0 flex-1 sm:text-right">
-                                                    <div className="h-1.5 w-1.5 rounded-full bg-red-500 shrink-0"></div>
-                                                    <span className="truncate">إلى {s.destinationGovernorate}، {s.destinationCity} ({s.destinationAddress || '---'})</span>
-                                                </div>
-                                            </div>
-
-
-                                        </div>
-                                    </motion.div>
-                                );
-                            }) : (
-                                <Card className="p-12 text-center bg-white rounded-[2.5rem] border-2 border-dashed border-slate-100 shadow-sm">
-                                    <div className="h-20 w-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                                        <Box className="h-10 w-10 text-slate-300" />
-                                    </div>
-                                    <h4 className="text-lg font-black text-slate-900 mb-2">لا توجد شحنات متاحة حالياً</h4>
-                                    <p className="text-sm font-bold text-slate-400 mb-6">ابدأ بتقديم عروض أسعار على الشحنات المتاحة للبدء في العمل.</p>
-                                    <Button onClick={() => navigate('/driver/available')} className="rounded-xl font-black bg-[#eb6a1d] px-8">عرض الشحنات المتاحة</Button>
-                                </Card>
-                            )}
-                        </AnimatePresence>
-                    </div>
-                </section>
             </div>
 
         </div>

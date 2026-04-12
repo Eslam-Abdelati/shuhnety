@@ -100,7 +100,7 @@ export const AvailableShipments = () => {
             </div>
 
             {/* Comprehensive Filters */}
-            <Card className="border-none shadow-xl shadow-slate-200/50 dark:shadow-none bg-white dark:bg-slate-900 rounded-[2rem] overflow-hidden border border-slate-100 dark:border-slate-800">
+            <Card className="shadow-xl shadow-slate-200/50 dark:shadow-none bg-white dark:bg-slate-900 rounded-[2rem] overflow-hidden border border-slate-200 dark:border-slate-800">
                 <CardContent className="p-6 md:p-8 space-y-6">
                     <div className="flex items-center gap-2 px-1">
                         <div className="h-8 w-8 bg-brand-primary/10 rounded-lg flex items-center justify-center text-brand-primary">
@@ -180,7 +180,7 @@ export const AvailableShipments = () => {
                                     "group relative bg-white dark:bg-slate-900 rounded-[2rem] border-2 transition-all duration-300 overflow-hidden",
                                     submitted 
                                         ? "border-emerald-100 dark:border-emerald-900/30 shadow-lg shadow-emerald-900/5" 
-                                        : "border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/40 hover:border-[#eb6a1d]/20 hover:shadow-orange-900/5"
+                                        : "border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/40 hover:border-[#eb6a1d]/20 hover:shadow-orange-900/5"
                                 )}
                             >
                                 <div className="p-5 md:p-6 lg:p-7">
@@ -198,7 +198,10 @@ export const AvailableShipments = () => {
                                                     {getGoodsTypeLabel(s.goodsType)}
                                                 </h4>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-[10px] font-black text-[#eb6a1d] bg-orange-50 px-1.5 py-0.5 rounded-md">{s.displayId}</span>
+                                                    <div className="flex items-center gap-1.5 px-1.5 py-0.5 bg-blue-50 dark:bg-blue-900/20 rounded-md text-[10px] font-black text-blue-600 dark:text-blue-400 border border-blue-100/50">
+                                                        <Weight className="h-3 w-3" />
+                                                        <span>{s.weight || '0'} كجم</span>
+                                                    </div>
                                                     <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400">
                                                         <Clock className="h-3 w-3" />
                                                         {s.createdAt ? formatDistanceToNow(new Date(s.createdAt), { locale: ar, addSuffix: true }) : 'الآن'}
@@ -207,12 +210,6 @@ export const AvailableShipments = () => {
                                             </div>
                                         </div>
                                         
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-[10px] font-black text-blue-600 dark:text-blue-400 border border-blue-100/50">
-                                                <Weight className="h-3 w-3" />
-                                                <span>{s.weight || '0'} كجم</span>
-                                            </div>
-                                        </div>
                                     </div>
 
                                     {/* Middle Section: Route (Visual Timeline Pattern) */}
@@ -266,25 +263,25 @@ export const AvailableShipments = () => {
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-3">
+                                        <div className="grid grid-cols-2 sm:flex sm:items-center gap-3">
                                             <button
                                                 onClick={() => navigate(`/driver/available/${s.id}`)}
-                                                className="px-4 text-[11px] font-black text-slate-400 hover:text-[#eb6a1d] transition-colors hidden md:block"
+                                                className="h-13 px-6 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl flex items-center justify-center gap-2 text-xs font-black border-2 border-slate-100 dark:border-slate-700 transition-all hover:bg-slate-50 hover:border-slate-200 active:scale-95 group/details"
                                             >
-                                                التفاصيل
+                                               التفاصيل
                                             </button>
+                                            
                                             {submitted ? (
-                                                <div className="h-13 px-8 rounded-2xl flex items-center justify-center gap-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black text-xs border border-emerald-100 dark:border-emerald-500/20">
-                                                    <CheckCircle2 className="h-4.5 w-4.5" />
-                                                    تم تقديم عرضك
+                                                <div className="h-13 px-6 rounded-2xl flex items-center justify-center gap-2 bg-emerald-500 text-white font-black text-xs shadow-lg shadow-emerald-500/20 border border-emerald-400/20">
+                                                    <CheckCircle2 className="h-4 w-4" />
+                                                    تم العرض
                                                 </div>
                                             ) : (
                                                 <button
                                                     onClick={() => navigate(`/driver/available/${s.id}`)}
-                                                    className="h-13 px-10 bg-[#eb6a1d] hover:bg-orange-600 text-white rounded-2xl flex items-center justify-center gap-2 text-xs font-black shadow-xl shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-95 group/btn"
+                                                    className="h-13 px-8 bg-gradient-to-r from-[#eb6a1d] to-[#ff8c41] hover:to-[#eb6a1d] text-white rounded-2xl flex items-center justify-center gap-3 text-xs font-black shadow-xl shadow-orange-500/30 transition-all hover:-translate-y-0.5 active:scale-95 group/bid"
                                                 >
-                                                    دخول المزاد
-                                                    <ChevronLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                                                    تقديم عرض
                                                 </button>
                                             )}
                                         </div>

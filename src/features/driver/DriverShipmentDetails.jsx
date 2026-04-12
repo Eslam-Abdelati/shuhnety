@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     MapPin, Truck, Box, Calendar, Weight, Package,
@@ -217,7 +217,7 @@ export const DriverShipmentDetails = () => {
     const isDelivered = rawStatus === 'delivered' || rawStatus === 'تم التوصيل';
 
     return (
-        <div className="max-w-5xl mx-auto pb-8 lg:pb-10 font-cairo" dir="rtl">
+        <div className="max-w-5xl mx-auto pb-24 lg:pb-10 font-cairo" dir="rtl">
             {/* --- Standard Header --- */}
             <div className=" pb-5">
                 <div className="flex flex-col gap-1">
@@ -232,7 +232,7 @@ export const DriverShipmentDetails = () => {
 
             {/* Mobile-only Price Summary - Right under header */}
             {hasMyBid && (
-                <div className="lg:hidden mb-4 p-5 rounded-md bg-emerald-50 border border-emerald-100/50 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="lg:hidden mb-4 p-5 rounded-[2rem] bg-emerald-50 border border-emerald-100/50 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
                     <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                             <div className={cn(
@@ -270,7 +270,7 @@ export const DriverShipmentDetails = () => {
                 {/* --- Main Content (Right Column) --- */}
                 <div className="lg:col-span-2 space-y-4">
                     {/* Path & Map Section */}
-                    <Card className="rounded-md border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
+                    <Card className="rounded-[2rem] border-slate-200 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
                         <CardContent className="p-4">
                             <div className="flex items-center gap-4 mb-10">
                                 <div className="h-8 w-8 bg-emerald-50 text-emerald-500 rounded-md flex items-center justify-center">
@@ -324,9 +324,9 @@ export const DriverShipmentDetails = () => {
                     </Card>
 
                     {/* Specifications Section */}
-                    <Card className="rounded-md border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] p-4">
+                    <Card className="rounded-[2rem] border-slate-200 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] p-6">
                         <div className="flex items-center gap-4 mb-10">
-                            <div className="h-12 w-12 bg-slate-50 dark:bg-slate-800 rounded-md flex items-center justify-center text-slate-400">
+                            <div className="h-12 w-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400">
                                 <Box className="h-6 w-6" />
                             </div>
                             <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">مواصفات الشحنة</h3>
@@ -402,7 +402,7 @@ export const DriverShipmentDetails = () => {
 
                         <div className="space-y-6">
                             {shipment.description && (
-                                <div className="p-4 bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800/50 rounded-md flex items-start gap-4">
+                                <div className="p-4 bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-800/50 rounded-2xl flex items-start gap-4">
                                     <Info className="h-5 w-5 text-slate-400 mt-1 shrink-0" />
                                     <div className="space-y-1">
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">وصف وتفاصيل الحمولة</span>
@@ -412,7 +412,7 @@ export const DriverShipmentDetails = () => {
                             )}
 
                             {shipment.note && shipment.note !== "لا يوجد ملاحظات" && (
-                                <div className="p-4 bg-brand-primary/5 border border-brand-primary/10 rounded-md flex items-start gap-4">
+                                <div className="p-4 bg-brand-primary/5 border border-brand-primary/10 rounded-2xl flex items-start gap-4">
                                     <AlertCircle className="h-5 w-5 text-brand-primary mt-1 shrink-0" />
                                     <div className="space-y-1">
                                         <span className="text-[10px] font-black text-brand-primary uppercase tracking-widest">ملاحظات إضافية وهامة</span>
@@ -428,10 +428,10 @@ export const DriverShipmentDetails = () => {
                 <div className="space-y-4">
 
                     {/* Contacts Section (Conditional) */}
-                    <Card className="rounded-md border-slate-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] p-6">
+                    <Card className="rounded-[2rem] border-slate-200 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.03)] p-6">
                         <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center mb-6">بيانات التواصل</h4>
 
-                        {(shipment.driver_id === user?.id || shipment.driverId === user?.id) ? (
+                        {(isOfferAccepted || shipment.driver_id === user?.id || shipment.driverId === user?.id) ? (
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between p-4 bg-slate-50 rounded-md">
                                     <div>
@@ -455,7 +455,7 @@ export const DriverShipmentDetails = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="p-8 bg-amber-50/50 border border-amber-100/50 rounded-md text-center space-y-3">
+                            <div className="p-8 bg-amber-50/50 border border-amber-100/50 rounded-[2rem] text-center space-y-3">
                                 <div className="h-12 w-12 bg-amber-500/10 text-amber-600 rounded-full flex items-center justify-center mx-auto">
                                     <Lock className="h-6 w-6" />
                                 </div>
@@ -467,7 +467,10 @@ export const DriverShipmentDetails = () => {
                     </Card>
 
                     {/* Actions Section - Modified for Sticky Mobile UX */}
-                    <div className="fixed bottom-0 left-0 right-0 lg:static bg-white/95 dark:bg-slate-900/95 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none border-t lg:border-none border-slate-100 dark:border-slate-800 p-4 lg:p-0 z-[100] lg:z-auto shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)] lg:shadow-none transition-all duration-300">
+                    <div className={cn(
+                        "fixed bottom-0 left-0 right-0 lg:static bg-white/95 dark:bg-slate-900/95 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none border-t lg:border-none border-slate-200 dark:border-slate-800 p-4 lg:p-0 z-40 lg:z-auto shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)] lg:shadow-none transition-all duration-300",
+                        showBidModal && "opacity-0 pointer-events-none lg:opacity-100 lg:pointer-events-auto"
+                    )}>
                         {updating ? (
                             <Loading section={true} text="جاري التنفيذ..." className="p-8 bg-white/50 rounded-md border-2 border-dashed border-slate-100" />
                         ) : (

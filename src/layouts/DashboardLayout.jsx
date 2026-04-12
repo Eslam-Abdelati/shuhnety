@@ -1,4 +1,4 @@
-﻿import { Sidebar } from './Sidebar'
+import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 import { useUIStore } from '@/store/useUIStore'
 import { AnimatePresence, motion } from 'framer-motion'

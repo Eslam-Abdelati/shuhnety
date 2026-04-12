@@ -1,4 +1,4 @@
-﻿import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import {
     BarChart3,
     Package,
@@ -14,7 +14,8 @@ import {
     ShieldCheck,
     AlertTriangle,
     MapPin,
-    X
+    X,
+    MessageSquare
 } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useUIStore } from '@/store/useUIStore'
@@ -28,6 +29,7 @@ const navigation = {
         { name: 'شحناتي', href: '/customer/shipments', icon: Package },
         { name: 'العروض', href: '/customer/bids', icon: FileSearch },
         { name: 'تتبع الشحنات', href: '/customer/tracking', icon: MapPin },
+        { name: 'الدعم الفني', href: '/customer/report', icon: MessageSquare },
         { name: 'الإعدادات', href: '/customer/settings', icon: Settings },
     ],
     driver: [
@@ -37,6 +39,7 @@ const navigation = {
         { name: 'تنبيهات الطريق', href: '/driver/alerts', icon: AlertTriangle },
         { name: 'التقارير', href: '/driver/reports', icon: BarChart3 },
         { name: 'الحساب', href: '/driver/profile', icon: Users },
+        { name: 'الدعم الفني', href: '/driver/report', icon: MessageSquare },
     ],
     company: [
         { name: 'الأسطول', href: '/company', icon: Truck },

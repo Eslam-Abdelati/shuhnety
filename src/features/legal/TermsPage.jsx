@@ -1,8 +1,9 @@
-﻿import { motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Shield, FileText, Scale, AlertCircle, ChevronRight, CheckCircle2, Lock, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { SimpleFooter } from '@/components/SimpleFooter'
+import { PublicNavbar } from '@/components/PublicNavbar'
 
 export const TermsPage = () => {
     const sections = [
@@ -40,6 +41,7 @@ export const TermsPage = () => {
 
     return (
         <div className="min-h-screen bg-[#fcfcf9] font-cairo text-right" dir="rtl">
+            <PublicNavbar />
             {/* Header / Hero */}
             <div className="relative bg-brand-secondary py-24 overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(235,106,29,0.15)_0%,transparent_50%)]"></div>

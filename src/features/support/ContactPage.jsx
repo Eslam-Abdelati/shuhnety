@@ -1,9 +1,10 @@
-﻿import { motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Globe, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useState } from 'react'
 import { SimpleFooter } from '@/components/SimpleFooter'
+import { PublicNavbar } from '@/components/PublicNavbar'
 
 export const ContactPage = () => {
     const [formStatus, setFormStatus] = useState(null)
@@ -32,6 +33,7 @@ export const ContactPage = () => {
 
     return (
         <div className="min-h-screen bg-[#fcfcf9] font-cairo text-right" dir="rtl">
+            <PublicNavbar />
             {/* Header Section */}
             <div className="relative bg-brand-secondary py-24 overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(235,106,29,0.15)_0%,transparent_50%)]"></div>

@@ -1,4 +1,4 @@
-﻿import { useEffect } from 'react'
+import { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { DashboardLayout } from './layouts/DashboardLayout'
@@ -38,6 +38,8 @@ import { ProfilePage } from './features/profile/ProfilePage'
 import { TermsPage } from './features/legal/TermsPage'
 import { ContactPage } from './features/support/ContactPage'
 import { FaqPage } from './features/support/FaqPage'
+import { ReportIssuePage } from './features/support/ReportIssuePage'
+import { AllReportsPage } from './features/support/AllReportsPage'
 import { SocketSync } from './components/SocketSync'
 import ScrollToTop from './components/ScrollToTop'
 
@@ -136,6 +138,8 @@ function App() {
                                                     <Route path="/bids/:id" element={<BiddingInterface />} />
                                                     <Route path="/tracking" element={<ShipmentTracking />} />
                                                     <Route path="/tracking/:id" element={<ShipmentTracking />} />
+                                                    <Route path="/report" element={<ReportIssuePage />} />
+                                                    <Route path="/reports-history" element={<AllReportsPage />} />
                                                     <Route path="/profile" element={<ProfilePage />} />
                                                     <Route path="*" element={<Placeholder title="قيد التطوير" />} />
 
@@ -148,6 +152,8 @@ function App() {
                                                     <Route path="/active" element={<ActiveShipments />} />
                                                     <Route path="/alerts" element={<RoadAlerts />} />
                                                     <Route path="/reports" element={<DriverReports />} />
+                                                    <Route path="/report" element={<ReportIssuePage />} />
+                                                    <Route path="/reports-history" element={<AllReportsPage />} />
                                                     <Route path="/profile" element={<ProfilePage />} />
                                                     <Route path="*" element={<Placeholder title="قيد التطوير" />} />
 
@@ -183,24 +189,25 @@ function App() {
                         />
                     ))}
 
-                    {/* Temporary Unprotected Admin Route */}
                     <Route
                         path="/admin/*"
                         element={
-                            <DashboardLayout>
-                                <Routes>
-                                    <Route path="/" element={<AdminDashboard />} />
-                                    <Route path="/users" element={<AdminDashboard />} />
-                                    <Route path="/verification" element={<DriverVerification />} />
-                                    <Route path="/operations" element={<PlatformManagement />} />
-                                    <Route path="/reports" element={<AdminReports />} />
-                                    <Route path="/disputes" element={<DisputeResolution />} />
-                                    <Route path="/contracts" element={<DigitalContracts />} />
-                                    <Route path="/settings" element={<SystemSettings />} />
-                                    <Route path="/profile" element={<ProfilePage />} />
-                                    <Route path="*" element={<Placeholder title="قيد التطوير" />} />
-                                </Routes>
-                            </DashboardLayout>
+                            <ProtectedRoute allowedRoles={['admin']}>
+                                <DashboardLayout>
+                                    <Routes>
+                                        <Route path="/" element={<AdminDashboard />} />
+                                        <Route path="/users" element={<AdminDashboard />} />
+                                        <Route path="/verification" element={<DriverVerification />} />
+                                        <Route path="/operations" element={<PlatformManagement />} />
+                                        <Route path="/reports" element={<AdminReports />} />
+                                        <Route path="/disputes" element={<DisputeResolution />} />
+                                        <Route path="/contracts" element={<DigitalContracts />} />
+                                        <Route path="/settings" element={<SystemSettings />} />
+                                        <Route path="/profile" element={<ProfilePage />} />
+                                        <Route path="*" element={<Placeholder title="قيد التطوير" />} />
+                                    </Routes>
+                                </DashboardLayout>
+                            </ProtectedRoute>
                         }
                     />
 
