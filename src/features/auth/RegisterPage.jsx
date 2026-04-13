@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
@@ -671,12 +671,16 @@ export const RegisterPage = () => {
                                         "flex-[2] h-14 rounded-2xl font-black text-white transition-all shadow-xl",
                                         step === 3
                                             ? "bg-[#064e3b] hover:bg-[#053a2c] shadow-[#064e3b]/20"
-                                            : "bg-brand-primary hover:bg-orange-600 shadow-brand-primary/30"
+                                            : "bg-brand-primary hover:bg-orange-600 shadow-brand-primary/30",
+                                        isLoading && "opacity-80 cursor-not-allowed"
                                     )}
                                     disabled={isLoading}
                                 >
                                     {isLoading ? (
-                                        <Loading minimal={true} className="text-white" text="جاري الحفظ..." />
+                                        <div className="flex items-center justify-center gap-2">
+                                            <div className="h-5 w-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                                            <span>جاري إنشاء الحساب...</span>
+                                        </div>
                                     ) : (
                                         step === 3 ? (selectedRole === 'driver' ? 'تسجيل والانتظار المراجعة' : 'إتمام التسجيل') : 'التالي'
                                     )}

@@ -1,4 +1,4 @@
-﻿import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import {
     Package,
     MapPin,
@@ -83,64 +83,62 @@ export const ShipmentDetailsPage = () => {
     }
 
     return (
-        <div className="max-w-5xl mx-auto pb-20 space-y-8 animate-in fade-in duration-500">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-4">
+        <div className="space-y-5 md:space-y-6 md:px-2 animate-in fade-in duration-500">
+            {/* Premium Header */}
+            <div className="relative overflow-hidden rounded-[1.25rem] md:rounded-[2rem] bg-gradient-to-br from-brand-secondary to-[#043328] p-5 md:p-8 text-white shadow-lg">
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <div className="flex items-center gap-3 mb-1.5">
-                            <h1 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white">تفاصيل الشحنة</h1>
+                        <div className="flex flex-wrap items-center gap-3 mb-2">
+                            <h1 className="text-xl md:text-2xl font-black tracking-tight">تفاصيل الشحنة</h1>
                             <span className={cn(
-                                "px-3 py-1 md:py-1.5 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest ring-1 ring-inset",
-                                getStatusStyles(shipment.status).bg,
-                                getStatusStyles(shipment.status).text,
-                                getStatusStyles(shipment.status).border.replace('border-', 'ring-')
+                                "px-3 py-1 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest ring-1 ring-inset bg-white/10 text-white ring-white/20",
+                                // Using consistent status label colors if needed, but white/10 looks premium on dark bg
                             )}>
                                 {shipment.status}
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <p className="text-[9px] md:text-[10px] font-black text-slate-500 bg-slate-50 dark:bg-slate-800/50 px-4 py-1 rounded-md border border-slate-100 dark:border-slate-800">{shipment.displayId}</p>
-
+                            <p className="text-[9px] md:text-[10px] font-black text-white/60 bg-white/5 px-4 py-1 rounded-md border border-white/10">{shipment.displayId}</p>
                         </div>
                     </div>
-                </div>
 
-                <div className="flex items-center gap-2.5">
-                    {role === 'customer' && (
-                        <>
-                            {['في انتظار العروض', 'عروض رهن المراجعة'].includes(shipment.status) && (
+                    <div className="flex items-center gap-2.5">
+                        {role === 'customer' && (
+                            <>
+
+                                {['في انتظار العروض', 'عروض رهن المراجعة'].includes(shipment.status) && (
+                                    <button
+                                        onClick={() => navigate(`/customer/edit/${shipment.id}`)}
+                                        className="flex items-center justify-center gap-1.5 px-4 h-9 md:h-10 rounded-xl text-[10px] md:text-xs font-black text-white bg-white/10 hover:bg-white/20 transition-all border border-white/10 cursor-pointer"
+                                    >
+                                        تعديل الشحنة
+                                    </button>
+                                )}
                                 <button
-                                    onClick={() => navigate(`/customer/edit/${shipment.id}`)}
-                                    className="flex items-center justify-center gap-1.5 px-4 h-9 md:h-10 rounded-md text-[10px] md:text-xs font-black text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all ring-1 ring-slate-200 dark:ring-slate-700 hover:ring-slate-300"
+                                    onClick={() => navigate(`/customer/tracking/${shipment.id}`)}
+                                    className="flex items-center justify-center gap-1.5 px-5 h-9 md:h-10 rounded-xl text-[10px] md:text-xs font-black text-white bg-brand-primary hover:bg-orange-600 shadow-lg shadow-brand-primary/20 transition-all active:scale-95 cursor-pointer"
                                 >
-                                    تعديل الشحنة
+                                    تتبع المسار
                                 </button>
-                            )}
-                            <button
-                                onClick={() => navigate(`/customer/tracking/${shipment.id}`)}
-                                className="flex items-center justify-center gap-1.5 px-5 h-9 md:h-10 rounded-md text-[10px] md:text-xs font-black text-white bg-brand-primary hover:bg-brand-primary/90 shadow-sm shadow-brand-primary/20 transition-all active:scale-95"
-                            >
-                                تتبع المسار
-                            </button>
-                        </>
-                    )}
+                            </>
+                        )}
 
-                    {role === 'driver' && (
-                        <button
-                            onClick={() => navigate(`/driver/available/${shipment.id}/submit`)}
-                            className="flex items-center justify-center gap-1.5 px-6 h-10 md:h-11 rounded-md text-[11px] md:text-sm font-black text-white bg-brand-primary hover:bg-brand-primary/90 shadow-sm shadow-brand-primary/20 transition-all active:scale-95"
-                        >
-                            تقديم عرض سعر الآن
-                            <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
-                        </button>
-                    )}
+                        {role === 'driver' && (
+                            <button
+                                onClick={() => navigate(`/driver/available/${shipment.id}/submit`)}
+                                className="flex items-center justify-center gap-1.5 px-6 h-10 md:h-11 rounded-xl text-[11px] md:text-sm font-black text-white bg-brand-primary hover:bg-orange-600 shadow-lg shadow-brand-primary/20 transition-all active:scale-95 cursor-pointer"
+                            >
+                                تقديم عرض سعر الآن
+                                <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
 
             {/* Offers Notification */}
             {!acceptedOffer && shipment.bidsCount > 0 && (
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 md:p-6 bg-white dark:bg-slate-900 border border-brand-primary/20 rounded-[1.5rem] shadow-sm hover:border-brand-primary/40 transition-all relative overflow-hidden group animate-in slide-in-from-top-4 duration-500">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 md:p-5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.25rem] md:rounded-[2rem] shadow-sm hover:translate-y-[-2px] transition-all relative overflow-hidden group animate-in slide-in-from-top-4 duration-500">
                     <div className="absolute top-0 right-0 w-1.5 h-full bg-brand-primary"></div>
                     <div className="flex items-center gap-3 md:gap-4 pl-4 sm:pl-0">
                         <div className="h-10 w-10 md:h-12 md:w-12 bg-brand-primary/10 rounded-full flex items-center justify-center text-brand-primary shrink-0 group-hover:rotate-6 transition-transform">
@@ -153,33 +151,32 @@ export const ShipmentDetailsPage = () => {
                                     {shipment.bidsCount}
                                 </span>
                             </h3>
-                            <p className="text-[10px] md:text-xs font-bold text-slate-500 mt-0.5">هناك أسعار قدمها الكابتنون بانتظار موافقتك.</p>
+                            <p className="text-[10px] md:text-xs font-bold text-slate-500 mt-0.5">هناك أسعار قدمها الكابتن بانتظار موافقتك.</p>
                         </div>
                     </div>
                     <button
                         onClick={() => navigate(role === 'customer' ? `/customer/bids/${shipment.id}` : '#')}
-                        className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-brand-primary/10 hover:bg-brand-primary text-brand-primary hover:text-white px-5 h-9 md:h-10 rounded-full font-black text-[10px] md:text-[11px] transition-colors duration-300"
+                        className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-brand-primary/10 hover:bg-brand-primary text-brand-primary hover:text-white px-5 h-9 md:h-10 rounded-full font-black text-[10px] md:text-[11px] transition-colors duration-300 cursor-pointer"
                     >
-                        عرض الكباتن
-                        <ChevronLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                        عرض العروض
                     </button>
                 </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-6">
                 {/* Main Content */}
-                <div className="lg:col-span-2 space-y-8">
+                <div className="lg:col-span-2 space-y-5 md:space-y-6">
                     {/* Route Card */}
-                    <Card className="rounded-[1.5rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <Card className="rounded-[1.25rem] md:rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
                         <CardContent className="p-0">
-                            <div className="p-5 md:p-6 border-b border-slate-50 dark:border-slate-800/50 flex items-center gap-3 bg-slate-50/30 dark:bg-slate-800/20">
-                                <div className="h-8 w-8 md:h-10 md:w-10 bg-white dark:bg-slate-800 rounded-full shadow-sm flex items-center justify-center text-slate-500">
+                            <div className="p-4 md:p-5 border-b border-slate-50 dark:border-slate-800/50 flex items-center gap-3 bg-slate-50/30 dark:bg-slate-800/20">
+                                <div className="h-8 w-8 md:h-9 md:w-9 bg-white dark:bg-slate-800 rounded-full shadow-sm flex items-center justify-center text-slate-500">
                                     <MapPin className="h-4 w-4 md:h-5 md:w-5" />
                                 </div>
                                 <h3 className="font-black text-slate-900 dark:text-white text-sm md:text-base">المسار</h3>
                             </div>
 
-                            <div className="p-5 md:p-6 flex flex-col md:flex-row gap-6 relative">
+                            <div className="p-4 md:p-5 lg:p-6 flex flex-col md:flex-row gap-6 relative">
                                 <div className="flex-1 space-y-2 relative z-10">
                                     <div className="flex items-center gap-2 mb-1">
                                         <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200"></div>
@@ -221,15 +218,15 @@ export const ShipmentDetailsPage = () => {
                     </Card>
 
                     {/* Goods Details Card */}
-                    <Card className="rounded-[1.5rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <Card className="rounded-[1.25rem] md:rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
                         <CardContent className="p-0">
-                            <div className="p-5 md:p-6 border-b border-slate-50 dark:border-slate-800/50 flex items-center gap-3 bg-slate-50/30 dark:bg-slate-800/20">
-                                <div className="h-8 w-8 md:h-10 md:w-10 bg-white dark:bg-slate-800 rounded-full shadow-sm flex items-center justify-center text-slate-500">
+                            <div className="p-4 md:p-5 border-b border-slate-50 dark:border-slate-800/50 flex items-center gap-3 bg-slate-50/30 dark:bg-slate-800/20">
+                                <div className="h-8 w-8 md:h-9 md:w-9 bg-white dark:bg-slate-800 rounded-full shadow-sm flex items-center justify-center text-slate-500">
                                     <Package className="h-4 w-4 md:h-5 md:w-5" />
                                 </div>
                                 <h3 className="font-black text-slate-900 dark:text-white text-sm md:text-base">تفاصيل الشحنة</h3>
                             </div>
-                            <div className="p-5 md:p-6 space-y-8">
+                            <div className="p-4 md:p-5 lg:p-6 space-y-8">
                                 {/* Row 1: Core Info */}
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                                     <div className="space-y-1">
@@ -274,7 +271,7 @@ export const ShipmentDetailsPage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="p-5 md:p-6 pt-0 space-y-6">
+                            <div className="p-4 md:p-5 lg:p-6 pt-0 space-y-6">
                                 <div>
                                     <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">وصف الشحنة والتعليمات</p>
                                     <div className="bg-slate-50/50 dark:bg-slate-800/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800/50">
@@ -434,11 +431,11 @@ export const ShipmentDetailsPage = () => {
                 </div>
 
                 {/* Sidebar */}
-                <div className="space-y-8">
+                <div className="space-y-5 md:space-y-6">
                     {/* Costs Card */}
-                    <Card className="rounded-[1.5rem] border-none shadow-sm bg-slate-900 text-white overflow-hidden relative group">
+                    <Card className="rounded-[1.25rem] md:rounded-[2rem] border-none shadow-sm bg-slate-900 text-white overflow-hidden relative group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
-                        <CardContent className="p-5 md:p-6 relative z-10">
+                        <CardContent className="p-4 md:p-5 lg:p-6 relative z-10">
                             <div className="flex items-center gap-3 mb-6">
                                 <div className="h-8 w-8 md:h-10 md:w-10 bg-white/10 rounded-full flex items-center justify-center">
                                     <DollarSign className="h-4 w-4 md:h-5 md:w-5" />
@@ -474,9 +471,9 @@ export const ShipmentDetailsPage = () => {
                     </Card>
 
                     {/* Recipient Card */}
-                    <Card className="rounded-[1.5rem] border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden">
+                    <Card className="rounded-[1.25rem] md:rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-24 h-24 bg-blue-50/50 dark:bg-blue-900/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-                        <CardContent className="p-5 md:p-6 relative z-10">
+                        <CardContent className="p-4 md:p-5 lg:p-6 relative z-10">
                             <div className="flex items-center gap-3 mb-5">
                                 <div className="h-8 w-8 md:h-10 md:w-10 bg-blue-100/50 dark:bg-blue-900/20 text-blue-600 rounded-full flex items-center justify-center shadow-sm">
                                     <User className="h-4 w-4 md:h-5 md:w-5" />

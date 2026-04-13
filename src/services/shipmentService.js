@@ -277,7 +277,6 @@ export const shipmentService = {
     getNewBids: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.BIDS.NEW);
-            console.log('Get new bids response:', response.data);
             return response.data;
         } catch (error) {
             console.error('Get new bids error:', error.response?.data || error.message);
@@ -290,7 +289,6 @@ export const shipmentService = {
     getBidDashboardStats: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.BIDS.DASHBOARD_STATS);
-            console.log('Bid Dashboard Stats:', response.data);
             return response.data;
         } catch (error) {
             console.error('Get bid dashboard stats error:', error.response?.data || error.message);

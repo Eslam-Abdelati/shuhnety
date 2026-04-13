@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/Button'
 import { Loading } from '@/components/ui/Loading'
 import { cn } from '@/lib/utils'
 import { shipmentService } from '@/services/shipmentService'
-import { getGoodsTypeLabel, getStatusStyles } from '@/utils/shipmentUtils'
+import { getGoodsTypeLabel, getStatusStyles, mapShipmentData } from '@/utils/shipmentUtils'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
 
@@ -37,11 +37,11 @@ export const DriverDashboard = () => {
         setIsFetchingAvailable(true)
         try {
             const availableResponse = await shipmentService.searchAvailableShipments({ skip: 0, take: 3 })
-            const availableList = availableResponse.data?.shipments || (Array.isArray(availableResponse.data) ? availableResponse.data : [])
+            const availableList = (availableResponse.data?.shipments || (Array.isArray(availableResponse.data) ? availableResponse.data : [])).map(mapShipmentData);
             setAvailableShipments(availableList)
 
             const assignedResponse = await shipmentService.getAssignedShipments({ skip: 0, take: 5 })
-            const assignedList = assignedResponse.data?.shipments || (Array.isArray(assignedResponse.data) ? assignedResponse.data : [])
+            const assignedList = (assignedResponse.data?.shipments || (Array.isArray(assignedResponse.data) ? assignedResponse.data : [])).map(mapShipmentData);
             setAssignedShipments(assignedList)
 
             // Fetch Bidding Dashboard Stats
@@ -128,7 +128,7 @@ export const DriverDashboard = () => {
                                 <button
                                     onClick={() => setIsOnline(!isOnline)}
                                     className={cn(
-                                        "w-10 h-5.5 rounded-full p-0.5 transition-all duration-500 relative flex items-center shadow-inner",
+                                        "w-10 h-5.5 rounded-full p-0.5 transition-all duration-500 relative flex items-center shadow-inner cursor-pointer",
                                         isOnline ? "bg-[#009966]" : "bg-slate-300"
                                     )}
                                 >
@@ -149,14 +149,14 @@ export const DriverDashboard = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <Button
                                 onClick={() => navigate('/driver/available')}
-                                className="h-14 bg-[#eb6a1d] hover:bg-[#d45a16] text-white rounded-2xl font-black text-xs shadow-lg shadow-orange-200/40 transition-all active:scale-95 flex items-center justify-center gap-2"
+                                className="h-14 bg-[#eb6a1d] hover:bg-[#d45a16] text-white rounded-2xl font-black text-xs shadow-lg shadow-orange-200/40 transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                             >
                                 عرض الشحنات
                             </Button>
                             <Button
                                 variant="outline"
                                 onClick={() => navigate('/driver/active')}
-                                className="h-14 border-slate-100 text-slate-600 rounded-2xl font-black text-xs hover:bg-slate-50 bg-white transition-all active:scale-95 flex items-center justify-center gap-2"
+                                className="h-14 border-slate-100 text-slate-600 rounded-2xl font-black text-xs hover:bg-slate-50 bg-white transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                             >
                                 الطلبات النشطة
                             </Button>
@@ -172,7 +172,7 @@ export const DriverDashboard = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
                 >
-                <Card className="rounded-[2rem] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden bg-white">
+                    <Card className="rounded-[2rem] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden bg-white">
                         <CardContent className="p-6 md:p-8">
                             <div className="flex justify-between items-start mb-6">
                                 <div className="space-y-1">
@@ -228,15 +228,15 @@ export const DriverDashboard = () => {
                         <CardContent className="p-6 space-y-4">
                             <div className="flex items-center justify-between border-b border-slate-50 pb-3">
                                 <div className="flex items-center gap-3">
-                                   
+
                                     <span className="text-sm font-bold text-slate-600">إجمالي الرحلات</span>
                                 </div>
                                 <span className="text-lg font-black text-slate-900">---</span>
                             </div>
-                            
+
                             <div className="flex items-center justify-between border-b border-slate-50 pb-3">
                                 <div className="flex items-center gap-3">
-                                    
+
                                     <span className="text-sm font-bold text-slate-600"> قيد الوصول</span>
                                 </div>
                                 <span className="text-lg font-black text-slate-900">---</span>
@@ -244,7 +244,7 @@ export const DriverDashboard = () => {
 
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                   
+
                                     <span className="text-sm font-bold text-slate-600"> بدأ الملاحة</span>
                                 </div>
                                 <span className="text-lg font-black text-slate-900">---</span>
@@ -252,7 +252,7 @@ export const DriverDashboard = () => {
 
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                   
+
                                     <span className="text-sm font-bold text-slate-600">رحلات مكتملة</span>
                                 </div>
                                 <span className="text-lg font-black text-slate-900">---</span>
@@ -371,33 +371,73 @@ export const DriverDashboard = () => {
                             </div>
                             <CardContent className="p-6">
                                 <div className="space-y-6">
-                                    {/* Corrected Hyper-Horizontal Header */}
-                                    <div className="flex items-center gap-3 overflow-hidden">
-                                        <div className="h-10 w-10 rounded-xl bg-[#eb6a1d]/10 flex items-center justify-center text-[#eb6a1d] shrink-0 shadow-inner">
-                                            <Package className="h-5 w-5" />
+                                    {/* Detailed Trip Info Grid */}
+                                    <div className="space-y-5">
+                                        {/* Row 1: Goods & Status */}
+                                        <div className="flex items-center justify-between pb-4 border-b border-slate-50">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-10 w-10 rounded-xl bg-orange-50 flex items-center justify-center text-[#eb6a1d] shadow-sm">
+                                                    <Box className="h-5 w-5" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">نوع الشحنة</p>
+                                                    <h4 className="font-black text-slate-900 text-sm">{getGoodsTypeLabel(activeTrip.goodsType)}</h4>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">الحالة</p>
+                                                <span className="text-[10px] font-black text-[#eb6a1d] bg-orange-50 px-2.5 py-1 rounded-lg">
+                                                    {activeTrip.status}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-2 min-w-0 flex-1">
-                                            <h4 className="font-black text-slate-900 text-sm whitespace-nowrap shrink-0">{getGoodsTypeLabel(activeTrip.goodsType)}</h4>
-                                            <div className="h-4 w-px bg-slate-100 shrink-0" />
 
-                                            <div className="flex items-center gap-3 min-w-0 flex-1">
-                                                {/* Customer Tag */}
-                                                <div className="flex items-center gap-1.5 shrink-0 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
-                                                    <span className="text-[8px] font-black text-slate-400 uppercase">العميل:</span>
-                                                    <a href={`tel:${activeTrip.customerPhone}`} className="text-[10px] font-black text-slate-900 hover:text-[#eb6a1d] flex items-center gap-1">
-                                                        {activeTrip.customerName || '---'}
-                                                        <span className="text-[8px] font-bold text-slate-400">({activeTrip.customerPhone || '---'})</span>
+                                        {/* Row 2: Two Columns for Pickup/Customer and Delivery/Recipient */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            {/* Pickup / Customer Info */}
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-2 text-[10px] font-black text-emerald-600 uppercase tracking-[0.1em]">
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                                                    نقطة التحميل والعميل
+                                                </div>
+                                                <p className="text-xs font-bold text-slate-700 leading-tight mb-2 pr-3.5 border-r-2 border-emerald-100">{activeTrip.pickupPoint}</p>
+
+                                                <div className="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-100 shadow-sm transition-all hover:border-emerald-100">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="h-9 w-9 rounded-xl bg-white flex items-center justify-center text-slate-400 border border-slate-100 shadow-inner">
+                                                            <UserIcon className="h-4 w-4" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-xs font-black text-slate-900 leading-none mb-1">{activeTrip.customerName || '---'}</p>
+                                                            <p className="text-[10px] font-bold text-slate-400">{activeTrip.customerPhone || '---'}</p>
+                                                        </div>
+                                                    </div>
+                                                    <a href={`tel:${activeTrip.customerPhone}`} className="h-9 w-9 bg-emerald-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 active:scale-90 transition-all hover:bg-emerald-600">
+                                                        <Phone className="h-4.5 w-4.5" />
                                                     </a>
                                                 </div>
+                                            </div>
 
-                                                <div className="h-3 w-px bg-slate-100 shrink-0" />
+                                            {/* Delivery / Recipient Info */}
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-2 text-[10px] font-black text-brand-primary uppercase tracking-[0.1em]">
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-brand-primary"></div>
+                                                    وجهة التوصيل والمستلم
+                                                </div>
+                                                <p className="text-xs font-bold text-slate-700 leading-tight mb-2 pr-3.5 border-r-2 border-orange-100">{activeTrip.destinationPoint}</p>
 
-                                                {/* Recipient Tag */}
-                                                <div className="flex items-center gap-1.5 shrink-0 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
-                                                    <span className="text-[8px] font-black text-slate-400 uppercase">المستلم:</span>
-                                                    <a href={`tel:${activeTrip.recipientPhone}`} className="text-[10px] font-black text-slate-900 hover:text-[#009966] flex items-center gap-1">
-                                                        {activeTrip.recipientName || '---'}
-                                                        <span className="text-[8px] font-bold text-slate-400">({activeTrip.recipientPhone || '---'})</span>
+                                                <div className="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-100 shadow-sm transition-all hover:border-orange-100">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="h-9 w-9 rounded-xl bg-white flex items-center justify-center text-slate-400 border border-slate-100 shadow-inner">
+                                                            <UserIcon className="h-4 w-4" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-xs font-black text-slate-900 leading-none mb-1">{activeTrip.recipientName || '---'}</p>
+                                                            <p className="text-[10px] font-bold text-slate-400">{activeTrip.recipientPhone || '---'}</p>
+                                                        </div>
+                                                    </div>
+                                                    <a href={`tel:${activeTrip.recipientPhone}`} className="h-9 w-9 bg-brand-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/20 active:scale-90 transition-all hover:bg-[#d45a16]">
+                                                        <Phone className="h-4.5 w-4.5" />
                                                     </a>
                                                 </div>
                                             </div>
@@ -430,7 +470,7 @@ export const DriverDashboard = () => {
                                                     return (
                                                         <Button
                                                             onClick={() => handleCompleteDelivery(activeTrip.id)}
-                                                            className="h-14 bg-[#009966] text-white rounded-2xl font-black gap-2 transition-all hover:bg-[#007a52] shadow-lg shadow-emerald-200/50 active:scale-95"
+                                                            className="h-14 bg-[#009966] text-white rounded-2xl font-black gap-2 transition-all hover:bg-[#007a52] shadow-lg shadow-emerald-200/50 active:scale-95 cursor-pointer"
                                                         >
                                                             <CheckCircle2 className="h-5 w-5" />
                                                             إتمام الوصول
@@ -441,7 +481,7 @@ export const DriverDashboard = () => {
                                                 return (
                                                     <Button
                                                         onClick={() => handleStartNavigation(activeTrip.id)}
-                                                        className="h-14 bg-slate-900 text-white rounded-2xl font-black gap-2 transition-all hover:bg-slate-800 shadow-lg shadow-slate-200 active:scale-95"
+                                                        className="h-14 bg-slate-900 text-white rounded-2xl font-black gap-2 transition-all hover:bg-slate-800 shadow-lg shadow-slate-200 active:scale-95 cursor-pointer"
                                                     >
                                                         <Navigation className="h-5 w-5 text-orange-400" />
                                                         بدء الملاحة

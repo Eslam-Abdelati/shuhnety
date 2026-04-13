@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
     AlertTriangle,
     MapPin,
@@ -16,6 +16,17 @@ import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/cn'
 import { roadAlertService } from '@/services/roadAlertService'
 import { toast } from 'react-hot-toast'
+import { z } from 'zod'
+
+// Define validation schema
+const roadAlertSchema = z.object({
+    type: z.string({
+        required_error: "يرجى اختيار نوع التنبيه",
+    }).min(1, "يرجى اختيار نوع التنبيه"),
+    locationText: z.string()
+        .min(10, "وصف الموقع يجب ألا يقل عن 10 أحرف ليكون واضحاً للسائقين")
+        .max(200, "وصف الموقع طويل جداً")
+})
 
 export const RoadAlerts = () => {
     const [showReportModal, setShowReportModal] = useState(false)
@@ -29,8 +40,6 @@ export const RoadAlerts = () => {
         setIsLoading(true);
         try {
             const response = await roadAlertService.getActiveAlerts();
-            console.log('Road Alerts Data Structure:', response);
-            // Assuming the data is in response.data or response
             const alertsList = response.data || response;
             setActiveAlerts(Array.isArray(alertsList) ? alertsList : []);
         } catch (error) {
@@ -83,21 +92,38 @@ export const RoadAlerts = () => {
         { id: 'sand_dunes', name: 'زحف رمال', icon: Wind, color: 'bg-orange-50 text-orange-600' },
     ]
 
+    const [formErrors, setFormErrors] = useState({})
+
     const handleSubmitAlert = async () => {
-        if (!selectedType) {
-            toast.error('يرجى اختيار نوع التنبيه');
+        setFormErrors({});
+        // Prepare data for validation
+        const formData = {
+            type: selectedType,
+            locationText: locationText.trim()
+        };
+
+        // Validate using Zod
+        const result = roadAlertSchema.safeParse(formData);
+
+        if (!result.success) {
+            const errors = {};
+            result.error.issues.forEach(err => {
+                errors[err.path[0]] = err.message;
+            });
+            setFormErrors(errors);
+            toast.error('يرجى التأكد من البيانات المدخلة');
             return;
         }
 
         setIsSubmitting(true);
         try {
-            await roadAlertService.createRoadAlert({
-                type: selectedType,
-                locationText: locationText
-            });
+            await roadAlertService.createRoadAlert(result.data);
             toast.success('تم إرسال التنبيه بنجاح، شكراً لمساهمتك');
             setShowReportModal(false);
             setSelectedType(null);
+            setLocationText('');
+            setFormErrors({});
+            fetchActiveAlerts();
         } catch (error) {
             toast.error(error.message || 'فشل في إرسال التنبيه');
         } finally {
@@ -110,15 +136,7 @@ export const RoadAlerts = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
                     <h1 className="text-3xl font-black text-slate-900 mb-0">تنبيهات الطريق</h1>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="rounded-full h-10 w-10 p-0 text-slate-400 hover:text-brand-primary"
-                        onClick={fetchActiveAlerts}
-                        disabled={isLoading}
-                    >
-                        <Clock className={cn("h-5 w-5", isLoading && "animate-spin")} />
-                    </Button>
+                    
                 </div>
                 <Button
                     className="rounded-2xl gap-2 px-8 h-12 bg-rose-500 hover:bg-rose-600 text-white shadow-lg shadow-rose-100 border-none transition-all active:scale-95 hover:scale-[1.02]"
@@ -181,7 +199,7 @@ export const RoadAlerts = () => {
                                         </div>
                                         <div className="text-left">
                                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                                {alert.createdAt ? new Date(alert.createdAt).toLocaleTimeString('ar-EG') : (alert.time || 'الآن')}
+                                                {alert.createDateTime ? new Date(alert.createDateTime).toLocaleTimeString('ar-EG') : (alert.createdAt ? new Date(alert.createdAt).toLocaleTimeString('ar-EG') : (alert.time || 'الآن'))}
                                             </span>
                                         </div>
                                     </div>
@@ -190,14 +208,16 @@ export const RoadAlerts = () => {
                                         <div className="flex items-center gap-4">
                                             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-xl">
                                                 <ThumbsUp className="h-3.5 w-3.5" />
-                                                <span>{alert.reliability || 100}% موثوقية</span>
+                                                <span>{alert.reliabilityScore || alert.reliability || 100}% موثوقية</span>
                                             </div>
-                                            <p className="text-xs font-bold text-brand-primary">بواسطة: {alert.reporter || 'نظام شحنتي'}</p>
+                                            <p className="text-xs font-bold text-brand-primary">
+                                                بواسطة: {typeof alert.reporter === 'object' ? (alert.reporter?.full_name || 'نظام شحنتي') : (alert.reporter || 'نظام شحنتي')}
+                                            </p>
                                         </div>
                                         <div className="flex gap-2">
                                             <Button variant="ghost" size="sm" className="gap-2 text-slate-400">
                                                 <MessageSquare className="h-4 w-4" />
-                                                تأكيد
+                                                <span>تأكيد {alert.confirmationsCount > 0 ? `(${alert.confirmationsCount})` : ''}</span>
                                             </Button>
                                         </div>
                                     </div>
@@ -214,36 +234,53 @@ export const RoadAlerts = () => {
                     <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowReportModal(false)}></div>
                     <Card className="w-full max-w-lg relative z-10 rounded-t-[2.5rem] sm:rounded-[2.5rem] overflow-hidden animate-in slide-in-from-bottom">
                         <CardContent className="p-8">
-                            <h3 className="text-2xl font-black text-slate-900 mb-8 text-center">بماذا تريد الإبلاغ؟</h3>
-
-                            <div className="grid grid-cols-2 gap-4 mb-8">
-                                {alertTypes.map((type) => (
-                                    <button
-                                        key={type.id}
-                                        onClick={() => setSelectedType(type.id)}
-                                        className={cn(
-                                            "p-6 rounded-2xl flex flex-col items-center gap-3 transition-all border-2 active:scale-95",
-                                            selectedType === type.id
-                                                ? "border-brand-primary bg-brand-primary/5 ring-4 ring-brand-primary/10"
-                                                : "border-transparent " + type.color
-                                        )}
-                                    >
-                                        <type.icon className="h-8 w-8" />
-                                        <span className="font-black text-sm">{type.name}</span>
-                                    </button>
-                                ))}
+                            <div className="space-y-2 mb-8">
+                                <h4 className="text-sm font-black text-slate-700 pr-1">بماذا تريد الإبلاغ؟</h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    {alertTypes.map((type) => (
+                                        <button
+                                            key={type.id}
+                                            onClick={() => {
+                                                setSelectedType(type.id);
+                                                if (formErrors.type) setFormErrors({...formErrors, type: null});
+                                            }}
+                                            className={cn(
+                                                "p-6 rounded-2xl flex flex-col items-center gap-3 transition-all border-2 active:scale-95",
+                                                selectedType === type.id
+                                                    ? "border-brand-primary bg-brand-primary/5 ring-4 ring-brand-primary/10"
+                                                    : (formErrors.type ? "border-red-200 bg-red-50/30" : "border-transparent " + type.color)
+                                            )}
+                                        >
+                                            <type.icon className="h-8 w-8" />
+                                            <span className="font-black text-sm">{type.name}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                                {formErrors.type && <p className="text-[10px] font-bold text-red-500 pr-1 mt-1 animate-in fade-in slide-in-from-top-1">{formErrors.type}</p>}
                             </div>
 
                             <div className="space-y-6">
                                 <div className="space-y-3">
-                                    <label className="text-sm font-black text-slate-700 mb-3 block">الموقع الحالي</label>
+                                    <label className={cn(
+                                        "text-sm font-black mb-1 block pr-1",
+                                        formErrors.locationText ? "text-red-500" : "text-slate-700"
+                                    )}>الموقع الحالي</label>
                                     <input
                                         type="text"
                                         value={locationText}
-                                        onChange={(e) => setLocationText(e.target.value)}
-                                        className="w-full bg-slate-50 p-4 rounded-xl border border-slate-100 font-bold text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                                        onChange={(e) => {
+                                            setLocationText(e.target.value);
+                                            if (formErrors.locationText) setFormErrors({...formErrors, locationText: null});
+                                        }}
+                                        className={cn(
+                                            "w-full bg-slate-50 p-4 rounded-xl border-2 font-bold text-sm transition-all focus:outline-none",
+                                            formErrors.locationText
+                                                ? "border-red-100 focus:border-red-500 bg-red-50/10"
+                                                : "border-slate-100 focus:border-brand-primary"
+                                        )}
                                         placeholder="مثال: طريق القاهرة الإسكندرية الصحراوي - كم 45"
                                     />
+                                    {formErrors.locationText && <p className="text-[10px] font-bold text-red-500 pr-1 animate-in fade-in slide-in-from-top-1">{formErrors.locationText}</p>}
                                 </div>
 
                                 <div className="flex gap-4">

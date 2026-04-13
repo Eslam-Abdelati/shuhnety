@@ -493,7 +493,7 @@ export const DriverShipmentDetails = () => {
                                                     "text-[9px] font-black uppercase tracking-widest",
                                                     isOfferAccepted ? "text-emerald-600" : (myBid?.negotiatedAmount ? "text-amber-600" : "text-emerald-600")
                                                 )}>
-                                                    {(isOfferAccepted && isPickupInProgress) ? 'تم قبول عرضك' : (isOfferAccepted ? 'السعر المتفق عليه' : (myBid?.negotiatedAmount ? 'عرض مقابل من العميل' : 'عرضك الحالي'))}
+                                                    {(isOfferAccepted && isPickupInProgress) ? 'تم قبول العرض' : (isOfferAccepted ? 'السعر المتفق عليه' : (myBid?.negotiatedAmount ? 'عرض مقابل من العميل' : 'عرضك الحالي'))}
                                                 </h3>
                                             </div>
                                             <div className="flex items-center gap-1.5 opacity-40">

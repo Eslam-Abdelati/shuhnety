@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './routes/ProtectedRoute'
+import { PublicRoute } from './routes/PublicRoute'
 import { DashboardLayout } from './layouts/DashboardLayout'
 import { useThemeStore } from './store/useThemeStore'
 import { Toaster } from 'react-hot-toast'
@@ -106,11 +107,11 @@ function App() {
             <Router>
                 <ScrollToTop />
                 <Routes>
-                    <Route path="/" element={<LandingPage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/verify-email" element={<VerifyEmailPage />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
+                    <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+                    <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+                    <Route path="/verify-email" element={<PublicRoute><VerifyEmailPage /></PublicRoute>} />
+                    <Route path="/forgot-password" element={<PublicRoute><ForgotPasswordPage /></PublicRoute>} />
                     <Route path="/unauthorized" element={<Unauthorized />} />
 
                     {/* Roles with Protection */}

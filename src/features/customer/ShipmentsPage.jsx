@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
     Package,
     CheckCircle,
@@ -166,7 +166,7 @@ export const ShipmentsPage = () => {
 
 
     return (
-        <div className="space-y-5 md:space-y-6 font-cairo pb-20 px-0 md:px-2" dir="rtl">
+        <div className="space-y-5 md:space-y-6 md:px-2" dir="rtl">
             {/* Upper Header Section */}
             <div className="relative overflow-hidden rounded-[1.25rem] md:rounded-[2rem] bg-gradient-to-br from-brand-secondary to-[#043328] p-5 md:p-10 text-white shadow-lg">
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-8">
@@ -388,10 +388,10 @@ export const ShipmentsPage = () => {
                                                     )
                                                 })()}
 
-                                                <div className="flex items-center flex-wrap gap-1.5 md:gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                                                    <Link to={`/customer/shipments/${shipment.id}`} className="flex-1 sm:flex-none">
-                                                        <button className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-1.5 md:py-2 rounded-full text-[9px] md:text-[11px] font-black text-brand-primary bg-brand-primary/5 hover:bg-brand-primary/10 transition-all group border border-transparent hover:border-brand-primary/20">
-                                                            <FileText className="h-3 w-3 md:h-3.5 md:w-3.5 group-hover:scale-110 transition-transform" />
+                                                <div className="flex items-center justify-center sm:justify-end flex-wrap gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                                                    <Link to={`/customer/shipments/${shipment.id}`} className="shrink-0">
+                                                        <button className="h-10 px-6 min-w-[110px] flex items-center justify-center gap-2 rounded-xl text-[10px] md:text-[11px] font-black text-brand-primary bg-brand-primary/5 hover:bg-brand-primary/10 transition-all group border-2 border-brand-primary/5 hover:border-brand-primary/10 shadow-sm">
+                                                            <FileText className="h-3.5 w-3.5 group-hover:scale-110 transition-transform" />
                                                             التفاصيل
                                                         </button>
                                                     </Link>

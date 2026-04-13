@@ -198,12 +198,16 @@ export const LoginPage = () => {
                                     type="submit"
                                     className={cn(
                                         "w-full h-14 rounded-2xl text-base font-black transition-all shadow-lg",
-                                        "bg-brand-primary hover:bg-orange-600 text-white shadow-brand-primary/20"
+                                        "bg-brand-primary hover:bg-orange-600 text-white shadow-brand-primary/20",
+                                        isLoading && "opacity-80 cursor-not-allowed"
                                     )}
                                     disabled={isLoading}
                                 >
                                     {isLoading ? (
-                                        <Loading minimal={true} className="text-white" text="جاري التحقق..." />
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-5 w-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                                            <span>جاري تسجيل الدخول...</span>
+                                        </div>
                                     ) : 'تسجيل الدخول'}
                                 </Button>
 

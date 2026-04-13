@@ -274,7 +274,7 @@ export const AvailableShipments = () => {
                                             {submitted ? (
                                                 <div className="h-13 px-6 rounded-2xl flex items-center justify-center gap-2 bg-emerald-500 text-white font-black text-xs shadow-lg shadow-emerald-500/20 border border-emerald-400/20">
                                                     <CheckCircle2 className="h-4 w-4" />
-                                                    تم العرض
+                                                    تم تقديم عرضك 
                                                 </div>
                                             ) : (
                                                 <button

@@ -173,7 +173,7 @@ export const AllReportsPage = () => {
                                     {selectedReport.reply ? (
                                         <div className="bg-brand-primary/5 border border-brand-primary/10 p-6 rounded-[2rem] space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-700">
                                             <h4 className="text-xs font-black text-brand-primary uppercase tracking-widest flex items-center gap-2">
-                                               <CheckCircle2 className="h-3 w-3" />  رد الدعم الفني 
+                                               <CheckCircle2 className="h-5 w-5" />  رد الدعم الفني 
                                             </h4>
                                             <p className="text-sm font-bold text-brand-primary leading-relaxed">
                                                 {selectedReport.reply}
@@ -183,10 +183,10 @@ export const AllReportsPage = () => {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="bg-amber-50 border border-amber-100 p-6 rounded-[2rem] text-right flex items-center justify-between">
+                                        <div className="bg-amber-50 border border-amber-100 p-6 rounded-[2rem] text-right flex items-center gap-2">
                                             <Clock className="h-8 w-8 text-amber-500" />
                                             <div>
-                                                <h4 className="text-sm font-black text-amber-700">جاري مراجعة البلاغ</h4>
+                                                <h4 className="text-sm font-black text-amber-700 mb-1">جاري مراجعة البلاغ</h4>
                                                 <p className="text-xs font-bold text-amber-600/70">فريقنا يعمل حالياً على فحص المشكلة والرد عليك فورا.</p>
                                             </div>
                                         </div>

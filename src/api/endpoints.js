@@ -33,7 +33,7 @@
         NEW: '/bids/new',
         UPDATE_STATUS: (bidId) => `/bids/${bidId}/status`,
         NEGOTIATE: (bidId) => `/bids/${bidId}/negotiate`,
-        DASHBOARD_STATS: '/bids/dashboard-stats',
+        DASHBOARD_STATS: '/shipments/driver/dashboard-stats',
     },
     LOCATION: {
         GOVERNORATES: '/governorate/list',

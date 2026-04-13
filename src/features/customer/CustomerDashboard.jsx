@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Plus, Package, TrendingUp, ArrowLeftRight, ShieldCheck, Box, AlertCircle, ChevronLeft, Calendar, Truck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -137,10 +137,10 @@ export const CustomerDashboard = () => {
             {/* Global Stats Grid */}
             <DashboardStats statsData={apiStats} isLoading={isLoading} />
 
-            {/* Performance & Recent Activity Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                {/* Recent Shipments Table */}
-                <Card className="lg:col-span-2 overflow-hidden border-none shadow-2xl shadow-slate-200/50 dark:shadow-none dark:ring-1 dark:ring-slate-800 bg-white dark:bg-slate-900 rounded-[2.5rem]">
+            {/* Performance Grid Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+                {/* 1. Recent Shipments - (Middle on Mobile / Left on Desktop) */}
+                <Card className="order-2 lg:order-1 lg:col-span-2 overflow-hidden border-none shadow-2xl shadow-slate-200/50 dark:shadow-none dark:ring-1 dark:ring-slate-800 bg-white dark:bg-slate-900 rounded-[2.5rem]">
                     {/* Section Header */}
                     <div className="flex items-center justify-between mb-6 px-8 pt-8">
                         <div className="flex items-center gap-3">
@@ -255,8 +255,8 @@ export const CustomerDashboard = () => {
                     </div>
                 </Card>
 
-                {/* Sidebar Widget: Info */}
-                <div className="space-y-6 sm:space-y-10">
+                {/* 2. New Offers - (Top on Mobile / Sidebar Top on Desktop) */}
+                <div className="order-1 lg:order-2 lg:col-start-3 lg:row-start-1 space-y-6">
                     <Card className="bg-gradient-to-br from-brand-primary to-blue-900 border-none p-0.5 shadow-2xl shadow-brand-primary/30 dark:shadow-brand-primary/10 rounded-[2.5rem]">
                         <CardContent className="p-6 sm:p-8 text-white">
                             <div className="flex items-center gap-4 mb-6">
@@ -312,21 +312,6 @@ export const CustomerDashboard = () => {
                                     <Button variant="ghost" className="w-full text-white hover:bg-white/10 hover:text-white font-black text-xs h-10 rounded-xl">مشاهدة جميع العروض</Button>
                                 </Link>
                             )}
-                        </CardContent>
-                    </Card>
-
-                    {/* Digital Contracts Banner */}
-                    <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all cursor-pointer group rounded-[2.5rem]">
-                        <CardContent className="p-6 sm:p-8 text-center">
-                            <div className="h-14 w-14 sm:h-16 sm:w-16 bg-white dark:bg-slate-800 rounded-2xl sm:rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-700 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <ShieldCheck className="h-7 w-7 sm:h-8 sm:w-8 text-brand-secondary" />
-                            </div>
-                            <h5 className="text-base sm:text-lg font-black text-slate-900 dark:text-white mb-2 leading-none">عقودك الرقمية جاهزة</h5>
-                            <p className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 leading-relaxed mb-6">جميع معاملاتك محمية بعقود رقمية ملزمة لضمان حقوق كافة الأطراف</p>
-                            <Link to="/customer/contracts" className="inline-flex items-center text-xs sm:text-sm font-black text-brand-secondary hover:gap-2 transition-all">
-                                تحميل العقود الأخيرة
-                                <ArrowLeftRight className="mr-2 h-4 w-4" />
-                            </Link>
                         </CardContent>
                     </Card>
                 </div>

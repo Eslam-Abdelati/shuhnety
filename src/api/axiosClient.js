@@ -1,4 +1,4 @@
-﻿import axios from "axios";
+import axios from "axios";
 import Cookies from "js-cookie";
 
 // في بيئة التطوير نستخدم الرابط المباشر من .env
@@ -42,10 +42,16 @@ axiosClient.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // DON'T clear if we are ON the login page already
       if (!window.location.pathname.includes('/login')) {
+        // Clear all persistence to prevent redirection loops
         Cookies.remove("access_token", { path: '/' });
         Cookies.remove("role", { path: '/' });
+        localStorage.clear(); // Important: clears redux-persist state
+        
+        // Also try removing without path just in case
+        Cookies.remove("access_token");
+        Cookies.remove("role");
+
         window.location.href = "/login";
       }
     }

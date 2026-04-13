@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
     MapPin,
@@ -47,6 +47,7 @@ export const ShipmentTracking = () => {
                         setAcceptedOffer({
                             driverName: accepted.driver?.full_name || 'كابتن شحن',
                             driverImage: accepted.driver?.driverDetails?.profile_picture,
+                            driverPhone: accepted.driver?.phone_number,
                             amount: accepted.amount,
                             estimatedTime: accepted.estimatedTime
                         })
@@ -234,13 +235,23 @@ export const ShipmentTracking = () => {
                     </p>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="outline" className="rounded-xl gap-2 h-12 font-bold border-slate-200" disabled={!acceptedOffer || shipment.status === 'ملغي'}>
+                    <Button 
+                        className="rounded-xl gap-2 h-12 font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 transition-all active:scale-95 cursor-pointer" 
+                        disabled={!acceptedOffer || shipment.status === 'ملغي'}
+                        onClick={() => acceptedOffer?.driverPhone && (window.location.href = `tel:${acceptedOffer.driverPhone}`)}
+                    >
                         <Phone className="h-5 w-5" />
                         اتصال بالكابتن
                     </Button>
-                    <Button className="rounded-xl gap-2 h-12 shadow-xl shadow-brand-primary/20 font-bold bg-brand-primary text-white" disabled={!acceptedOffer || shipment.status === 'ملغي'}>
+                    <Button 
+                        className="rounded-xl gap-2 h-12 shadow-xl shadow-slate-200/50 font-bold bg-slate-100 text-slate-400 border-none opacity-60 flex items-center justify-center cursor-not-allowed group relative" 
+                        disabled={true}
+                    >
                         <MessageSquare className="h-5 w-5" />
-                        محادثة فورية
+                        <span>محادثة فورية</span>
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                            قريباً...
+                        </div>
                     </Button>
                 </div>
             </div>

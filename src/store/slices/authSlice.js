@@ -1,4 +1,4 @@
-﻿import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
 
 const initialState = {
@@ -36,6 +36,10 @@ const authSlice = createSlice({
             state.token = null;
 
             // Remove ONLY essential keys from Cookies
+            Cookies.remove('access_token', { path: '/' });
+            Cookies.remove('role', { path: '/' });
+            
+            // Fallback removal
             Cookies.remove('access_token');
             Cookies.remove('role');
 
