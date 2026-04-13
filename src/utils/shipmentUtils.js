@@ -72,8 +72,8 @@ export const getStatusStyles = (status) => {
         'delivery_in_progress': { label: 'جاري التوصيل', bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200', dot: 'bg-indigo-500' },
         'جاري التوصيل': { label: 'جاري التوصيل', bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200', dot: 'bg-indigo-500' },
 
-        'arrived': { label: 'تم الوصول', bg: 'bg-teal-50', text: 'text-teal-700', border: 'border-teal-200', dot: 'bg-teal-500' },
-        'تم الوصول': { label: 'تم الوصول', bg: 'bg-teal-50', text: 'text-teal-700', border: 'border-teal-200', dot: 'bg-teal-500' },
+        'arrived': { label: 'تم الوصول', bg: 'bg-sky-50', text: 'text-sky-700', border: 'border-sky-200', dot: 'bg-sky-500' },
+        'تم الوصول': { label: 'تم الوصول', bg: 'bg-sky-50', text: 'text-sky-700', border: 'border-sky-200', dot: 'bg-sky-500' },
         
         'delivered': { label: 'تم التسليم', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: 'bg-emerald-500' },
         'تم التسليم': { label: 'تم التسليم', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: 'bg-emerald-500' },

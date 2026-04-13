@@ -29,6 +29,9 @@ export const DriverShipmentDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [updating, setUpdating] = useState(false);
+    const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+    const [otpValue, setOtpValue] = useState('');
+    const [isConfirmingDelivery, setIsConfirmingDelivery] = useState(false);
     const [showBidModal, setShowBidModal] = useState(false);
     const [bidForm, setBidForm] = useState({
         amount: '',
@@ -42,6 +45,11 @@ export const DriverShipmentDetails = () => {
     const [showNegotiateInput, setShowNegotiateInput] = useState(false);
     const [negotiateAmount, setNegotiateAmount] = useState('');
 
+    useEffect(() => {
+        if (shipment) {
+            console.log("🛠️ DEBUG: Original Status:", shipment.status_original);
+        }
+    }, [shipment]);
 
     useEffect(() => {
         fetchShipmentDetails();
@@ -151,7 +159,7 @@ export const DriverShipmentDetails = () => {
     const handleStartNavigation = async () => {
         try {
             setUpdating(true);
-            await shipmentService.updateShipmentStatus(id, 'delivery_in_progress');
+            await shipmentService.updateShipmentStatus(id);
             toast.success('تم بدء الرحلة');
             fetchShipmentDetails();
         } catch (err) {
@@ -164,7 +172,7 @@ export const DriverShipmentDetails = () => {
     const handleArrived = async () => {
         try {
             setUpdating(true);
-            await shipmentService.updateShipmentStatus(id, 'arrived');
+            await shipmentService.updateShipmentStatus(id);
             toast.success('تم تأكيد الوصول');
             fetchShipmentDetails();
         } catch (err) {
@@ -174,16 +182,27 @@ export const DriverShipmentDetails = () => {
         }
     };
 
-    const handleCompleteDelivery = async () => {
+    const handleCompleteDelivery = () => {
+        setIsOtpModalOpen(true);
+    };
+
+    const handleConfirmDelivery = async () => {
+        if (otpValue.length < 4) {
+            toast.error('يرجى إدخال الرمز كاملاً');
+            return;
+        }
+
         try {
-            setUpdating(true);
-            await shipmentService.updateShipmentStatus(id, 'delivered');
-            toast.success('تم إتمام التوصيل بنجاح');
+            setIsConfirmingDelivery(true);
+            await shipmentService.confirmDelivery(id, { otp: otpValue });
+            toast.success('تم إتمم التوصيل بنجاح');
+            setIsOtpModalOpen(false);
+            setOtpValue('');
             fetchShipmentDetails();
         } catch (err) {
-            toast.error('فشل في إتمام التوصيل');
+            toast.error(err.message || 'الرمز غير صحيح');
         } finally {
-            setUpdating(false);
+            setIsConfirmingDelivery(false);
         }
     };
 
@@ -593,30 +612,30 @@ export const DriverShipmentDetails = () => {
                                             <Button
                                                 onClick={handleStartNavigation}
                                                 disabled={updating}
-                                                className="w-full h-14 bg-slate-900 text-white rounded-md font-black text-base shadow-lg hover:bg-slate-800 transition-all border-none flex items-center justify-center gap-2"
+                                                className="w-full h-14 bg-slate-900 text-white rounded-md font-black text-base shadow-lg hover:bg-slate-800 transition-all border-none flex items-center justify-center gap-2 cursor-pointer"
                                             >
                                                 {updating ? <Loading minimal={true} className="text-white" /> : (
-                                                    <><Navigation className="h-5 w-5" /> بدأ الملاحة</>
+                                                    <><Navigation className="h-5 w-5 text-orange-400" /> بدء الملاحة</>
                                                 )}
                                             </Button>
                                         ) : (isOfferAccepted && isDeliveryInProgress) ? (
                                             <Button
                                                 onClick={handleArrived}
                                                 disabled={updating}
-                                                className="w-full h-14 bg-teal-600 text-white rounded-md font-black text-base shadow-lg hover:bg-teal-700 transition-all border-none flex items-center justify-center gap-2"
+                                                className="w-full h-14 bg-teal-600 text-white rounded-md font-black text-base shadow-lg hover:bg-teal-700 transition-all border-none flex items-center justify-center gap-2 cursor-pointer"
                                             >
                                                 {updating ? <Loading minimal={true} className="text-white" /> : (
-                                                    <><MapPin className="h-5 w-5" /> تأكيد الوصول</>
+                                                    <><MapPin className="h-5 w-5" /> اتمام الوصول</>
                                                 )}
                                             </Button>
                                         ) : (isOfferAccepted && isArrived) ? (
                                             <Button
                                                 onClick={handleCompleteDelivery}
                                                 disabled={updating}
-                                                className="w-full h-14 bg-emerald-600 text-white rounded-md font-black text-base shadow-lg hover:bg-emerald-700 transition-all border-none flex items-center justify-center gap-2"
+                                                className="w-full h-14 bg-[#009966] text-white rounded-md font-black text-base shadow-lg hover:bg-[#007a52] transition-all border-none flex items-center justify-center gap-2 cursor-pointer"
                                             >
                                                 {updating ? <Loading minimal={true} className="text-white" /> : (
-                                                    <><CheckCircle2 className="h-5 w-5" /> إتمام التوصيل</>
+                                                    <><ShieldCheck className="h-5 w-5" /> تأكيد التسليم</>
                                                 )}
                                             </Button>
                                         ) : isDelivered ? (
@@ -752,6 +771,57 @@ export const DriverShipmentDetails = () => {
                     </form>
                 </DialogContent>
             </Dialog>
+            {/* OTP Confirmation Modal */}
+            {isOtpModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300 pointer-events-auto">
+                    <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-300">
+                        <div className="p-8">
+                            <div className="text-center space-y-4 mb-8">
+                                <div className="h-16 w-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto text-emerald-600">
+                                    <ShieldCheck className="h-8 w-8" />
+                                </div>
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-black text-slate-900">تأكيد رمز الاستلام</h3>
+                                    <p className="text-xs font-bold text-slate-400">اطلب الرمز من العميل لإتمام الرحلة</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-6">
+                                <input
+                                    type="text"
+                                    maxLength={4}
+                                    value={otpValue}
+                                    autoFocus
+                                    onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ''))}
+                                    placeholder="----"
+                                    className="w-full h-16 bg-slate-50 border-2 border-slate-100 rounded-2xl text-center text-3xl font-black tracking-[0.5em] focus:border-emerald-500 focus:bg-white transition-all outline-none"
+                                />
+
+                                <div className="flex flex-col gap-3">
+                                    <Button
+                                        onClick={handleConfirmDelivery}
+                                        disabled={isConfirmingDelivery || otpValue.length < 4}
+                                        className="w-full h-14 bg-emerald-600 text-white rounded-xl font-black"
+                                    >
+                                        {isConfirmingDelivery ? "جاري التأكيد..." : "تأكيد واستلام الأرباح"}
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        onClick={() => {
+                                            setIsOtpModalOpen(false);
+                                            setOtpValue('');
+                                        }}
+                                        disabled={isConfirmingDelivery}
+                                        className="w-full h-12 text-slate-400 font-bold"
+                                    >
+                                        إلغاء
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

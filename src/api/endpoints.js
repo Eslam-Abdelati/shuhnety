@@ -1,4 +1,4 @@
-﻿export const API_ENDPOINTS = {
+export const API_ENDPOINTS = {
     AUTH: {
         REGISTER: '/auth/register',
         LOGIN: '/auth/login',
@@ -26,6 +26,7 @@
         CANCEL: (id) => `/shipments/${id}/cancel`,
         UPDATE_STATUS: (id) => `/shipments/${id}/status`,
         CONFIRM_DELIVERY: (id) => `/shipments/${id}/confirm-delivery`,
+        RATE: (id) => `/shipments/${id}/rate`,
         ME_STATS: '/shipments/me/stats',
     },
     BIDS: {

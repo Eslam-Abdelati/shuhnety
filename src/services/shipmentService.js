@@ -40,7 +40,6 @@ export const shipmentService = {
 
             const response = await axiosClient.post(API_ENDPOINTS.SHIPMENT.SEARCH, cleanedBody, { params });
             const result = response.data;
-
             // Automatically map the shipments if they exist in the response
             if (result.status && result.data?.shipments) {
                 result.data.shipments = result.data.shipments.map(mapShipmentData);
@@ -87,6 +86,7 @@ export const shipmentService = {
         try {
             const response = await axiosClient.post(API_ENDPOINTS.SHIPMENT.AVAILABLE, {}, { params });
             const result = response.data;
+            // console.log(result);
 
             // Automatically map the shipments
             if (result.status && result.data?.shipments) {
@@ -109,6 +109,7 @@ export const shipmentService = {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.SHIPMENT.ASSIGNED, { params });
             const result = response.data;
+            // console.log('Assigned shipments:', result);
             // Automatically map the shipments
             if (result.status && result.data?.shipments) {
                 result.data.shipments = result.data.shipments.map(mapShipmentData);
@@ -223,9 +224,9 @@ export const shipmentService = {
      * @param {string|number} id
      * @param {string} status
      */
-    updateShipmentStatus: async (id, status) => {
+    updateShipmentStatus: async (id) => {
         try {
-            const response = await axiosClient.patch(API_ENDPOINTS.SHIPMENT.UPDATE_STATUS(id), { status });
+            const response = await axiosClient.patch(API_ENDPOINTS.SHIPMENT.UPDATE_STATUS(id));
             const result = response.data;
             if (result.status && result.data) {
                 result.data = mapShipmentData(result.data);
@@ -243,9 +244,9 @@ export const shipmentService = {
      * Confirm shipment delivery (usually for drivers)
      * @param {string|number} id
      */
-    confirmDelivery: async (id) => {
+    confirmDelivery: async (id, otpData) => {
         try {
-            const response = await axiosClient.patch(API_ENDPOINTS.SHIPMENT.CONFIRM_DELIVERY(id));
+            const response = await axiosClient.patch(API_ENDPOINTS.SHIPMENT.CONFIRM_DELIVERY(id), otpData);
             const result = response.data;
             if (result.status && result.data) {
                 result.data = mapShipmentData(result.data);
@@ -263,12 +264,17 @@ export const shipmentService = {
      */
     submitReview: async (shipmentId, reviewData) => {
         try {
-            // Note: Updated review endpoint if it changes in backend, but keeping current if not listed
-            const response = await axiosClient.post(`/shipments/${shipmentId}/review`, reviewData);
+            console.log('Submitting review for ID:', shipmentId);
+            // Strictly using 'score' and 'comment' only, as the backend rejects 'rating'
+            const payload = {
+                score: Number(reviewData.score || reviewData.rating),
+                comment: reviewData.comment || ''
+            };
+            const response = await axiosClient.patch(API_ENDPOINTS.SHIPMENT.RATE(shipmentId), payload);
             return response.data;
         } catch (error) {
             console.error('Submit review error:', error.response?.data || error.message);
-            throw new Error(error.response?.data?.message || 'فشل في إرسال التقيم');
+            throw new Error(error.response?.data?.message || 'فشل في إرسال التقييم');
         }
     },
     /**
@@ -277,6 +283,8 @@ export const shipmentService = {
     getNewBids: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.BIDS.NEW);
+            console.log(response);
+
             return response.data;
         } catch (error) {
             console.error('Get new bids error:', error.response?.data || error.message);

@@ -6,7 +6,7 @@ import {
     ChevronLeft, Navigation, Phone, User as UserIcon,
     MessageSquare, CheckCircle2, Box, Bell, Zap,
     Star, ArrowUpRight, Search, LayoutGrid, Timer,
-    Weight, ArrowRightLeft, AlertTriangle, Eye
+    Weight, ArrowRightLeft, AlertTriangle, Eye, ShieldCheck
 } from 'lucide-react'
 import { useShipmentStore } from '@/store/useShipmentStore'
 import { useOfferStore } from '@/store/useOfferStore'
@@ -32,6 +32,10 @@ export const DriverDashboard = () => {
     const [isOnline, setIsOnline] = useState(true)
     const [loading, setLoading] = useState(true)
     const [stats, setStats] = useState(null)
+    const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+    const [otpValue, setOtpValue] = useState('');
+    const [isConfirmingDelivery, setIsConfirmingDelivery] = useState(false);
+    const [selectedShipmentId, setSelectedShipmentId] = useState(null);
 
     const fetchDashboardData = async () => {
         setIsFetchingAvailable(true)
@@ -41,7 +45,10 @@ export const DriverDashboard = () => {
             setAvailableShipments(availableList)
 
             const assignedResponse = await shipmentService.getAssignedShipments({ skip: 0, take: 5 })
-            const assignedList = (assignedResponse.data?.shipments || (Array.isArray(assignedResponse.data) ? assignedResponse.data : [])).map(mapShipmentData);
+            const assignedList = (assignedResponse.data?.shipments || (Array.isArray(assignedResponse.data) ? assignedResponse.data : [])).map(s => {
+                const mapped = mapShipmentData(s);
+                return mapped;
+            });
             setAssignedShipments(assignedList)
 
             // Fetch Bidding Dashboard Stats
@@ -63,12 +70,17 @@ export const DriverDashboard = () => {
         fetchDashboardData()
     }, [])
 
-    const activeTrip = assignedShipments.find(s =>
-        s.status !== 'delivered' &&
-        s.status !== 'تم التسليم' &&
-        s.status !== 'cancelled' &&
-        s.status !== 'ملغي'
-    )
+    const activeTrip = assignedShipments.find(s => {
+        const sStatusOriginal = (s.status_original || '').toLowerCase();
+        const sStatusMapped = s.status || '';
+
+        // Hide if delivered or canceled
+        if (sStatusOriginal === 'delivered' || sStatusMapped === 'تم التسليم') return false;
+        if (sStatusOriginal === 'canceled' || sStatusOriginal === 'cancelled' || sStatusMapped === 'ملغي') return false;
+
+        // Otherwise, if it's assigned to me, it's active
+        return true;
+    });
 
     // Earnings data from API
     const totalEarnings = stats?.total?.earnings || stats?.totalEarnings || 0
@@ -78,31 +90,34 @@ export const DriverDashboard = () => {
 
     const handleStartNavigation = async (shipmentId) => {
         try {
-            await shipmentService.updateShipmentStatus(shipmentId, 'delivery_in_progress');
+            await shipmentService.updateShipmentStatus(shipmentId);
             toast.success('تم بدء الرحلة بنجاح');
             fetchDashboardData();
         } catch (error) {
             console.error('Failed to start navigation:', error);
+            toast.error(error.message || 'فشل في بدء الرحلة');
         }
     };
 
     const handleArrived = async (shipmentId) => {
         try {
-            await shipmentService.updateShipmentStatus(shipmentId, 'arrived');
+            await shipmentService.updateShipmentStatus(shipmentId);
             toast.success('تم تأكيد الوصول لموقع التوصيل');
             fetchDashboardData();
         } catch (error) {
             console.error('Failed to confirm arrival:', error);
+            toast.error(error.message || 'فشل في تأكيد الوصول');
         }
     };
 
     const handleCompleteDelivery = async (shipmentId) => {
         try {
-            await shipmentService.updateShipmentStatus(shipmentId, 'delivered');
+            await shipmentService.confirmDelivery(shipmentId);
             toast.success('تم إتمام التوصيل بنجاح');
             fetchDashboardData();
         } catch (error) {
             console.error('Failed to complete delivery:', error);
+            toast.error(error.message || 'فشل في إتمام التوصيل');
         }
     };
 
@@ -238,34 +253,25 @@ export const DriverDashboard = () => {
                         <CardContent className="p-6 space-y-4">
                             <div className="flex items-center justify-between border-b border-slate-50 pb-3">
                                 <div className="flex items-center gap-3">
-
                                     <span className="text-sm font-bold text-slate-600">إجمالي الرحلات</span>
                                 </div>
-                                <span className="text-lg font-black text-slate-900">---</span>
+                                <span className="text-lg font-black text-slate-900">{stats?.total?.trips || 0}</span>
                             </div>
 
                             <div className="flex items-center justify-between border-b border-slate-50 pb-3">
                                 <div className="flex items-center gap-3">
-
-                                    <span className="text-sm font-bold text-slate-600"> قيد الوصول</span>
+                                    <span className="text-sm font-bold text-slate-600">قيد الوصول</span>
                                 </div>
-                                <span className="text-lg font-black text-slate-900">---</span>
+                                <span className="text-lg font-black text-slate-900">
+                                    {assignedShipments.filter(s => (s.status_original || s.status) === 'arrived').length}
+                                </span>
                             </div>
 
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-
-                                    <span className="text-sm font-bold text-slate-600"> بدأ الملاحة</span>
-                                </div>
-                                <span className="text-lg font-black text-slate-900">---</span>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-
                                     <span className="text-sm font-bold text-slate-600">رحلات مكتملة</span>
                                 </div>
-                                <span className="text-lg font-black text-slate-900">---</span>
+                                <span className="text-lg font-black text-emerald-600">{stats?.total?.trips || 0}</span>
                             </div>
                         </CardContent>
                     </Card>
@@ -283,7 +289,9 @@ export const DriverDashboard = () => {
                                 const apiBid = s.bids && s.bids.length > 0 ? s.bids[0] : null;
                                 const localOffer = (offers || []).find(o => String(o.shipmentId) === String(s.id) && String(o.driverId) === String(user?.id || 'doc-driver-id'));
                                 const hasBid = apiBid || localOffer;
-                                const displayPrice = apiBid ? (apiBid.negotiatedAmount || apiBid.amount) : localOffer?.price;
+                                const negotiatedPrice = apiBid ? (apiBid.negotiatedAmount || apiBid.negotiated_amount) : null;
+                                const hasNegotiation = negotiatedPrice > 0;
+                                const displayPrice = apiBid ? (negotiatedPrice || apiBid.amount) : localOffer?.price;
 
                                 return (
                                     <motion.div
@@ -294,43 +302,54 @@ export const DriverDashboard = () => {
                                         onClick={() => navigate(`/driver/available/${s.id}`)}
                                         className={cn(
                                             "group relative rounded-[2rem] p-5 border transition-all cursor-pointer overflow-hidden backdrop-blur-sm",
-                                            hasBid
-                                                ? "border-[#009966] bg-[#009966]/5 shadow-md shadow-[#009966]/5"
-                                                : "bg-white border-slate-100 shadow-sm hover:shadow-xl hover:shadow-orange-900/5 hover:bg-slate-50/50 hover:border-[#eb6a1d]/20 transition-all duration-300"
+                                            hasNegotiation
+                                                ? "border-amber-500 bg-amber-50/50 shadow-md shadow-amber-500/10"
+                                                : hasBid
+                                                    ? "border-[#009966] bg-[#009966]/5 shadow-md shadow-[#009966]/5"
+                                                    : "bg-white border-slate-100 shadow-sm hover:shadow-xl hover:shadow-orange-900/5 hover:bg-slate-50/50 hover:border-[#eb6a1d]/20 transition-all duration-300"
                                         )}
                                     >
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex items-center gap-3">
                                                 <div className={cn(
                                                     "h-10 w-10 rounded-xl flex items-center justify-center transition-colors",
-                                                    hasBid ? "bg-[#009966] text-white" : "bg-slate-50 text-slate-400 group-hover:bg-[#eb6a1d]/10 group-hover:text-[#eb6a1d]"
+                                                    hasNegotiation ? "bg-amber-500 text-white animate-pulse" : (hasBid ? "bg-[#009966] text-white" : "bg-slate-50 text-slate-400 group-hover:bg-[#eb6a1d]/10 group-hover:text-[#eb6a1d]")
                                                 )}>
-                                                    <Package className="h-5 w-5" />
+                                                    {hasNegotiation ? <TrendingUp className="h-5 w-5" /> : <Package className="h-5 w-5" />}
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-black text-sm text-slate-900">{getGoodsTypeLabel(s.goodsType)}</h4>
+                                                    <div className="flex items-center gap-2">
+                                                        <h4 className="font-black text-sm text-slate-900">{getGoodsTypeLabel(s.goodsType)}</h4>
+                                                        {hasNegotiation && (
+                                                            <span className="flex items-center gap-1 px-1.5 py-0.5 bg-amber-100 text-[8px] font-black text-amber-600 rounded-lg animate-bounce">
+                                                                تفاوض!
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <span className="text-[10px] font-bold text-slate-400">{s.weight} كجم</span>
                                                 </div>
                                             </div>
                                             <div className="text-right">
                                                 <div className={cn(
-                                                    "text-lg font-black",
-                                                    hasBid ? "text-[#009966]" : "text-[#eb6a1d]"
+                                                    "text-lg font-black font-cairo",
+                                                    hasNegotiation ? "text-amber-600" : (hasBid ? "text-[#009966]" : "text-[#eb6a1d]")
                                                 )}>
-                                                    {hasBid ? (
-                                                        <span className="flex items-baseline gap-1 font-cairo">
-                                                            {apiBid?.negotiatedAmount ? (
-                                                                <>
-                                                                    <span className="text-[9px] line-through opacity-40 ml-1">{apiBid.amount}</span>
-                                                                    {apiBid.negotiatedAmount}
-                                                                </>
-                                                            ) : displayPrice}
+                                                    {hasNegotiation ? (
+                                                        <div className="flex items-baseline gap-1">
+                                                            <span className="text-[9px] line-through opacity-40 ml-1">{apiBid.amount}</span>
+                                                            {negotiatedPrice}
+                                                        </div>
+                                                    ) : hasBid ? (
+                                                        <span className="flex items-baseline gap-1">
+                                                            {displayPrice}
                                                         </span>
                                                     ) : (
-                                                        <span className="font-cairo">{s.price > 0 ? s.price : 'مزايدة'}</span>
+                                                        <span>{s.price > 0 ? s.price : 'مزايدة'}</span>
                                                     )}
                                                 </div>
-                                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">جنيه مصري</p>
+                                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                                                    {hasNegotiation ? 'عرض العميل' : 'جنيه مصري'}
+                                                </p>
                                             </div>
                                         </div>
 
@@ -457,7 +476,7 @@ export const DriverDashboard = () => {
                                     {/* Action Buttons */}
                                     <div className="pt-2">
                                         <div className="grid grid-cols-2 gap-3">
-                                            <Button variant="outline" className="h-14 rounded-2xl gap-2 font-black border-slate-100 hover:bg-slate-50">
+                                            <Button variant="outline" className="h-14 rounded-2xl gap-2 font-black border-slate-100 hover:bg-slate-50 cursor-pointer">
                                                 <MessageSquare className="h-5 w-5 text-blue-500" />
                                                 محادثة
                                             </Button>
@@ -479,11 +498,15 @@ export const DriverDashboard = () => {
                                                 if (activeTrip.status === 'arrived' || activeTrip.status === 'تم الوصول') {
                                                     return (
                                                         <Button
-                                                            onClick={() => handleCompleteDelivery(activeTrip.id)}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setSelectedShipmentId(activeTrip.id);
+                                                                setIsOtpModalOpen(true);
+                                                            }}
                                                             className="h-14 bg-[#009966] text-white rounded-2xl font-black gap-2 transition-all hover:bg-[#007a52] shadow-lg shadow-emerald-200/50 active:scale-95 cursor-pointer"
                                                         >
-                                                            <CheckCircle2 className="h-5 w-5" />
-                                                            إتمام التوصيل
+                                                            <ShieldCheck className="h-5 w-5" />
+                                                            تأكيد التسليم
                                                         </Button>
                                                     );
                                                 }
@@ -495,7 +518,7 @@ export const DriverDashboard = () => {
                                                             className="h-14 bg-teal-600 text-white rounded-2xl font-black gap-2 transition-all hover:bg-teal-700 shadow-lg shadow-teal-200/50 active:scale-95 cursor-pointer"
                                                         >
                                                             <MapPin className="h-5 w-5" />
-                                                            تأكيد الوصول
+                                                            اتمام الوصول
                                                         </Button>
                                                     );
                                                 }
@@ -544,8 +567,76 @@ export const DriverDashboard = () => {
                 )}
 
 
-            </div>
+                {/* OTP Confirmation Modal */}
+                {isOtpModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300 pointer-events-auto">
+                        <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-300">
+                            <div className="p-8">
+                                <div className="text-center space-y-4 mb-8">
+                                    <div className="h-16 w-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto text-emerald-600">
+                                        <ShieldCheck className="h-8 w-8" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h3 className="text-xl font-black text-slate-900">تأكيد رمز الاستلام</h3>
+                                        <p className="text-xs font-bold text-slate-400">اطلب الرمز من العميل لإتمام الرحلة</p>
+                                    </div>
+                                </div>
 
+                                <div className="space-y-6">
+                                    <input
+                                        type="text"
+                                        maxLength={4}
+                                        value={otpValue}
+                                        autoFocus
+                                        onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ''))}
+                                        placeholder="----"
+                                        className="w-full h-16 bg-slate-50 border-2 border-slate-100 rounded-2xl text-center text-3xl font-black tracking-[0.5em] focus:border-emerald-500 focus:bg-white transition-all outline-none"
+                                    />
+
+                                    <div className="flex flex-col gap-3">
+                                        <Button
+                                            onClick={async () => {
+                                                if (otpValue.length < 4) {
+                                                    toast.error('يرجى إدخال الرمز كاملاً');
+                                                    return;
+                                                }
+                                                try {
+                                                    setIsConfirmingDelivery(true);
+                                                    console.log(`Confirming Delivery for ${selectedShipmentId} with OTP: ${otpValue}`);
+                                                    await shipmentService.confirmDelivery(selectedShipmentId, { otp: otpValue });
+                                                    toast.success('تم التسليم بنجاح');
+                                                    setIsOtpModalOpen(false);
+                                                    setOtpValue('');
+                                                    fetchDashboardData();
+                                                } catch (err) {
+                                                    toast.error(err.message || 'الرمز غير صحيح');
+                                                } finally {
+                                                    setIsConfirmingDelivery(false);
+                                                }
+                                            }}
+                                            disabled={isConfirmingDelivery || otpValue.length < 4}
+                                            className="w-full h-14 bg-emerald-600 text-white rounded-xl font-black"
+                                        >
+                                            {isConfirmingDelivery ? "جاري التأكيد..." : "تأكيد واستلام الأرباح"}
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => {
+                                                setIsOtpModalOpen(false);
+                                                setOtpValue('');
+                                            }}
+                                            disabled={isConfirmingDelivery}
+                                            className="w-full h-12 text-slate-400 font-bold"
+                                        >
+                                            إلغاء
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

@@ -19,6 +19,7 @@ import {
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Loading } from '@/components/ui/Loading'
+import { toast } from 'react-hot-toast'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
@@ -33,6 +34,10 @@ export const ShipmentDetailsPage = () => {
     const { role } = useAuthStore()
     const [shipment, setShipment] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [score, setScore] = useState(1)
+    const [comment, setComment] = useState('')
+    const [isSubmittingReview, setIsSubmittingReview] = useState(false)
+    const [isReviewed, setIsReviewed] = useState(false)
 
     const fetchShipment = async () => {
         setIsLoading(true)
@@ -54,6 +59,22 @@ export const ShipmentDetailsPage = () => {
 
     const shipmentOffers = shipment?.bids || []
     const acceptedOffer = shipmentOffers.find(o => o.status === 'accepted')
+
+    const handleReviewSubmit = async () => {
+        try {
+            setIsSubmittingReview(true)
+            console.log('Identifiers:', { trackingNumber: shipment?.trackingNumber, _id: shipment?._id, id: shipment?.id, paramsId: id, acceptedOfferId: acceptedOffer?.id });
+            await shipmentService.submitReview(shipment?.id || id, { score, comment })
+            toast.success('تم إرسال تقييمك بنجاح')
+            setIsReviewed(true)
+            fetchShipment()
+        } catch (error) {
+            console.error('Failed to submit review:', error)
+            toast.error(error.message || 'فشل في إرسال التقييم')
+        } finally {
+            setIsSubmittingReview(false)
+        }
+    }
 
     const formatDimension = (value) => {
         if (!value) return '-';
@@ -135,10 +156,9 @@ export const ShipmentDetailsPage = () => {
                     </div>
                 </div>
             </div>
-
             {/* Offers Notification */}
             {!acceptedOffer && shipment.bidsCount > 0 && (
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 md:p-5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.25rem] md:rounded-[2rem] shadow-sm hover:translate-y-[-2px] transition-all relative overflow-hidden group animate-in slide-in-from-top-4 duration-500">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 md:p-5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.25rem] md:rounded-[2rem] shadow-sm hover:translate-y-[-2px] transition-all relative overflow-hidden group animate-in slide-in-from-top-4 duration-500 mb-5 md:mb-6">
                     <div className="absolute top-0 right-0 w-1.5 h-full bg-brand-primary"></div>
                     <div className="flex items-center gap-3 md:gap-4 pl-4 sm:pl-0">
                         <div className="h-10 w-10 md:h-12 md:w-12 bg-brand-primary/10 rounded-full flex items-center justify-center text-brand-primary shrink-0 group-hover:rotate-6 transition-transform">
@@ -162,6 +182,83 @@ export const ShipmentDetailsPage = () => {
                     </button>
                 </div>
             )}
+
+            {/* Driver Rating Section (Top on Mobile only) */}
+            {(role === 'customer' && (shipment.status === 'تم التسليم' || shipment.status === 'delivered') && (
+                <div className="animate-in fade-in slide-in-from-top-4 duration-700 mb-5 md:mb-6 lg:hidden">
+                    {!shipment.review && !isReviewed ? (
+                        <Card className="rounded-[1.25rem] md:rounded-[2rem] border-none shadow-xl bg-gradient-to-br from-slate-900 to-slate-800 text-white overflow-hidden relative group">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                            <CardContent className="p-6 md:p-8 relative z-10">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                    <div className="flex items-center gap-4">
+                                        <div className="h-12 w-12 bg-brand-primary rounded-2xl flex items-center justify-center shadow-lg shadow-brand-primary/20 shrink-0">
+                                            <Star className="h-6 w-6 text-white" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-black text-lg">تقييم الكابتن</h3>
+                                            <p className="text-xs font-bold text-white/50">كيف كانت تجربتك مع هذا القائد؟</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Stars Selection */}
+                                    <div className="flex items-center justify-center gap-2 py-2">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <button
+                                                key={star}
+                                                onClick={() => setScore(star)}
+                                                type="button"
+                                                className="transition-all active:scale-90"
+                                            >
+                                                <Star
+                                                    className={cn(
+                                                        "h-8 w-8 md:h-9 md:w-9 transition-colors",
+                                                        score >= star ? "fill-brand-primary text-brand-primary" : "text-white/20 fill-transparent"
+                                                    )}
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex flex-col gap-4 w-full">
+                                        <textarea
+                                            value={comment}
+                                            onChange={(e) => setComment(e.target.value)}
+                                            placeholder="اكتب ملاحظاتك عن الخدمة والكابتن..."
+                                            className="w-full h-24 bg-white/5 border border-white/10 rounded-2xl p-4 text-xs font-bold outline-none focus:border-brand-primary focus:bg-white/10 transition-all resize-none"
+                                        />
+                                        <Button
+                                            onClick={handleReviewSubmit}
+                                            disabled={isSubmittingReview}
+                                            className="w-full h-12 bg-brand-primary text-white rounded-xl font-black text-sm shadow-lg shadow-brand-primary/20"
+                                        >
+                                            {isSubmittingReview ? <Loading minimal={true} className="text-white" /> : 'إرسال التقييم'}
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <Card className="rounded-[1.25rem] md:rounded-[2rem] border border-emerald-100 dark:border-emerald-900/30 bg-emerald-50/30 dark:bg-emerald-900/10 p-5 md:p-6 flex flex-row items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="h-10 w-10 bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 rounded-full flex items-center justify-center shrink-0">
+                                    <ShieldCheck className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <h4 className="font-black text-slate-900 dark:text-white text-sm">تم تقييم الكابتن بنجاح</h4>
+                                    <p className="text-[10px] font-bold text-emerald-600/70">شكراً لمشاركتنا تجربتك!</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                {[1, 2, 3, 4, 5].map(star => (
+                                    <Star key={star} className={cn("h-4 w-4", (shipment.review?.score || shipment.review?.rating || score) >= star ? "fill-amber-500 text-amber-500" : "text-slate-200 dark:text-slate-700")} />
+                                ))}
+                            </div>
+                        </Card>
+                    )}
+                </div>
+            ))}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-6">
                 {/* Main Content */}
@@ -432,6 +529,79 @@ export const ShipmentDetailsPage = () => {
 
                 {/* Sidebar */}
                 <div className="space-y-5 md:space-y-6">
+                    {/* Driver Rating Card (Desktop only - Top of Sidebar) */}
+                    {role === 'customer' && (shipment.status === 'تم التسليم' || shipment.status === 'delivered') && (
+                        <div className="hidden lg:block animate-in zoom-in-95 duration-700">
+                            {!shipment.review && !isReviewed ? (
+                                <Card className="rounded-[2rem] border-none shadow-xl bg-gradient-to-br from-slate-900 to-slate-800 text-white overflow-hidden relative group">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                                    <CardContent className="p-6 relative z-10">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="h-10 w-10 bg-brand-primary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/20">
+                                                <Star className="h-5 w-5 text-white" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-black text-base">تقييم الكابتن</h3>
+                                                <p className="text-[10px] font-bold text-white/50">كيف كانت تجربتك؟</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-5">
+                                            <div className="flex items-center justify-center gap-2 py-2">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <button
+                                                        key={star}
+                                                        onClick={() => setScore(star)}
+                                                        type="button"
+                                                        className="transition-all active:scale-90"
+                                                    >
+                                                        <Star
+                                                            className={cn(
+                                                                "h-7 w-7 transition-colors",
+                                                                score >= star ? "fill-brand-primary text-brand-primary" : "text-white/20 fill-transparent"
+                                                            )}
+                                                        />
+                                                    </button>
+                                                ))}
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <textarea
+                                                    value={comment}
+                                                    onChange={(e) => setComment(e.target.value)}
+                                                    placeholder="اكتب ملاحظاتك..."
+                                                    className="w-full h-24 bg-white/5 border border-white/10 rounded-xl p-4 text-xs font-bold outline-none focus:border-brand-primary focus:bg-white/10 transition-all resize-none"
+                                                />
+                                            </div>
+
+                                            <Button
+                                                onClick={handleReviewSubmit}
+                                                disabled={isSubmittingReview}
+                                                className="w-full h-11 bg-brand-primary text-white rounded-xl font-black text-xs shadow-lg shadow-brand-primary/20"
+                                            >
+                                                {isSubmittingReview ? <Loading minimal={true} className="text-white" /> : 'إرسال التقييم'}
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ) : (
+                                <Card className="rounded-[2rem] border border-emerald-100 dark:border-emerald-900/30 bg-emerald-50/30 dark:bg-emerald-900/10 p-6 flex flex-col items-center text-center space-y-3">
+                                    <div className="h-12 w-12 bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 rounded-full flex items-center justify-center">
+                                        <ShieldCheck className="h-6 w-6" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-black text-slate-900 dark:text-white text-sm">تم التقييم بنجاح</h4>
+                                        <div className="flex items-center justify-center gap-1 mt-1">
+                                            {[1, 2, 3, 4, 5].map(star => (
+                                                <Star key={star} className={cn("h-3 w-3", (shipment.review?.score || shipment.review?.rating || score) >= star ? "fill-amber-500 text-amber-500" : "text-slate-200 dark:text-slate-700")} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </Card>
+                            )}
+                        </div>
+                    )}
+
                     {/* Costs Card */}
                     <Card className="rounded-[1.25rem] md:rounded-[2rem] border-none shadow-sm bg-slate-900 text-white overflow-hidden relative group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
@@ -500,7 +670,6 @@ export const ShipmentDetailsPage = () => {
                                             <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white tracking-widest" dir="ltr">{shipment.recipientPhone}</p>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </CardContent>

@@ -14,7 +14,8 @@ import {
     Filter,
     X,
     ArrowRight,
-    RotateCcw
+    RotateCcw,
+    TrendingUp
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -68,21 +69,27 @@ export const AvailableShipments = () => {
         return matchFrom && matchTo
     })
 
+    const getMyBid = (s) => {
+        // Check API response bids first
+        if (s.bids && s.bids.length > 0) {
+            return s.bids[0];
+        }
+        // Check local store
+        return (offers || []).find(o => String(o.shipmentId) === String(s.id) && String(o.driverId) === String(user?.id || 'doc-driver-id'))
+    }
+
     const hasBid = (s) => {
-        // Check API response bids
-        if (s.bids && s.bids.length > 0) return true;
-        // Check local store offers (for newly submitted bids)
-        return (offers || []).some(o => String(o.shipmentId) === String(s.id) && String(o.driverId) === String(user?.id || 'doc-driver-id'))
+        return !!getMyBid(s);
     }
 
     const getOfferPrice = (s) => {
-        // Check API response bids first
-        if (s.bids && s.bids.length > 0) {
-            return s.bids[0].amount;
-        }
-        // Check local store
-        const offer = (offers || []).find(o => String(o.shipmentId) === String(s.id) && String(o.driverId) === String(user?.id || 'doc-driver-id'))
-        return offer ? offer.price : null
+        const bid = getMyBid(s);
+        return bid ? (bid.amount || bid.price) : null;
+    }
+
+    const getNegotiatedPrice = (s) => {
+        const bid = getMyBid(s);
+        return bid ? (bid.negotiatedAmount || bid.negotiated_amount) : null;
     }
 
     if (loading) {
@@ -170,6 +177,8 @@ export const AvailableShipments = () => {
                     filteredShipments.map((s) => {
                         const submitted = hasBid(s)
                         const bidPrice = getOfferPrice(s)
+                        const negotiatedPrice = getNegotiatedPrice(s)
+                        const hasNegotiation = negotiatedPrice > 0
 
                         return (
                             <motion.div
@@ -189,14 +198,21 @@ export const AvailableShipments = () => {
                                         <div className="flex items-center gap-4">
                                             <div className={cn(
                                                 "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-inner",
-                                                submitted ? "bg-emerald-500 text-white" : "bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-[#eb6a1d] group-hover:text-white"
+                                                hasNegotiation ? "bg-amber-500 text-white animate-pulse" : (submitted ? "bg-emerald-500 text-white" : "bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-[#eb6a1d] group-hover:text-white")
                                             )}>
-                                                <Package className="h-6 w-6" />
+                                                {hasNegotiation ? <TrendingUp className="h-6 w-6" /> : <Package className="h-6 w-6" />}
                                             </div>
                                             <div className="space-y-1">
-                                                <h4 className="text-sm font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tight">
-                                                    {getGoodsTypeLabel(s.goodsType)}
-                                                </h4>
+                                                <div className="flex items-center gap-2">
+                                                    <h4 className="text-sm font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tight">
+                                                        {getGoodsTypeLabel(s.goodsType)}
+                                                    </h4>
+                                                    {hasNegotiation && (
+                                                        <span className="flex items-center gap-1.5 px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-[10px] font-black text-amber-600 dark:text-amber-400 rounded-full border border-amber-200/50 animate-bounce">
+                                                            لديك تفاوض من العميل!
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 <div className="flex items-center gap-2">
                                                     <div className="flex items-center gap-1.5 px-1.5 py-0.5 bg-blue-50 dark:bg-blue-900/20 rounded-md text-[10px] font-black text-blue-600 dark:text-blue-400 border border-blue-100/50">
                                                         <Weight className="h-3 w-3" />
@@ -253,12 +269,22 @@ export const AvailableShipments = () => {
                                                 <Box className="h-5 w-5" />
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-[9px] font-black text-slate-400 tracking-wider uppercase">سعر المزاد الحالي</span>
+                                                <span className="text-[9px] font-black text-slate-400 tracking-wider uppercase">
+                                                    {hasNegotiation ? 'السعر المعروض من العميل' : 'سعر المزاد الحالي'}
+                                                </span>
                                                 <div className="flex items-baseline gap-1.5">
-                                                    <span className="text-2xl font-black text-slate-900 dark:text-white">
-                                                        {submitted ? `${bidPrice}` : (s.price > 0 ? `${s.price}` : 'مزايدة')}
+                                                    <span className={cn(
+                                                        "text-2xl font-black",
+                                                        hasNegotiation ? "text-amber-600" : "text-slate-900 dark:text-white"
+                                                    )}>
+                                                        {hasNegotiation ? `${negotiatedPrice}` : (submitted ? `${bidPrice}` : (s.price > 0 ? `${s.price}` : 'مزايدة'))}
                                                     </span>
                                                     <span className="text-xs font-bold text-slate-400">ج.م</span>
+                                                    {hasNegotiation && (
+                                                        <span className="text-[10px] font-bold text-slate-300 line-through mr-2">
+                                                            {bidPrice} ج.م
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -271,7 +297,15 @@ export const AvailableShipments = () => {
                                                التفاصيل
                                             </button>
                                             
-                                            {submitted ? (
+                                            {hasNegotiation ? (
+                                                <button
+                                                    onClick={() => navigate(`/driver/available/${s.id}`)}
+                                                    className="h-13 px-8 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-2xl flex items-center justify-center gap-3 text-xs font-black shadow-xl shadow-amber-500/30 transition-all hover:-translate-y-0.5 active:scale-95 group/negotiate"
+                                                >
+                                                    <TrendingUp className="h-4 w-4 animate-bounce" />
+                                                    بدأ التفاوض
+                                                </button>
+                                            ) : submitted ? (
                                                 <div className="h-13 px-6 rounded-2xl flex items-center justify-center gap-2 bg-emerald-500 text-white font-black text-xs shadow-lg shadow-emerald-500/20 border border-emerald-400/20">
                                                     <CheckCircle2 className="h-4 w-4" />
                                                     تم تقديم عرضك 

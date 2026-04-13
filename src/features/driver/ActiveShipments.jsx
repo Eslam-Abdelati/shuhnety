@@ -99,6 +99,7 @@ export const ActiveShipments = () => {
         const matchesStatus = filterStatus === 'الكل' ||
             s.status_original === targetStatusOriginal ||
             s.status === filterStatus ||
+            (filterStatus === 'تم الوصول' && (s.status_original === 'arrived' || s.status === 'تم الوصول')) ||
             isPickupProgress;
 
         // Search Filter
@@ -184,7 +185,8 @@ export const ActiveShipments = () => {
                                         <div className="flex items-center gap-3">
                                             <div className={cn(
                                                 "h-10 w-10 rounded-xl flex items-center justify-center text-white transition-colors",
-                                                statusStyle.bg.replace('bg-', 'bg-').includes('emerald') ? 'bg-emerald-500' : 'bg-brand-primary'
+                                                s.status_original === 'delivered' ? 'bg-emerald-500' : 
+                                                s.status_original === 'arrived' ? 'bg-sky-500' : 'bg-brand-primary'
                                             )}>
                                                 <Truck className="h-5 w-5" />
                                             </div>
