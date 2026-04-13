@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Wallet,
     Briefcase,
@@ -77,8 +77,8 @@ export const DriverReports = () => {
                 {reportItems.map((item, idx) => (
                     <Card key={idx} className="border-none shadow-sm rounded-[2rem] overflow-hidden bg-white hover:shadow-md transition-all">
                         <div className={`p-5 flex items-center justify-between text-white ${item.color === 'orange' ? 'bg-[#eb6a1d]' :
-                                item.color === 'emerald' ? 'bg-[#009966]' :
-                                    item.color === 'blue' ? 'bg-blue-600' : 'bg-slate-900'
+                            item.color === 'emerald' ? 'bg-[#009966]' :
+                                item.color === 'blue' ? 'bg-blue-600' : 'bg-slate-900'
                             }`}>
                             <div className="flex items-center gap-3">
                                 <div className="h-9 w-9 rounded-xl bg-white/20 flex items-center justify-center">

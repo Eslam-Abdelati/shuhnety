@@ -65,7 +65,7 @@ export const DriverDashboard = () => {
 
     const activeTrip = assignedShipments.find(s =>
         s.status !== 'delivered' &&
-        s.status !== 'تم التوصيل' &&
+        s.status !== 'تم التسليم' &&
         s.status !== 'cancelled' &&
         s.status !== 'ملغي'
     )
@@ -83,6 +83,16 @@ export const DriverDashboard = () => {
             fetchDashboardData();
         } catch (error) {
             console.error('Failed to start navigation:', error);
+        }
+    };
+
+    const handleArrived = async (shipmentId) => {
+        try {
+            await shipmentService.updateShipmentStatus(shipmentId, 'arrived');
+            toast.success('تم تأكيد الوصول لموقع التوصيل');
+            fetchDashboardData();
+        } catch (error) {
+            console.error('Failed to confirm arrival:', error);
         }
     };
 
@@ -454,7 +464,7 @@ export const DriverDashboard = () => {
 
                                             {/* Dynamic Button States */}
                                             {(() => {
-                                                if (activeTrip.status === 'delivered' || activeTrip.status === 'تم التوصيل') {
+                                                if (activeTrip.status === 'delivered' || activeTrip.status === 'تم التسليم') {
                                                     return (
                                                         <Button
                                                             disabled
@@ -466,14 +476,26 @@ export const DriverDashboard = () => {
                                                     );
                                                 }
 
-                                                if (activeTrip.status === 'delivery_in_progress' || activeTrip.status === 'جاري التوصيل' || activeTrip.status?.includes('جاري')) {
+                                                if (activeTrip.status === 'arrived' || activeTrip.status === 'تم الوصول') {
                                                     return (
                                                         <Button
                                                             onClick={() => handleCompleteDelivery(activeTrip.id)}
                                                             className="h-14 bg-[#009966] text-white rounded-2xl font-black gap-2 transition-all hover:bg-[#007a52] shadow-lg shadow-emerald-200/50 active:scale-95 cursor-pointer"
                                                         >
                                                             <CheckCircle2 className="h-5 w-5" />
-                                                            إتمام الوصول
+                                                            إتمام التوصيل
+                                                        </Button>
+                                                    );
+                                                }
+
+                                                if (activeTrip.status === 'delivery_in_progress' || activeTrip.status === 'جاري التوصيل' || activeTrip.status?.includes('جاري')) {
+                                                    return (
+                                                        <Button
+                                                            onClick={() => handleArrived(activeTrip.id)}
+                                                            className="h-14 bg-teal-600 text-white rounded-2xl font-black gap-2 transition-all hover:bg-teal-700 shadow-lg shadow-teal-200/50 active:scale-95 cursor-pointer"
+                                                        >
+                                                            <MapPin className="h-5 w-5" />
+                                                            تأكيد الوصول
                                                         </Button>
                                                     );
                                                 }

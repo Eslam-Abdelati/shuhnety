@@ -22,7 +22,7 @@ import { Loading } from '@/components/ui/Loading'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import { getGoodsTypeLabel, getStatusStyles } from '@/utils/shipmentUtils'
+import { getGoodsTypeLabel, getStatusStyles, mapShipmentData } from '@/utils/shipmentUtils'
 import { useState, useEffect } from 'react'
 import { shipmentService } from '@/services/shipmentService'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -38,7 +38,7 @@ export const ShipmentDetailsPage = () => {
         setIsLoading(true)
         try {
             const data = await shipmentService.getShipmentById(id)
-            setShipment(data)
+            setShipment(mapShipmentData(data))
             console.log(data);
 
         } catch (error) {

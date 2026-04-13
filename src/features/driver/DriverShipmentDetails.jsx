@@ -161,6 +161,19 @@ export const DriverShipmentDetails = () => {
         }
     };
 
+    const handleArrived = async () => {
+        try {
+            setUpdating(true);
+            await shipmentService.updateShipmentStatus(id, 'arrived');
+            toast.success('تم تأكيد الوصول');
+            fetchShipmentDetails();
+        } catch (err) {
+            toast.error('فشل في تأكيد الوصول');
+        } finally {
+            setUpdating(false);
+        }
+    };
+
     const handleCompleteDelivery = async () => {
         try {
             setUpdating(true);
@@ -214,7 +227,8 @@ export const DriverShipmentDetails = () => {
     const isOfferAccepted = myBid?.status === 'accepted' || myBid?.status === 'تم قبول العرض';
     const isPickupInProgress = rawStatus === 'pickup_in_progress' || rawStatus === 'قيد التنفيذ';
     const isDeliveryInProgress = rawStatus === 'delivery_in_progress' || rawStatus === 'جاري التوصيل';
-    const isDelivered = rawStatus === 'delivered' || rawStatus === 'تم التوصيل';
+    const isArrived = rawStatus === 'arrived' || rawStatus === 'تم الوصول';
+    const isDelivered = rawStatus === 'delivered' || rawStatus === 'تم التسليم';
 
     return (
         <div className="max-w-5xl mx-auto pb-24 lg:pb-10 font-cairo" dir="rtl">
@@ -587,12 +601,22 @@ export const DriverShipmentDetails = () => {
                                             </Button>
                                         ) : (isOfferAccepted && isDeliveryInProgress) ? (
                                             <Button
+                                                onClick={handleArrived}
+                                                disabled={updating}
+                                                className="w-full h-14 bg-teal-600 text-white rounded-md font-black text-base shadow-lg hover:bg-teal-700 transition-all border-none flex items-center justify-center gap-2"
+                                            >
+                                                {updating ? <Loading minimal={true} className="text-white" /> : (
+                                                    <><MapPin className="h-5 w-5" /> تأكيد الوصول</>
+                                                )}
+                                            </Button>
+                                        ) : (isOfferAccepted && isArrived) ? (
+                                            <Button
                                                 onClick={handleCompleteDelivery}
                                                 disabled={updating}
                                                 className="w-full h-14 bg-emerald-600 text-white rounded-md font-black text-base shadow-lg hover:bg-emerald-700 transition-all border-none flex items-center justify-center gap-2"
                                             >
                                                 {updating ? <Loading minimal={true} className="text-white" /> : (
-                                                    <><CheckCircle2 className="h-5 w-5" /> إتمام الوصول</>
+                                                    <><CheckCircle2 className="h-5 w-5" /> إتمام التوصيل</>
                                                 )}
                                             </Button>
                                         ) : isDelivered ? (

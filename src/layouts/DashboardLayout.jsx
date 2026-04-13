@@ -8,13 +8,12 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useDispatch } from 'react-redux'
 import { updateUser as updateUserAction } from '@/store/slices/authSlice'
 
-import { Loading } from '@/components/ui/Loading'
+
 
 export const DashboardLayout = ({ children }) => {
     const { isSidebarOpen, closeSidebar } = useUIStore()
     const { user, token } = useAuthStore()
     const dispatch = useDispatch()
-    const [isInitialSync, setIsInitialSync] = useState(false)
     const [hasSynced, setHasSynced] = useState(false)
 
     useEffect(() => {
@@ -22,10 +21,7 @@ export const DashboardLayout = ({ children }) => {
             // If we have a token but haven't synced in this session yet
             if (!token || hasSynced) return
 
-            // Show loader only if we don't have user data at all or it's missing essential fields
-            if (!user?.id) {
-                setIsInitialSync(true)
-            }
+
 
             try {
                 const profileData = await authService.getProfile()
@@ -40,17 +36,14 @@ export const DashboardLayout = ({ children }) => {
                     setHasSynced(true) // Don't keep retrying if it fails but we have cached data
                 }
             } finally {
-                setIsInitialSync(false)
+                // Background sync finished
             }
         }
 
         syncProfile()
     }, [dispatch, token, hasSynced, user?.id])
 
-    // Only block the UI if we have absolutely no user data to show
-    if (isInitialSync && !user?.id) {
-        return <Loading fullScreen={true} text="جاري تحضير لوحة التحكم الخاصة بك..." />
-    }
+
 
     return (
         <div className="flex h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden font-cairo transition-colors duration-300" dir="rtl">

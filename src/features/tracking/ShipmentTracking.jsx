@@ -82,10 +82,10 @@ export const ShipmentTracking = () => {
         // Accurate Status Checks
         const isPickupInProgress = status.includes('قيد التنفيذ') || status.includes('في الطريق للاستلام');
         // 'isReceived' means the driver has officially picked it up
-        const isReceived = status.includes('تم الاستلام') || status.includes('تم التحميل') || status.includes('وفي الطريق') || status.includes('جاري التوصيل') || status.includes('تم التوصيل');
+        const isReceived = status.includes('تم الاستلام') || status.includes('تم التحميل') || status.includes('وفي الطريق') || status.includes('جاري التوصيل') || status.includes('تم التسليم');
         // 'isDelivering' means it is currently on the way to destination
         const isDelivering = status.includes('جاري التوصيل') || status.includes('وفي الطريق');
-        const isDelivered = status.includes('تم التوصيل');
+        const isDelivered = status.includes('تم التسليم');
         const isCancelled = status.includes('ملغي');
 
         const baseSteps = [
@@ -134,7 +134,7 @@ export const ShipmentTracking = () => {
                 active: isDelivering && !isDelivered
             },
             {
-                label: 'تم التوصيل',
+                label: 'تم التسليم',
                 time: isDelivered ? 'تم تسليم الشحنة بنجاح' : '--:--',
                 completed: isDelivered,
                 active: isDelivered

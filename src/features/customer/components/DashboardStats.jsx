@@ -1,4 +1,4 @@
-﻿import React from 'react'
+import React from 'react'
 import { Package, Activity, CheckCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { cn } from '@/lib/utils'
@@ -22,7 +22,7 @@ const DashboardStats = ({ statsData, isLoading }) => {
             bg: 'bg-orange-50'
         },
         {
-            label: 'تم التوصيل',
+            label: 'تم التسليم',
             value: statsData.completed,
             icon: CheckCircle,
             color: 'text-emerald-600',

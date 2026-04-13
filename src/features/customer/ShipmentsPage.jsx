@@ -27,7 +27,7 @@ import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { getGoodsTypeLabel, getStatusStyles } from '@/utils/shipmentUtils'
+import { getGoodsTypeLabel, getStatusStyles, mapShipmentData } from '@/utils/shipmentUtils'
 import { shipmentService } from '@/services/shipmentService'
 import QuickCounter from '@/components/ui/QuickCounter'
 import { Pagination } from '@/components/ui/Pagination'
@@ -55,7 +55,8 @@ export const ShipmentsPage = () => {
         'عروض رهن المراجعة': 'has_offers',
         'في الطريق للاستلام': 'pickup_in_progress',
         'جاري التوصيل': 'delivery_in_progress',
-        'تم التوصيل': 'delivered',
+        'تم الوصول': 'arrived',
+        'تم التسليم': 'delivered',
         'ملغي': 'canceled'
     }
 
@@ -79,7 +80,7 @@ export const ShipmentsPage = () => {
             const fetchedData = result.data?.shipments || (Array.isArray(result.data) ? result.data : [])
 
             setHasMore(fetchedData.length > take);
-            setShipments(fetchedData.slice(0, take));
+            setShipments(fetchedData.slice(0, take).map(s => mapShipmentData(s)));
 
         } catch (error) {
             console.error('Failed to fetch shipments:', error)
@@ -157,7 +158,8 @@ export const ShipmentsPage = () => {
         'عروض رهن المراجعة',
         'في الطريق للاستلام',
         'جاري التوصيل',
-        'تم التوصيل',
+        'تم الوصول',
+        'تم التسليم',
         'ملغي'
     ]
 

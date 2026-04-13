@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
     Package,
@@ -36,11 +36,12 @@ export const ActiveShipments = () => {
         'الكل': null,
         'في الطريق للاستلام': 'pickup_in_progress',
         'جاري التوصيل': 'delivery_in_progress',
-        'تم التوصيل': 'delivered',
+        'تم الوصول': 'arrived',
+        'تم التسليم': 'delivered',
         'ملغي': 'canceled'
     }
 
-    const statuses = ['الكل', 'في الطريق للاستلام', 'جاري التوصيل', 'تم التوصيل', 'ملغي']
+    const statuses = ['الكل', 'في الطريق للاستلام', 'جاري التوصيل', 'تم الوصول', 'تم التسليم', 'ملغي']
 
     const fetchActiveShipments = async () => {
         setLoading(true)
