@@ -36,7 +36,8 @@ import { API_BASE_URL } from '@/api/axiosClient'
 import { GOODS_TYPES, getGoodsTypeLabel } from '@/utils/shipmentUtils'
 import { Loading } from '@/components/ui/Loading'
 
-const steps = ['تفاصيل المنتج', 'المسار', 'التأمين', 'المراجعة']
+// const steps = ['تفاصيل المنتج', 'المسار', 'المراجعة']
+const steps = ['بيانات الشحنة', 'مراجعة وتأكيد']
 const IS_PRICING_ENABLED = false; // قم بتغيير هذه القيمة إلى true لتفعيل التنسيق الأخير
 
 
@@ -66,6 +67,7 @@ export const CreateShipmentPage = () => {
         destinationAddress: '',
         recipientName: '',
         recipientPhone: '',
+        userRole: '', // '', 'sender' or 'recipient'
         dimensions: { width: '', length: '', height: '' },
         insuranceValue: '',
         insuranceRequested: false
@@ -132,6 +134,7 @@ export const CreateShipmentPage = () => {
                         destinationAddress: fetchedShipment.destinationAddressDetails || fetchedShipment.destinationAddress || '',
                         recipientName: fetchedShipment.recipientName || '',
                         recipientPhone: fetchedShipment.recipientPhone || '',
+                        userRole: fetchedShipment.userRole || fetchedShipment.user_role || 'sender',
                         dimensions: {
                             width: fetchedShipment.width || fetchedShipment.dimensions?.width || '',
                             length: fetchedShipment.length || fetchedShipment.dimensions?.length || '',
@@ -154,18 +157,25 @@ export const CreateShipmentPage = () => {
     const validateStep = (currentStep) => {
         const newErrors = {}
         if (currentStep === 1) {
+            // تفاصيل المنتج
             if (!formData.goodsType) newErrors.goodsType = 'نوع الشحنة مطلوب'
             if (formData.goodsType === 'other' && !formData.otherGoodsType) newErrors.otherGoodsType = 'برجاء تحديد نوع الشحنة'
             if (!formData.weight) newErrors.weight = 'الوزن مطلوب'
             if (!formData.description) newErrors.description = 'وصف الشحنة مطلوب'
-        } else if (currentStep === 2) {
+
+            // المسار والعناوين
             if (!formData.pickupCity) newErrors.pickupCity = 'المدينة مطلوبة'
             if (!formData.pickupAddress) newErrors.pickupAddress = 'العنوان التفصيلي مطلوب'
             if (!formData.destinationCity) newErrors.destinationCity = 'المدينة مطلوبة'
             if (!formData.destinationAddress) newErrors.destinationAddress = 'العنوان التفصيلي مطلوب'
-            if (!formData.recipientName) newErrors.recipientName = 'اسم المستلم مطلوب'
-            if (!formData.recipientPhone) newErrors.recipientPhone = 'رقم هاتف المستلم مطلوب'
-            else if (!/^01[0125]\d{8}$/.test(formData.recipientPhone)) newErrors.recipientPhone = 'رقم هاتف مصري غير صالح'
+
+            // بيانات التواصل
+            if (!formData.userRole) newErrors.userRole = 'برجاء تحديد دورك أولاً'
+            if (formData.userRole) {
+                if (!formData.recipientName) newErrors.recipientName = formData.userRole === 'sender' ? 'اسم المستلم مطلوب' : 'اسم المرسل مطلوب'
+                if (!formData.recipientPhone) newErrors.recipientPhone = formData.userRole === 'sender' ? 'رقم هاتف المستلم مطلوب' : 'رقم هاتف المرسل مطلوب'
+                else if (!/^01[0125]\d{8}$/.test(formData.recipientPhone)) newErrors.recipientPhone = 'رقم هاتف مصري غير صالح'
+            }
         }
 
         setErrors(newErrors)
@@ -257,6 +267,14 @@ export const CreateShipmentPage = () => {
     };
 
     const handlePublish = async () => {
+        if (isSubmitting) return
+        setWasNextAttempted(true)
+        if (!validateStep(step)) {
+            toast.error('يرجى التأكد من ملء كافة البيانات المطلوبة بشكل صحيح')
+            return
+        }
+
+        const loadingToast = toast.loading('جاري نشر شحنتك...')
         setIsSubmitting(true)
         try {
             // Diagnostic: use a default placeholder if no image exists to see if it bypasses the error
@@ -292,7 +310,8 @@ export const CreateShipmentPage = () => {
                 destinationCity: formData.destinationCity.trim(),
                 destinationAddressDetails: formData.destinationAddress.trim(),
                 recipientName: formData.recipientName.trim(),
-                recipientPhone: formData.recipientPhone.trim()
+                recipientPhone: formData.recipientPhone.trim(),
+                user_role: formData.userRole
             }
 
             // Dimensions: ensure they are sent as numbers or excluded if 0
@@ -325,6 +344,7 @@ export const CreateShipmentPage = () => {
         } catch (error) {
             toast.error(error.message || 'فشل في اتمام العملية. يرجى المحاولة مرة أخرى.')
         } finally {
+            toast.dismiss(loadingToast)
             setIsSubmitting(false)
         }
     }
@@ -340,65 +360,11 @@ export const CreateShipmentPage = () => {
                     {isEditMode ? `تعديل شحنة: ${displayId}` : 'إنشاء شحنة جديدة'}
                 </h1>
                 <p className="text-sm sm:text-base lg:text-md text-[#57534d] dark:text-slate-400 font-bold">
-                    {isEditMode ? 'يمكنك تعديل تفاصيل شحنتك قبل قبول أي عرض' : 'اتبع الخطوات التالية لنشر شحنتك وتلقي عروض الكباتن'}
+                    {isEditMode ? 'يمكنك تعديل تفاصيل شحنتك قبل قبول أي عرض' : 'يرجى إدخال كافة بيانات الشحنة بدقة ليتمكن الكباتن من تقديم أفضل العروض'}
                 </p>
             </div>
 
-            {/* Professional Blue Info Box */}
-
-            {/* Progress Stepper */}
-            <div className="relative mb-16 px-2 sm:px-6">
-                {/* Background Connecting Line - Premium look and mobile visible */}
-                <div className="absolute top-5 left-10 right-10 h-0.5 bg-slate-100/80 rounded-full">
-                    <div
-                        className="h-full bg-brand-primary transition-all duration-700 ease-in-out rounded-full shadow-[0_0_10px_rgba(235,106,29,0.3)]"
-                        style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
-                    ></div>
-                </div>
-
-                <div className="relative flex justify-between items-start max-w-4xl mx-auto">
-                    {steps.map((s, i) => {
-                        const stepNum = i + 1
-                        const isCompleted = step > stepNum
-                        const isActive = step === stepNum
-
-                        return (
-                            <div key={i} className="flex flex-col items-center relative z-10 group">
-                                {/* Step Circle */}
-                                <div className={cn(
-                                    "h-10 w-10 sm:h-11 sm:w-11 rounded-full flex items-center justify-center transition-all duration-500 border-2 select-none",
-                                    isActive ? "bg-brand-primary border-brand-primary text-white shadow-xl shadow-brand-primary/30 scale-110" :
-                                        isCompleted ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20" :
-                                            "bg-white border-slate-200 text-slate-400 group-hover:border-brand-primary/30 group-hover:text-brand-primary"
-                                )}>
-                                    {isCompleted ? (
-                                        <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6" />
-                                    ) : (
-                                        <span className="text-sm sm:text-base font-black">{stepNum}</span>
-                                    )}
-                                </div>
-
-                                {/* Step Label */}
-                                <div className="mt-4 flex flex-col items-center text-center max-w-[70px] sm:max-w-none">
-                                    <span className={cn(
-                                        "text-[9px] sm:text-xs font-black transition-colors leading-tight",
-                                        isActive ? "text-brand-primary" : isCompleted ? "text-emerald-600" : "text-slate-400 group-hover:text-slate-600"
-                                    )}>
-                                        {s}
-                                    </span>
-                                    {s === 'التأمين' && !IS_PRICING_ENABLED && (
-                                        <span className="mt-1 px-1.5 py-0.5 bg-brand-primary/10 text-brand-primary text-[7px] sm:text-[8px] font-black rounded-full uppercase tracking-tighter">
-                                            قريباً
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
-
-            <Card>
+            <Card className="mt-6 border-slate-100/50 shadow-sm rounded-[2.5rem] overflow-hidden">
                 <CardContent className="p-8">
                     {step === 1 && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-left-4">
@@ -572,229 +538,191 @@ export const CreateShipmentPage = () => {
                                     />
                                 </div>
                             </div>
+
+                            {/* --- المسار والعناوين --- */}
+                            <div className="pt-8 border-t border-slate-100 space-y-8">
+                                <div className="bg-brand-primary/5 border border-brand-primary/10 p-5 rounded-[2rem] flex items-start gap-4">
+                                    <div className="h-10 w-10 bg-brand-primary/10 rounded-2xl flex items-center justify-center shrink-0">
+                                        <Info className="h-5 w-5 text-brand-primary" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h5 className="font-black text-brand-primary text-sm">سياسة الشحن للمنصة</h5>
+                                        <p className="text-xs font-bold text-slate-500 leading-relaxed">
+                                            منصتنا متخصصة في دعم محافظة الوادي الجديد. يجب أن تكون نقطة الانطلاق أو نقطة الوصول هي "الوادي الجديد".
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="p-6 bg-emerald-50/50 rounded-[2rem] border border-emerald-100/50">
+                                        <h4 className="flex items-center gap-2 font-black text-emerald-700 mb-6 px-1">
+                                            <div className="h-8 w-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center">
+                                                <MapPin className="h-4 w-4" />
+                                            </div>
+                                            نقطة الانطلاق
+                                        </h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-bold text-slate-700 pr-1 block">المحافظة</label>
+                                                <select
+                                                    value={formData.pickupGovernorate}
+                                                    onChange={(e) => handleChange('pickupGovernorate', e.target.value)}
+                                                    className="w-full h-12 bg-white border border-slate-100 rounded-xl px-4 text-sm font-bold outline-none focus:border-brand-primary transition-all"
+                                                >
+                                                    {governorates.map(g => <option key={g} value={g}>{g}</option>)}
+                                                </select>
+                                            </div>
+                                            <FormInput
+                                                label="المدينة / المنطقة"
+                                                required
+                                                placeholder="مثال: بلاط"
+                                                value={formData.pickupCity}
+                                                onChange={(e) => handleChange('pickupCity', e.target.value)}
+                                                error={errors.pickupCity}
+                                                wasNextAttempted={wasNextAttempted}
+                                            />
+                                            <FormInput
+                                                label="العنوان التفصيلي"
+                                                required
+                                                placeholder="اسم الشارع، رقم المبنى..."
+                                                className="md:col-span-2"
+                                                value={formData.pickupAddress}
+                                                onChange={(e) => handleChange('pickupAddress', e.target.value)}
+                                                error={errors.pickupAddress}
+                                                wasNextAttempted={wasNextAttempted}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="p-6 bg-red-50/50 rounded-[2rem] border border-red-100/50">
+                                        <h4 className="flex items-center gap-2 font-black text-red-700 mb-6 px-1">
+                                            <div className="h-8 w-8 bg-red-500 text-white rounded-lg flex items-center justify-center">
+                                                <MapPin className="h-4 w-4" />
+                                            </div>
+                                            نقطة الوصول
+                                        </h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-bold text-slate-700 pr-1 block">المحافظة</label>
+                                                <select
+                                                    value={formData.destinationGovernorate}
+                                                    onChange={(e) => handleChange('destinationGovernorate', e.target.value)}
+                                                    className="w-full h-12 bg-white border border-slate-100 rounded-xl px-4 text-sm font-bold outline-none focus:border-brand-primary transition-all"
+                                                >
+                                                    {formData.pickupGovernorate !== 'الوادي الجديد' ? (
+                                                        <option value="الوادي الجديد">الوادي الجديد</option>
+                                                    ) : (
+                                                        governorates.map(g => <option key={g} value={g}>{g}</option>)
+                                                    )}
+                                                </select>
+                                            </div>
+                                            <FormInput
+                                                label="المدينة / المنطقة"
+                                                required
+                                                placeholder="مثال:  الخارجة"
+                                                value={formData.destinationCity}
+                                                onChange={(e) => handleChange('destinationCity', e.target.value)}
+                                                error={errors.destinationCity}
+                                                wasNextAttempted={wasNextAttempted}
+                                            />
+                                            <FormInput
+                                                label="العنوان التفصيلي"
+                                                required
+                                                placeholder="اسم الشارع، رقم المبنى..."
+                                                className="md:col-span-2"
+                                                value={formData.destinationAddress}
+                                                onChange={(e) => handleChange('destinationAddress', e.target.value)}
+                                                error={errors.destinationAddress}
+                                                wasNextAttempted={wasNextAttempted}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-10 w-10 bg-brand-primary/10 rounded-2xl flex items-center justify-center">
+                                                <ArrowLeftRight className="h-5 w-5 text-brand-primary" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-black text-slate-800 text-sm">أنت تقوم بإنشاء هذه الشحنة بصفتك؟</h4>
+                                                <p className="text-[10px] font-bold text-slate-500">حدد دورك لتنظيم بيانات التواصل بشكل صحيح</p>
+                                            </div>
+                                        </div>
+                                        <div className="w-full sm:w-auto">
+                                            <select
+                                                value={formData.userRole}
+                                                onChange={(e) => handleChange('userRole', e.target.value)}
+                                                className={cn(
+                                                    "w-full sm:w-64 h-12 bg-white border rounded-2xl px-4 text-sm font-black outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all cursor-pointer appearance-none shadow-sm",
+                                                    errors.userRole && wasNextAttempted ? "border-red-500" : "border-slate-200"
+                                                )}
+                                                style={{
+                                                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23eb6a1d' stroke-width='2.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")`,
+                                                    backgroundRepeat: 'no-repeat',
+                                                    backgroundPosition: 'left 1rem center',
+                                                    backgroundSize: '1.2rem',
+                                                    paddingLeft: '2.5rem'
+                                                }}
+                                            >
+                                                <option value="" disabled>-- اختر --</option>
+                                                <option value="sender">أنا المرسل (صاحب الشحنة)</option>
+                                                <option value="recipient">أنا المستلم (أنتظر الشحنة)</option>
+                                            </select>
+                                            {errors.userRole && wasNextAttempted && <p className="text-[10px] text-red-500 font-bold mt-1 pr-1">{errors.userRole}</p>}
+                                        </div>
+                                    </div>
+
+                                    {formData.userRole && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                                            <FormInput
+                                                label={formData.userRole === 'sender' ? "اسم المستلم" : "اسم المرسل"}
+                                                required
+                                                placeholder={formData.userRole === 'sender' ? "أدخل اسم المستلم بالكامل" : "أدخل اسم المرسل بالكامل"}
+                                                icon={User}
+                                                value={formData.recipientName}
+                                                onChange={(e) => handleChange('recipientName', e.target.value)}
+                                                error={errors.recipientName}
+                                                wasNextAttempted={wasNextAttempted}
+                                            />
+                                            <FormInput
+                                                label={formData.userRole === 'sender' ? "رقم هاتف المستلم" : "رقم هاتف المرسل"}
+                                                required
+                                                placeholder="01xxxxxxxxx"
+                                                icon={Phone}
+                                                value={formData.recipientPhone}
+                                                onChange={(e) => handleChange('recipientPhone', e.target.value)}
+                                                error={errors.recipientPhone}
+                                                wasNextAttempted={wasNextAttempted}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     )}
 
-                    {step === 2 && (
-                        <div className="space-y-8 animate-in fade-in slide-in-from-left-4">
-                            <div className="bg-brand-primary/5 border border-brand-primary/10 p-5 rounded-[2rem] flex items-start gap-4">
-                                <div className="h-10 w-10 bg-brand-primary/10 rounded-2xl flex items-center justify-center shrink-0">
-                                    <Info className="h-5 w-5 text-brand-primary" />
-                                </div>
-                                <div className="space-y-1">
-                                    <h5 className="font-black text-brand-primary text-sm">سياسة الشحن للمنصة</h5>
-                                    <p className="text-xs font-bold text-slate-500 leading-relaxed">
-                                        منصتنا متخصصة في دعم محافظة الوادي الجديد. يجب أن تكون نقطة الانطلاق أو نقطة الوصول هي "الوادي الجديد".
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="space-y-6">
-                                <div className="p-6 bg-emerald-50/50 rounded-[2rem] border border-emerald-100/50">
-                                    <h4 className="flex items-center gap-2 font-black text-emerald-700 mb-6 px-1">
-                                        <div className="h-8 w-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center">
-                                            <MapPin className="h-4 w-4" />
-                                        </div>
-                                        نقطة الانطلاق
-                                    </h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-slate-700 pr-1 block">المحافظة</label>
-                                            <select
-                                                value={formData.pickupGovernorate}
-                                                onChange={(e) => handleChange('pickupGovernorate', e.target.value)}
-                                                className="w-full h-12 bg-white border border-slate-100 rounded-xl px-4 text-sm font-bold outline-none focus:border-brand-primary transition-all"
-                                            >
-                                                {governorates.map(g => <option key={g} value={g}>{g}</option>)}
-                                            </select>
-                                        </div>
-                                        <FormInput
-                                            label="المدينة / المنطقة"
-                                            required
-                                            placeholder="مثال: بلاط"
-                                            value={formData.pickupCity}
-                                            onChange={(e) => handleChange('pickupCity', e.target.value)}
-                                            error={errors.pickupCity}
-                                            wasNextAttempted={wasNextAttempted}
-                                        />
-                                        <FormInput
-                                            label="العنوان التفصيلي"
-                                            required
-                                            placeholder="اسم الشارع، رقم المبنى..."
-                                            className="md:col-span-2"
-                                            value={formData.pickupAddress}
-                                            onChange={(e) => handleChange('pickupAddress', e.target.value)}
-                                            error={errors.pickupAddress}
-                                            wasNextAttempted={wasNextAttempted}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="p-6 bg-red-50/50 rounded-[2rem] border border-red-100/50">
-                                    <h4 className="flex items-center gap-2 font-black text-red-700 mb-6 px-1">
-                                        <div className="h-8 w-8 bg-red-500 text-white rounded-lg flex items-center justify-center">
-                                            <MapPin className="h-4 w-4" />
-                                        </div>
-                                        نقطة الوصول
-                                    </h4>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-slate-700 pr-1 block">المحافظة</label>
-                                            <select
-                                                value={formData.destinationGovernorate}
-                                                onChange={(e) => handleChange('destinationGovernorate', e.target.value)}
-                                                className="w-full h-12 bg-white border border-slate-100 rounded-xl px-4 text-sm font-bold outline-none focus:border-brand-primary transition-all"
-                                            >
-                                                {formData.pickupGovernorate !== 'الوادي الجديد' ? (
-                                                    <option value="الوادي الجديد">الوادي الجديد</option>
-                                                ) : (
-                                                    governorates.map(g => <option key={g} value={g}>{g}</option>)
-                                                )}
-                                            </select>
-                                        </div>
-                                        <FormInput
-                                            label="المدينة / المنطقة"
-                                            required
-                                            placeholder="مثال:  الخارجة"
-                                            value={formData.destinationCity}
-                                            onChange={(e) => handleChange('destinationCity', e.target.value)}
-                                            error={errors.destinationCity}
-                                            wasNextAttempted={wasNextAttempted}
-                                        />
-                                        <FormInput
-                                            label="العنوان التفصيلي"
-                                            required
-                                            placeholder="اسم الشارع، رقم المبنى..."
-                                            className="md:col-span-2"
-                                            value={formData.destinationAddress}
-                                            onChange={(e) => handleChange('destinationAddress', e.target.value)}
-                                            error={errors.destinationAddress}
-                                            wasNextAttempted={wasNextAttempted}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <FormInput
-                                    label="اسم المستلم"
-                                    required
-                                    placeholder="أدخل اسم المستلم بالكامل"
-                                    icon={User}
-                                    value={formData.recipientName}
-                                    onChange={(e) => handleChange('recipientName', e.target.value)}
-                                    error={errors.recipientName}
-                                    wasNextAttempted={wasNextAttempted}
-                                />
-                                <FormInput
-                                    label="رقم هاتف المستلم"
-                                    required
-                                    placeholder="01xxxxxxxxx"
-                                    icon={Phone}
-                                    value={formData.recipientPhone}
-                                    onChange={(e) => handleChange('recipientPhone', e.target.value)}
-                                    error={errors.recipientPhone}
-                                    wasNextAttempted={wasNextAttempted}
-                                />
-                            </div>
-
-                            {/* <div className="h-40 bg-slate-100 rounded-[2rem] relative overflow-hidden flex items-center justify-center border border-slate-200">
+                    {/* <div className="h-40 bg-slate-100 rounded-[2rem] relative overflow-hidden flex items-center justify-center border border-slate-200">
                                 <div className="text-center">
                                     <MapPin className="h-10 w-10 text-slate-300 mx-auto mb-2" />
                                     <p className="text-slate-400 font-bold text-sm">خارطة تفاعلية لاختيار المواقع بدقة</p>
                                 </div>
                             </div> */}
-                        </div>
-                    )}
 
-                    {step === 3 && (
-                        IS_PRICING_ENABLED ? (
-                            <div className="space-y-8 animate-in fade-in slide-in-from-left-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-4">
-                                        <FormInput
-                                            label="القيمة الإجمالية التقديرية للبضاعة (EGP)"
-                                            type="number"
-                                            placeholder="مثال: 50000"
-                                            icon={ShieldCheck}
-                                            value={formData.insuranceValue}
-                                            onChange={(e) => handleChange('insuranceValue', e.target.value)}
-                                        />
-                                        <div className="flex gap-3 bg-blue-50 border border-blue-100 p-4 rounded-2xl items-start group hover:bg-blue-100/50 transition-colors">
-                                            <Info className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
-                                            <p className="text-[11px] text-blue-700 font-bold leading-relaxed">
-                                                هذه القيمة تستخدم كأساس قانوني لتعويضك مالياً في حالة حدوث أي أضرار للشحنة أثناء النقل.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 h-fit">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="h-10 w-10 bg-brand-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/20">
-                                                    <ShieldCheck className="h-5 w-5" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-bold">تفعيل الحماية التأمينية</p>
-                                                    <p className="text-[11px] text-slate-500 font-bold">تغطية كاملة ضد المخاطر</p>
-                                                </div>
-                                            </div>
-                                            <input
-                                                type="checkbox"
-                                                checked={formData.insuranceRequested}
-                                                onChange={(e) => handleChange('insuranceRequested', e.target.checked)}
-                                                className="h-6 w-6 rounded-lg text-brand-primary border-slate-200 focus:ring-brand-primary/20 cursor-pointer"
-                                            />
-                                        </div>
-                                        <p className="text-[10px] text-slate-400 font-bold pr-13">
-                                            عند التفعيل، تلتزم المنصة بتعويضك عن قيمة البضاعة المصرح بها في حال وقوع أي حادث.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="p-8 bg-brand-primary/5 rounded-[2rem] border border-brand-primary/10">
-                                    <div className="flex gap-4">
-                                        <Info className="h-6 w-6 text-brand-primary shrink-0" />
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <h4 className="font-bold text-brand-primary">الرسوم السيادية والمحلية</h4>
-                                                <span className="px-2 py-0.5 bg-slate-200 text-slate-500 rounded-lg text-[10px] font-black">غير مفعلة حالياً</span>
-                                            </div>
-                                            <p className="text-sm text-slate-600 leading-relaxed">
-                                                يتم احتساب رسوم المحافظة تلقائياً بناءً على نوع المنتج ونقاط المرور. يقوم <b>الكابتن</b> بدفع هذه الرسوم من خلال المنصة لضمان الامتثال القانوني، ولا يتحمل العميل أي رسوم إضافية.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="py-20 text-center flex flex-col items-center justify-center animate-in fade-in slide-in-from-left-4">
-                                <div className="h-24 w-24 bg-blue-50/50 rounded-[2rem] flex items-center justify-center mb-8 rotate-3 border border-blue-100/50 shadow-xl shadow-blue-500/5">
-                                    <ShieldCheck className="h-12 w-12 text-blue-500" />
-                                </div>
-                                <h4 className="text-2xl font-black text-[#1c1919] mb-3">خدمة التأمين والحماية</h4>
-                                <p className="text-sm font-bold text-[#57534d] mb-10 max-w-[380px] leading-relaxed">
-                                    نحن نعمل بجهد لتوفير نظام تسعير ذكي وتغطية تأمينية شاملة لبضاعتك. هذه الميزة ستكون متاحة لجميع العملاء قريباً جداً.
-                                </p>
-                                <div className="flex items-center gap-2 px-5 py-2.5 bg-brand-primary/5 text-brand-primary rounded-2xl text-[13px] font-black border border-brand-primary/10 shadow-sm">
-                                    <Info className="h-4 w-4" />
-                                    قريباً (Coming Soon)
-                                </div>
-                            </div>
-                        )
-                    )}
-
-                    {step === 4 && (
+                    {step === 2 && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-left-4 text-right">
-                            <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 flex items-start gap-4">
-                                <CheckCircle2 className="h-8 w-8 text-emerald-500 shrink-0 mt-1" />
+                            <div className="bg-emerald-50 p-4 sm:p-6 rounded-[2rem] border border-emerald-100 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-right gap-4">
+                                <div className="h-12 w-12 bg-white rounded-2xl flex items-center justify-center shrink-0 shadow-sm border border-emerald-100">
+                                    <CheckCircle2 className="h-7 w-7 text-emerald-500" />
+                                </div>
                                 <div>
-                                    <h4 className="font-bold text-emerald-700 text-lg mb-1">شحنتك جاهزة للنشر</h4>
-                                    <p className="text-sm text-emerald-600 font-bold mb-3">يرجى مراجعة كافة البيانات قبل تأكيد الإرسال</p>
-                                    <div className="bg-white/50 p-4 rounded-xl border border-emerald-100/50">
-                                        <p className="text-[12px] font-bold text-emerald-800/80 leading-relaxed">
-                                            <span className="block mb-1 font-black underline underline-offset-4">تنبيه الموثوقية والأرشفة 🔒</span>
-                                            يتم أرشفة الشحنات المنشورة ولا يمكن حذفها نهائياً لضمان الشفافية. يُمكنك <span className="font-black">إلغاء الشحنة</span> فقط <span className="underline decoration-brand-primary/30">قبل قبول أي عروض</span>؛ بمجرد قبول العرض وتأكيده، لا يمكن التراجع عن العملية.
+                                    <h4 className="font-black text-emerald-700 text-md sm:text-lg mb-1">شحنتك جاهزة للنشر</h4>
+                                    <p className="text-[11px] sm:text-sm text-emerald-600/80 font-bold mb-3">يرجى مراجعة كافة البيانات قبل تأكيد الإرسال</p>
+                                    <div className="bg-white/60 p-4 rounded-2xl border border-emerald-100/50 backdrop-blur-sm">
+                                        <p className="text-[10px] sm:text-[12px] font-bold text-emerald-900 leading-relaxed">
+                                            <span className="block mb-2 font-black text-emerald-700 underline decoration-brand-primary/20 decoration-2 underline-offset-4">تنبيه 🔒</span>
+                                            يتم أرشفة الشحنات المنشورة ولا يمكن حذفها نهائياً لضمان الشفافية. يُمكنك <span className="font-black text-brand-primary">إلغاء الشحنة</span> فقط <span className="underline decoration-black/10">قبل قبول أي عروض</span>؛ بمجرد قبول العرض وتأكيده، لا يمكن التراجع عن العملية.
                                         </p>
                                     </div>
                                 </div>
@@ -831,7 +759,7 @@ export const CreateShipmentPage = () => {
                                     <div className="space-y-3">
                                         <h5 className="font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                                             <User className="h-4 w-4 text-brand-primary" />
-                                            المستلم
+                                            {formData.userRole === 'sender' ? "بيانات المستلم" : "بيانات المرسل"}
                                         </h5>
                                         <p className="text-sm text-slate-500 font-bold">الاسم: <span className="font-black text-slate-800">{formData.recipientName}</span></p>
                                         <p className="text-sm text-slate-500 font-bold">الهاتف: <span className="font-black text-slate-800">{formData.recipientPhone}</span></p>
@@ -849,36 +777,6 @@ export const CreateShipmentPage = () => {
                                 </div>
 
                                 <div className="space-y-6">
-                                    <div className="space-y-3">
-                                        <h5 className="font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                                            <ShieldCheck className="h-4 w-4 text-brand-primary" />
-                                            الحماية والتأمين
-                                        </h5>
-                                        <div className={cn(
-                                            "p-4 rounded-2xl border flex items-center justify-between",
-                                            formData.insuranceRequested ? "bg-emerald-50 border-emerald-100" : "bg-slate-50 border-slate-100"
-                                        )}>
-                                            <div>
-                                                <p className="text-sm font-black text-slate-900">حالة التأمين</p>
-                                                <p className="text-[11px] text-slate-500 font-bold">{formData.insuranceRequested ? 'الشحنة مغطاة تأمينياً بالكامل' : 'لم يتم طلب تأمين'}</p>
-                                            </div>
-                                            {formData.insuranceRequested ? (
-                                                <span className="bg-emerald-500 text-white p-1.5 rounded-lg">
-                                                    <ShieldCheck className="h-4 w-4" />
-                                                </span>
-                                            ) : (
-                                                <span className="bg-slate-300 text-white p-1.5 rounded-lg">
-                                                    <ShieldCheck className="h-4 w-4" />
-                                                </span>
-                                            )}
-                                        </div>
-                                        {formData.insuranceRequested && (
-                                            <p className="text-xs text-slate-500 font-bold pr-1">
-                                                قيمة التغطية: <span className="text-brand-primary font-black">{formData.insuranceValue} EGP</span>
-                                            </p>
-                                        )}
-                                    </div>
-
                                     {formData.shipmentImage && (
                                         <div className="space-y-3 pt-2">
                                             <h5 className="font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
@@ -895,20 +793,6 @@ export const CreateShipmentPage = () => {
                                             </div>
                                         </div>
                                     )}
-
-                                    <div className="space-y-3 pt-2">
-                                        <h5 className="font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-                                            <Info className="h-4 w-4 text-brand-primary" />
-                                            الرسوم والتكاليف
-                                        </h5>
-                                        <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4">
-                                            <div className="flex justify-between items-center mb-1">
-                                                <span className="text-sm font-bold text-blue-800">الرسوم السيادية</span>
-                                                <span className="text-[10px] font-black text-blue-600 bg-blue-100 px-2 py-0.5 rounded-md">يدفعها الكابتن</span>
-                                            </div>
-                                            <p className="text-[11px] text-blue-600 font-bold">يتم احتساب الرسوم بدقة فور قبول العرض</p>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -916,31 +800,30 @@ export const CreateShipmentPage = () => {
 
                     <div className="mt-12 pt-8 border-t border-slate-50 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-4">
                         {step > 1 ? (
-                            <Button variant="outline" className="gap-2 px-8 h-12 rounded-xl sm:w-auto w-full" onClick={prevStep}>
+                            <Button variant="outline" className="gap-2 px-8 h-12 rounded-xl sm:w-auto w-full cursor-pointer" onClick={prevStep}>
                                 <ChevronRight className="h-5 w-5" />
                                 السابق
                             </Button>
                         ) : <div className="hidden sm:block"></div>}
 
                         {step < steps.length ? (
-                            <Button className="gap-2 px-8 h-12 rounded-xl sm:w-auto w-full" onClick={nextStep}>
+                            <Button className="gap-2 px-8 h-12 rounded-xl sm:w-auto w-full cursor-pointer" onClick={nextStep}>
                                 التالي
                                 <ChevronLeft className="h-5 w-5" />
                             </Button>
                         ) : (
                             <Button
-                                className={cn("gap-2 px-6 sm:px-12 h-12 rounded-xl sm:w-auto w-full", isEditMode ? "bg-brand-primary" : "bg-emerald-600 hover:bg-emerald-700")}
-                                onClick={handlePublish}
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? (
-                                    <Loading minimal={true} text="جاري النشر..." className="text-white" />
-                                ) : (
-                                    <>
-                                        {isEditMode ? 'حفظ التعديلات' : 'نشر الشحنة الآن'}
-                                        {isEditMode ? <CheckCircle2 className="h-5 w-5" /> : <Truck className="h-5 w-5" />}
-                                    </>
+                                className={cn(
+                                    "gap-2 px-6 sm:px-12 h-12 rounded-xl sm:w-auto w-full text-white transition-all duration-300 cursor-pointer",
+                                    isEditMode
+                                        ? "bg-brand-primary hover:bg-brand-primary/90"
+                                        : "bg-emerald-600 hover:bg-emerald-700",
+                                    isSubmitting && "cursor-not-allowed select-none text-white"
                                 )}
+                                onClick={handlePublish}
+                            >
+                                {isEditMode ? 'حفظ التعديلات' : 'نشر الشحنة الآن'}
+                                {isEditMode ? <CheckCircle2 className="h-5 w-5" /> : <Truck className="h-5 w-5" />}
                             </Button>
                         )}
                     </div>

@@ -157,6 +157,7 @@ export const authService = {
     getProfile: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.USER.PROFILE);
+            console.log(response.data);
             return response.data;
         } catch (error) {
             console.error('Get profile error:', error);

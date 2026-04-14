@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
     Bell,
     Search,
@@ -13,7 +13,8 @@ import {
     CheckCircle2,
     AlertTriangle,
     Info,
-    CreditCard
+    CreditCard,
+    Star
 } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useThemeStore } from '@/store/useThemeStore'
@@ -245,9 +246,9 @@ export const Topbar = () => {
                             <div className="relative">
                                 <div className="h-10 w-10 bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center text-brand-primary dark:text-brand-primary group-hover:border-brand-primary shadow-sm overflow-hidden text-sm font-bold transition-all">
                                     {(user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar || user?.image) ? (
-                                        <img 
-                                            src={user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar || user?.image} 
-                                            alt={user?.full_name} 
+                                        <img
+                                            src={user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar || user?.image}
+                                            alt={user?.full_name}
                                             className="w-full h-full object-cover"
                                             onError={(e) => { e.target.onerror = null; e.target.src = ''; e.target.parentElement.innerHTML = user?.full_name?.charAt(0) || '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>'; }}
                                         />
@@ -295,7 +296,10 @@ export const Topbar = () => {
                                             </div>
                                             <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-2 rounded-xl text-center">
                                                 <p className="text-[9px] font-black text-slate-400 uppercase mb-0.5">التقييم</p>
-                                                <p className="text-[10px] font-black text-slate-900 dark:text-white">غير مقيم</p>
+                                                <p className="text-[10px] font-black text-slate-900 dark:text-white flex items-center justify-center gap-1">
+                                                    <Star className="h-2.5 w-2.5 text-amber-500 fill-current" />
+                                                    {user?.averageRating || user?.driverDetails?.averageRating || '٠.٠'}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>

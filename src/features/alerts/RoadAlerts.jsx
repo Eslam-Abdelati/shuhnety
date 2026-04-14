@@ -17,6 +17,7 @@ import { cn } from '@/utils/cn'
 import { roadAlertService } from '@/services/roadAlertService'
 import { toast } from 'react-hot-toast'
 import { z } from 'zod'
+import { useAuthStore } from '@/store/useAuthStore'
 
 // Define validation schema
 const roadAlertSchema = z.object({
@@ -35,6 +36,7 @@ export const RoadAlerts = () => {
     const [locationText, setLocationText] = useState('')
     const [activeAlerts, setActiveAlerts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const { user } = useAuthStore()
 
     const fetchActiveAlerts = async () => {
         setIsLoading(true);
@@ -57,7 +59,7 @@ export const RoadAlerts = () => {
     const alerts = [
         {
             id: 1,
-            type: 'حادث',
+            type: 'accident',
             location: 'طريق القاهرة الإسكندرية الصحراوي - كم 45',
             time: 'منذ 5 دقائق',
             reporter: 'كابتن محمود',
@@ -66,7 +68,7 @@ export const RoadAlerts = () => {
         },
         {
             id: 2,
-            type: 'أعمال طريق',
+            type: 'road_work',
             location: 'محور 26 يوليو - اتجاه الشيخ زايد',
             time: 'منذ 15 دقيقة',
             reporter: 'كابتن ياسر',
@@ -75,7 +77,7 @@ export const RoadAlerts = () => {
         },
         {
             id: 3,
-            type: 'ازدحام شديد',
+            type: 'heavy_traffic',
             location: 'الطريق الدائري - وصلة المريوطية',
             time: 'منذ ساعة',
             reporter: 'كابتن علي',
@@ -86,10 +88,9 @@ export const RoadAlerts = () => {
 
     const alertTypes = [
         { id: 'accident', name: 'حادث', icon: AlertTriangle, color: 'bg-red-50 text-red-600' },
-        { id: 'cops', name: 'رادار / تفتيش', icon: ShieldAlert, color: 'bg-blue-50 text-blue-600' },
-        { id: 'traffic', name: 'زحام مروري', icon: Clock, color: 'bg-amber-50 text-amber-600' },
-        { id: 'works', name: 'أعمال طريق', icon: Navigation, color: 'bg-slate-50 text-slate-600' },
-        { id: 'sand_dunes', name: 'زحف رمال', icon: Wind, color: 'bg-orange-50 text-orange-600' },
+        { id: 'road_work', name: 'أعمال طريق', icon: Navigation, color: 'bg-slate-50 text-slate-600' },
+        { id: 'heavy_traffic', name: 'ازدحام شديد', icon: Clock, color: 'bg-amber-50 text-amber-600' },
+        { id: 'sand_dunes', name: 'كثبان رملية', icon: Wind, color: 'bg-orange-50 text-orange-600' },
     ]
 
     const [formErrors, setFormErrors] = useState({})
@@ -131,12 +132,23 @@ export const RoadAlerts = () => {
         }
     }
 
+    const handleConfirmAlert = async (alertId) => {
+        if (!alertId) return;
+        try {
+            await roadAlertService.confirmRoadAlert(alertId);
+            toast.success('تم تأكيد التنبيه، شكراً لك');
+            fetchActiveAlerts();
+        } catch (error) {
+            toast.error(error.message || 'فشل في تأكيد التنبيه');
+        }
+    }
+
     return (
         <div className="space-y-8 pb-20">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
                     <h1 className="text-3xl font-black text-slate-900 mb-0">تنبيهات الطريق</h1>
-                    
+
                 </div>
                 <Button
                     className="rounded-2xl gap-2 px-8 h-12 bg-rose-500 hover:bg-rose-600 text-white shadow-lg shadow-rose-100 border-none transition-all active:scale-95 hover:scale-[1.02]"
@@ -198,8 +210,16 @@ export const RoadAlerts = () => {
                                             </div>
                                         </div>
                                         <div className="text-left">
-                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                                {alert.createDateTime ? new Date(alert.createDateTime).toLocaleTimeString('ar-EG') : (alert.createdAt ? new Date(alert.createdAt).toLocaleTimeString('ar-EG') : (alert.time || 'الآن'))}
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-tight">
+                                                {(() => {
+                                                    const dateObj = alert.createDateTime ? new Date(alert.createDateTime) : (alert.createdAt ? new Date(alert.createdAt) : null);
+                                                    if (!dateObj && alert.time) return alert.time;
+                                                    if (!dateObj) return 'الآن';
+
+                                                    const d = dateObj.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' });
+                                                    const t = dateObj.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                                                    return `تاريخ ${d} - وقت ${t}`;
+                                                })()}
                                             </span>
                                         </div>
                                     </div>
@@ -215,10 +235,26 @@ export const RoadAlerts = () => {
                                             </p>
                                         </div>
                                         <div className="flex gap-2">
-                                            <Button variant="ghost" size="sm" className="gap-2 text-slate-400">
-                                                <MessageSquare className="h-4 w-4" />
-                                                <span>تأكيد {alert.confirmationsCount > 0 ? `(${alert.confirmationsCount})` : ''}</span>
-                                            </Button>
+                                            {(() => {
+                                                const isMyAlert = alert.reporterId === user?.id || 
+                                                                 (typeof alert.reporter === 'object' && alert.reporter?.id === user?.id) ||
+                                                                 (alert.userId === user?.id);
+                                                
+                                                if (isMyAlert) return null;
+
+                                                return (
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="sm" 
+                                                        className="gap-2 text-slate-400 cursor-pointer hover:text-brand-primary transition-all"
+                                                        onClick={() => handleConfirmAlert(alert.id)}
+                                                        title="تأكيد صحة التنبيه"
+                                                    >
+                                                        <MessageSquare className="h-4 w-4" />
+                                                        <span>تأكيد {alert.confirmationsCount > 0 ? `(${alert.confirmationsCount})` : ''}</span>
+                                                    </Button>
+                                                );
+                                            })()}
                                         </div>
                                     </div>
                                 </CardContent>
@@ -242,7 +278,7 @@ export const RoadAlerts = () => {
                                             key={type.id}
                                             onClick={() => {
                                                 setSelectedType(type.id);
-                                                if (formErrors.type) setFormErrors({...formErrors, type: null});
+                                                if (formErrors.type) setFormErrors({ ...formErrors, type: null });
                                             }}
                                             className={cn(
                                                 "p-6 rounded-2xl flex flex-col items-center gap-3 transition-all border-2 active:scale-95",
@@ -270,7 +306,7 @@ export const RoadAlerts = () => {
                                         value={locationText}
                                         onChange={(e) => {
                                             setLocationText(e.target.value);
-                                            if (formErrors.locationText) setFormErrors({...formErrors, locationText: null});
+                                            if (formErrors.locationText) setFormErrors({ ...formErrors, locationText: null });
                                         }}
                                         className={cn(
                                             "w-full bg-slate-50 p-4 rounded-xl border-2 font-bold text-sm transition-all focus:outline-none",

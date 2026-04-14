@@ -1,4 +1,4 @@
-﻿import axiosClient from '../api/axiosClient';
+import axiosClient from '../api/axiosClient';
 import { API_ENDPOINTS } from '../api/endpoints';
 
 export const roadAlertService = {
@@ -27,6 +27,19 @@ export const roadAlertService = {
         } catch (error) {
             console.error('Get active road alerts error:', error.response?.data || error.message);
             throw new Error(error.response?.data?.message || 'فشل في جلب تنبيهات الطريق');
+        }
+    },
+    /**
+     * Confirm a road alert
+     * @param {string} id - The alert ID
+     */
+    confirmRoadAlert: async (id) => {
+        try {
+            const response = await axiosClient.post(API_ENDPOINTS.ROAD_ALERTS.CONFIRM(id));
+            return response.data;
+        } catch (error) {
+            console.error('Confirm road alert error:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'فشل في تأكيد التنبيه');
         }
     }
 };

@@ -51,12 +51,20 @@ export const DriverDashboard = () => {
             });
             setAssignedShipments(assignedList)
 
-            // Fetch Bidding Dashboard Stats
+            // Fetch Both Bidding and Shipment Stats
             try {
-                const bidStatsRes = await shipmentService.getBidDashboardStats();
-                setStats(bidStatsRes.data || bidStatsRes);
+                const [bidStatsRes, shipStatsRes] = await Promise.all([
+                    shipmentService.getBidDashboardStats(),
+                    shipmentService.getShipmentStats()
+                ]);
+                
+                // Set merged stats
+                setStats({
+                    ...(bidStatsRes.data || bidStatsRes),
+                    shipmentCounts: (shipStatsRes.data || shipStatsRes)
+                });
             } catch (err) {
-                console.warn('Failed to fetch bid stats:', err);
+                console.warn('Failed to fetch dashboard stats:', err);
             }
         } catch (error) {
             console.error('Failed to fetch dashboard data:', error)
@@ -247,7 +255,7 @@ export const DriverDashboard = () => {
                     transition={{ delay: 0.15 }}
                 >
                     <div className="flex items-center justify-between mb-4 px-1">
-                        <h3 className="text-xl font-black text-slate-900">نظرة عامة على اليوم</h3>
+                        <h3 className="text-xl font-black text-slate-900">نظرة عامة على الرحلات</h3>
                     </div>
                     <Card className="rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 bg-white overflow-hidden">
                         <CardContent className="p-6 space-y-4">
@@ -255,7 +263,7 @@ export const DriverDashboard = () => {
                                 <div className="flex items-center gap-3">
                                     <span className="text-sm font-bold text-slate-600">إجمالي الرحلات</span>
                                 </div>
-                                <span className="text-lg font-black text-slate-900">{stats?.total?.trips || 0}</span>
+                                <span className="text-lg font-black text-slate-900">{stats?.shipmentCounts?.totalShipments || 0}</span>
                             </div>
 
                             <div className="flex items-center justify-between border-b border-slate-50 pb-3">
@@ -263,7 +271,7 @@ export const DriverDashboard = () => {
                                     <span className="text-sm font-bold text-slate-600">قيد الوصول</span>
                                 </div>
                                 <span className="text-lg font-black text-slate-900">
-                                    {assignedShipments.filter(s => (s.status_original || s.status) === 'arrived').length}
+                                    {stats?.shipmentCounts?.inProgressShipments || 0}
                                 </span>
                             </div>
 
@@ -271,7 +279,7 @@ export const DriverDashboard = () => {
                                 <div className="flex items-center gap-3">
                                     <span className="text-sm font-bold text-slate-600">رحلات مكتملة</span>
                                 </div>
-                                <span className="text-lg font-black text-emerald-600">{stats?.total?.trips || 0}</span>
+                                <span className="text-lg font-black text-emerald-600">{stats?.shipmentCounts?.completedShipments || 0}</span>
                             </div>
                         </CardContent>
                     </Card>
