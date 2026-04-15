@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, forwardRef } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm, Controller } from 'react-hook-form'
@@ -686,7 +686,7 @@ export const RegisterPage = () => {
                                             <span>جاري إنشاء الحساب...</span>
                                         </div>
                                     ) : (
-                                        step === 3 ? (selectedRole === 'driver' ? 'تسجيل والانتظار المراجعة' : 'إتمام التسجيل') : 'التالي'
+                                        step === 3 ? 'إتمام التسجيل' : 'التالي'
                                     )}
                                 </Button>
                             </div>
@@ -1275,7 +1275,7 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
     )
 }
 
-const Input = React.forwardRef(({ label, icon: Icon, error, isTouched, wasNextAttempted, className, isLoading, ...props }, ref) => {
+const Input = forwardRef(({ label, icon: Icon, error, isTouched, wasNextAttempted, className, isLoading, ...props }, ref) => {
     const showError = error && (isTouched || wasNextAttempted)
     return (
         <div className={cn("space-y-1.5", className)}>
@@ -1302,7 +1302,7 @@ const Input = React.forwardRef(({ label, icon: Icon, error, isTouched, wasNextAt
     )
 })
 
-const Checkbox = React.forwardRef(({ label, error, isTouched, wasNextAttempted, ...props }, ref) => {
+const Checkbox = forwardRef(({ label, error, isTouched, wasNextAttempted, ...props }, ref) => {
     const showError = error && (isTouched || wasNextAttempted)
     return (
         <label className="flex items-center gap-3 cursor-pointer group w-fit">

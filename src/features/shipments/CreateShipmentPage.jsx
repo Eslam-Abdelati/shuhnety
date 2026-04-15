@@ -65,9 +65,9 @@ export const CreateShipmentPage = () => {
         destinationGovernorate: 'الوادي الجديد',
         destinationCity: '',
         destinationAddress: '',
-        recipientName: '',
-        recipientPhone: '',
-        userRole: '', // '', 'sender' or 'recipient'
+        recipientOrSenderName: '',
+        recipientOrSenderPhone: '',
+        creatorRole: '', // '', 'SENDER' or 'RECEIVER'
         dimensions: { width: '', length: '', height: '' },
         insuranceValue: '',
         insuranceRequested: false
@@ -132,9 +132,9 @@ export const CreateShipmentPage = () => {
                         destinationGovernorate: fetchedShipment.destinationGovernorate || 'القاهرة',
                         destinationCity: fetchedShipment.destinationCity || '',
                         destinationAddress: fetchedShipment.destinationAddressDetails || fetchedShipment.destinationAddress || '',
-                        recipientName: fetchedShipment.recipientName || '',
-                        recipientPhone: fetchedShipment.recipientPhone || '',
-                        userRole: fetchedShipment.userRole || fetchedShipment.user_role || 'sender',
+                        recipientOrSenderName: fetchedShipment.recipientOrSenderName || fetchedShipment.recipientName || '',
+                        recipientOrSenderPhone: fetchedShipment.recipientOrSenderPhone || fetchedShipment.recipientPhone || '',
+                        creatorRole: fetchedShipment.creatorRole || fetchedShipment.userRole || fetchedShipment.user_role || 'SENDER',
                         dimensions: {
                             width: fetchedShipment.width || fetchedShipment.dimensions?.width || '',
                             length: fetchedShipment.length || fetchedShipment.dimensions?.length || '',
@@ -170,11 +170,11 @@ export const CreateShipmentPage = () => {
             if (!formData.destinationAddress) newErrors.destinationAddress = 'العنوان التفصيلي مطلوب'
 
             // بيانات التواصل
-            if (!formData.userRole) newErrors.userRole = 'برجاء تحديد دورك أولاً'
-            if (formData.userRole) {
-                if (!formData.recipientName) newErrors.recipientName = formData.userRole === 'sender' ? 'اسم المستلم مطلوب' : 'اسم المرسل مطلوب'
-                if (!formData.recipientPhone) newErrors.recipientPhone = formData.userRole === 'sender' ? 'رقم هاتف المستلم مطلوب' : 'رقم هاتف المرسل مطلوب'
-                else if (!/^01[0125]\d{8}$/.test(formData.recipientPhone)) newErrors.recipientPhone = 'رقم هاتف مصري غير صالح'
+            if (!formData.creatorRole) newErrors.creatorRole = 'برجاء تحديد دورك أولاً'
+            if (formData.creatorRole) {
+                if (!formData.recipientOrSenderName) newErrors.recipientOrSenderName = formData.creatorRole === 'SENDER' ? 'اسم المستلم مطلوب' : 'اسم المرسل مطلوب'
+                if (!formData.recipientOrSenderPhone) newErrors.recipientOrSenderPhone = formData.creatorRole === 'SENDER' ? 'رقم هاتف المستلم مطلوب' : 'رقم هاتف المرسل مطلوب'
+                else if (!/^01[0125]\d{8}$/.test(formData.recipientOrSenderPhone)) newErrors.recipientOrSenderPhone = 'رقم هاتف مصري غير صالح'
             }
         }
 
@@ -309,9 +309,9 @@ export const CreateShipmentPage = () => {
                 destinationGovernorate: formData.destinationGovernorate.trim(),
                 destinationCity: formData.destinationCity.trim(),
                 destinationAddressDetails: formData.destinationAddress.trim(),
-                recipientName: formData.recipientName.trim(),
-                recipientPhone: formData.recipientPhone.trim(),
-                user_role: formData.userRole
+                recipientOrSenderName: formData.recipientOrSenderName.trim(),
+                recipientOrSenderPhone: formData.recipientOrSenderPhone.trim(),
+                creatorRole: formData.creatorRole
             }
 
             // Dimensions: ensure they are sent as numbers or excluded if 0
@@ -652,11 +652,11 @@ export const CreateShipmentPage = () => {
                                         </div>
                                         <div className="w-full sm:w-auto">
                                             <select
-                                                value={formData.userRole}
-                                                onChange={(e) => handleChange('userRole', e.target.value)}
+                                                value={formData.creatorRole}
+                                                onChange={(e) => handleChange('creatorRole', e.target.value)}
                                                 className={cn(
                                                     "w-full sm:w-64 h-12 bg-white border rounded-2xl px-4 text-sm font-black outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 transition-all cursor-pointer appearance-none shadow-sm",
-                                                    errors.userRole && wasNextAttempted ? "border-red-500" : "border-slate-200"
+                                                    errors.creatorRole && wasNextAttempted ? "border-red-500" : "border-slate-200"
                                                 )}
                                                 style={{
                                                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23eb6a1d' stroke-width='2.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")`,
@@ -667,33 +667,33 @@ export const CreateShipmentPage = () => {
                                                 }}
                                             >
                                                 <option value="" disabled>-- اختر --</option>
-                                                <option value="sender">أنا المرسل (صاحب الشحنة)</option>
-                                                <option value="recipient">أنا المستلم (أنتظر الشحنة)</option>
+                                                <option value="SENDER">أنا المرسل (صاحب الشحنة)</option>
+                                                <option value="RECEIVER">أنا المستلم (أنتظر الشحنة)</option>
                                             </select>
-                                            {errors.userRole && wasNextAttempted && <p className="text-[10px] text-red-500 font-bold mt-1 pr-1">{errors.userRole}</p>}
+                                            {errors.creatorRole && wasNextAttempted && <p className="text-[10px] text-red-500 font-bold mt-1 pr-1">{errors.creatorRole}</p>}
                                         </div>
                                     </div>
 
-                                    {formData.userRole && (
+                                    {formData.creatorRole && (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
                                             <FormInput
-                                                label={formData.userRole === 'sender' ? "اسم المستلم" : "اسم المرسل"}
+                                                label={formData.creatorRole === 'SENDER' ? "اسم المستلم" : "اسم المرسل"}
                                                 required
-                                                placeholder={formData.userRole === 'sender' ? "أدخل اسم المستلم بالكامل" : "أدخل اسم المرسل بالكامل"}
+                                                placeholder={formData.creatorRole === 'SENDER' ? "أدخل اسم المستلم بالكامل" : "أدخل اسم المرسل بالكامل"}
                                                 icon={User}
-                                                value={formData.recipientName}
-                                                onChange={(e) => handleChange('recipientName', e.target.value)}
-                                                error={errors.recipientName}
+                                                value={formData.recipientOrSenderName}
+                                                onChange={(e) => handleChange('recipientOrSenderName', e.target.value)}
+                                                error={errors.recipientOrSenderName}
                                                 wasNextAttempted={wasNextAttempted}
                                             />
                                             <FormInput
-                                                label={formData.userRole === 'sender' ? "رقم هاتف المستلم" : "رقم هاتف المرسل"}
+                                                label={formData.creatorRole === 'SENDER' ? "رقم هاتف المستلم" : "رقم هاتف المرسل"}
                                                 required
                                                 placeholder="01xxxxxxxxx"
                                                 icon={Phone}
-                                                value={formData.recipientPhone}
-                                                onChange={(e) => handleChange('recipientPhone', e.target.value)}
-                                                error={errors.recipientPhone}
+                                                value={formData.recipientOrSenderPhone}
+                                                onChange={(e) => handleChange('recipientOrSenderPhone', e.target.value)}
+                                                error={errors.recipientOrSenderPhone}
                                                 wasNextAttempted={wasNextAttempted}
                                             />
                                         </div>
@@ -759,10 +759,10 @@ export const CreateShipmentPage = () => {
                                     <div className="space-y-3">
                                         <h5 className="font-black text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                                             <User className="h-4 w-4 text-brand-primary" />
-                                            {formData.userRole === 'sender' ? "بيانات المستلم" : "بيانات المرسل"}
+                                            {formData.creatorRole === 'SENDER' ? "بيانات المستلم" : "بيانات المرسل"}
                                         </h5>
-                                        <p className="text-sm text-slate-500 font-bold">الاسم: <span className="font-black text-slate-800">{formData.recipientName}</span></p>
-                                        <p className="text-sm text-slate-500 font-bold">الهاتف: <span className="font-black text-slate-800">{formData.recipientPhone}</span></p>
+                                        <p className="text-sm text-slate-500 font-bold">الاسم: <span className="font-black text-slate-800">{formData.recipientOrSenderName}</span></p>
+                                        <p className="text-sm text-slate-500 font-bold">الهاتف: <span className="font-black text-slate-800">{formData.recipientOrSenderPhone}</span></p>
                                     </div>
 
                                     {formData.additionalNotes && (

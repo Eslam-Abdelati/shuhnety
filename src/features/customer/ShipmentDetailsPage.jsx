@@ -118,8 +118,14 @@ export const ShipmentDetailsPage = () => {
                                 {shipment.status}
                             </span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                             <p className="text-[9px] md:text-[10px] font-black text-white/60 bg-white/5 px-4 py-1 rounded-md border border-white/10">{shipment.displayId}</p>
+                            {shipment.deliveryOtp && shipment.deliveryOtp !== '---' && (
+                                <div className="flex items-center gap-2 px-3 py-1 bg-brand-primary/20 text-brand-primary border border-brand-primary/30 rounded-md">
+                                    <ShieldCheck className="h-3 w-3" />
+                                    <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest leading-none">كود التسليم: {shipment.deliveryOtp}</span>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -642,40 +648,86 @@ export const ShipmentDetailsPage = () => {
                         </CardContent>
                     </Card>
 
-                    {/* Recipient Card */}
-                    <Card className="rounded-[1.25rem] md:rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-24 h-24 bg-blue-50/50 dark:bg-blue-900/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-                        <CardContent className="p-4 md:p-5 lg:p-6 relative z-10">
-                            <div className="flex items-center gap-3 mb-5">
-                                <div className="h-8 w-8 md:h-10 md:w-10 bg-blue-100/50 dark:bg-blue-900/20 text-blue-600 rounded-full flex items-center justify-center shadow-sm">
-                                    <User className="h-4 w-4 md:h-5 md:w-5" />
-                                </div>
-                                <h3 className="font-black text-sm md:text-base text-slate-800 dark:text-white">تفاصيل المستلم</h3>
-                            </div>
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800/50">
-                                    <div className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-full flex items-center justify-center text-slate-400 shadow-sm">
-                                        <User className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                    {/* Parties Info Container */}
+                    <div className="space-y-5 md:space-y-6">
+                        {/* Sender Card */}
+                        <Card className="rounded-[1.25rem] md:rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-20 h-20 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+                            <CardContent className="p-4 md:p-5 lg:p-6 relative z-10">
+                                <div className="flex items-center gap-3 mb-5">
+                                    <div className="h-8 w-8 md:h-10 md:w-10 bg-emerald-100/50 dark:bg-emerald-900/20 text-emerald-600 rounded-full flex items-center justify-center shadow-sm">
+                                        <User className="h-4 w-4 md:h-5 md:w-5" />
                                     </div>
-                                    <div>
-                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">الاسم الكامل</p>
-                                        <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white">{shipment.recipientName}</p>
-                                    </div>
+                                    <h3 className="font-black text-sm md:text-base text-slate-800 dark:text-white">تفاصيل المرسل</h3>
                                 </div>
-                                <div className="flex items-center justify-between p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800/50">
-                                    <div className="flex items-center gap-3">
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800/50">
                                         <div className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-full flex items-center justify-center text-slate-400 shadow-sm">
-                                            <Phone className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                                            <User className="h-3.5 w-3.5 md:h-4 md:w-4" />
                                         </div>
                                         <div>
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">رقم الهاتف</p>
-                                            <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white tracking-widest" dir="ltr">{shipment.recipientPhone}</p>
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">اسم المرسل</p>
+                                            <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white">
+                                                {shipment.senderName}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800/50">
+                                        <div className="flex items-center gap-3 font-cairo">
+                                            <div className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-full flex items-center justify-center text-slate-400 shadow-sm">
+                                                <Phone className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">رقم الهاتف</p>
+                                                <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white tracking-widest" dir="ltr">
+                                                    {shipment.senderPhone}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
+
+                        {/* Recipient Card */}
+                        <Card className="rounded-[1.25rem] md:rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-20 h-20 bg-blue-50/50 dark:bg-blue-900/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+                            <CardContent className="p-4 md:p-5 lg:p-6 relative z-10">
+                                <div className="flex items-center gap-3 mb-5 text-right font-cairo" dir="rtl">
+                                    <div className="h-8 w-8 md:h-10 md:w-10 bg-blue-100/50 dark:bg-blue-900/20 text-blue-600 rounded-full flex items-center justify-center shadow-sm">
+                                        <User className="h-4 w-4 md:h-5 md:w-5" />
+                                    </div>
+                                    <h3 className="font-black text-sm md:text-base text-slate-800 dark:text-white">تفاصيل المستلم</h3>
+                                </div>
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800/50 text-right font-cairo" dir="rtl">
+                                        <div className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-full flex items-center justify-center text-slate-400 shadow-sm">
+                                            <User className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">اسم المستلم</p>
+                                            <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white">
+                                                {shipment.recipientName}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800/50 text-right font-cairo" dir="rtl">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-full flex items-center justify-center text-slate-400 shadow-sm">
+                                                <Phone className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">رقم الهاتف</p>
+                                                <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white tracking-widest" dir="ltr">
+                                                    {shipment.recipientPhone}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
             </div>
         </div>
