@@ -184,13 +184,7 @@ export const LoginPage = () => {
                                     {errors.password && <p className="text-xs text-red-500 font-bold pr-1">{errors.password.message}</p>}
                                 </div>
 
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <input type="checkbox" id="remember" className="w-4 h-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary cursor-pointer" />
-                                        <label htmlFor="remember" className="text-sm font-bold text-[#57534d] cursor-pointer">تذكرني</label>
-                                    </div>
-                                    <Link to="/forgot-password" size="sm" className="text-sm font-bold text-brand-primary hover:underline">نسيت كلمة المرور؟</Link>
-                                </div>
+
 
 
                                 <Button
@@ -209,6 +203,10 @@ export const LoginPage = () => {
                                         </div>
                                     ) : 'تسجيل الدخول'}
                                 </Button>
+
+                                <div className="text-center">
+                                    <Link to="/forgot-password" size="sm" className="text-sm font-bold text-brand-primary hover:underline">نسيت كلمة المرور؟</Link>
+                                </div>
 
                                 <div className="pt-4 text-center">
                                     <p className="text-sm font-bold text-[#57534d]">لا تملك حساب؟ <Link to="/register" className="text-brand-primary hover:text-orange-600 font-extrabold">سجل الآن</Link></p>
