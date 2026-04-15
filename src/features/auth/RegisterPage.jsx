@@ -996,7 +996,7 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
                                     label="المحافظة"
                                     options={governorates?.map(gov => ({ value: gov.id, label: gov.name_ar || gov.name || '---' }))}
                                     value={field.value}
-                                    onChange={field.onChange}
+                                    onChange={(val) => field.onChange(String(val))}
                                     placeholder="اختر المحافظة"
                                     error={errors.governorate && (touchedFields.governorate || wasNextAttempted) ? errors.governorate : null}
                                 />
@@ -1010,7 +1010,7 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
                                     label="المدينة"
                                     options={cities?.map(city => ({ value: city.id, label: city.name_ar || city.name || '---' }))}
                                     value={field.value}
-                                    onChange={field.onChange}
+                                    onChange={(val) => field.onChange(String(val))}
                                     placeholder="اختر المدينة"
                                     error={errors.city && (touchedFields.city || wasNextAttempted) ? errors.city : null}
                                     isLoading={isLoadingLocations}
@@ -1219,7 +1219,7 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
                                 label="المحافظة"
                                 options={governorates?.map(gov => ({ value: gov.id, label: gov.name_ar || gov.name || '---' }))}
                                 value={field.value}
-                                onChange={field.onChange}
+                                onChange={(val) => field.onChange(String(val))}
                                 placeholder="اختر المحافظة"
                                 error={errors.governorate && (touchedFields.governorate || wasNextAttempted) ? errors.governorate : null}
                             />
@@ -1233,7 +1233,7 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
                                 label="المدينة"
                                 options={cities?.map(city => ({ value: city.id, label: city.name_ar || city.name || '---' }))}
                                 value={field.value}
-                                onChange={field.onChange}
+                                onChange={(val) => field.onChange(String(val))}
                                 placeholder="اختر المدينة"
                                 error={errors.city && (touchedFields.city || wasNextAttempted) ? errors.city : null}
                                 isLoading={isLoadingLocations}
