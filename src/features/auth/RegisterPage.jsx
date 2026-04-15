@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import {
@@ -15,6 +15,7 @@ import { toast } from 'react-hot-toast'
 
 // UI Components
 import { Button } from '@/components/ui/Button'
+import { Select } from '@/components/ui/Select'
 import { cn } from '@/utils/cn'
 
 // Services
@@ -195,6 +196,7 @@ export const RegisterPage = () => {
         setValue,
         setError,
         clearErrors,
+        control,
         formState: { errors, touchedFields, isSubmitted },
     } = useForm({
         resolver: zodResolver(
@@ -624,6 +626,7 @@ export const RegisterPage = () => {
                                             selectedRole={selectedRole}
                                             watch={watch}
                                             setValue={setValue}
+                                            control={control}
                                             governorates={governorates}
                                             cities={cities}
                                             isLoadingLocations={isLoadingLocations}
@@ -642,6 +645,7 @@ export const RegisterPage = () => {
                                             wasNextAttempted={wasNextAttempted}
                                             watch={watch}
                                             setValue={setValue}
+                                            control={control}
                                             governorates={governorates}
                                             cities={cities}
                                             isLoadingLocations={isLoadingLocations}
@@ -793,7 +797,7 @@ const FileUploader = ({ label, icon: Icon, onFileSelect, onFileChange, preview, 
         </div>
     )
 }
-const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setShowPassword, showConfirmPassword, setShowConfirmPassword, wasNextAttempted, selectedRole, watch, setValue, governorates, cities, isLoadingLocations, handleImmediateUpload, checkingFields, handleCheckAvailability }) => {
+const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setShowPassword, showConfirmPassword, setShowConfirmPassword, wasNextAttempted, selectedRole, watch, setValue, control, governorates, cities, isLoadingLocations, handleImmediateUpload, checkingFields, handleCheckAvailability }) => {
     const driverPhoto = watch('driverPhoto')
     const licenseFront = watch('licenseFront')
     const licenseBack = watch('licenseBack')
@@ -984,43 +988,36 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
                 <div className="pt-4 space-y-4 border-t border-slate-50">
                     <h3 className="text-[13px] font-black text-brand-primary flex items-center gap-2 border-r-4 border-brand-primary pr-3 leading-none">بيانات العنوان</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-600 pr-1">المحافظة</label>
-                            <div className="relative">
-                                <select
-                                    {...register('governorate')}
-                                    className="w-full h-14 px-4 rounded-2xl border-2 border-slate-100 bg-slate-50/50 font-black text-sm outline-none focus:border-brand-primary transition-colors cursor-pointer appearance-none"
-                                >
-                                    <option value="">اختر المحافظة</option>
-                                    {governorates?.map(gov => (
-                                        <option key={gov.id} value={gov.id}>{gov.name_ar || gov.name || '---'}</option>
-                                    ))}
-                                </select>
-                                <ChevronRight className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none rotate-90" />
-                            </div>
-                            {errors.governorate && (touchedFields.governorate || wasNextAttempted) && <p className="text-[11px] text-red-500 font-bold pr-1">{errors.governorate.message}</p>}
-
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-600 pr-1 flex items-center gap-2">
-                                المدينة
-                                {isLoadingLocations && <Loading minimal={true} className="inline-flex mr-2 scale-75" />}
-                            </label>
-                            <div className="relative">
-                                <select
-                                    {...register('city')}
-                                    className="w-full h-14 px-4 rounded-2xl border-2 border-slate-100 bg-slate-50/50 font-black text-sm outline-none focus:border-brand-primary transition-colors cursor-pointer appearance-none"
-                                    disabled={!watch('governorate') || isLoadingLocations}
-                                >
-                                    <option value="">اختر المدينة</option>
-                                    {cities?.map(city => (
-                                        <option key={city.id} value={city.id}>{city.name_ar || city.name || '---'}</option>
-                                    ))}
-                                </select>
-                                <ChevronRight className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none rotate-90" />
-                            </div>
-                            {errors.city && (touchedFields.city || wasNextAttempted) && <p className="text-[11px] text-red-500 font-bold pr-1">{errors.city.message}</p>}
-                        </div>
+                        <Controller
+                            name="governorate"
+                            control={control}
+                            render={({ field }) => (
+                                <Select
+                                    label="المحافظة"
+                                    options={governorates?.map(gov => ({ value: gov.id, label: gov.name_ar || gov.name || '---' }))}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    placeholder="اختر المحافظة"
+                                    error={errors.governorate && (touchedFields.governorate || wasNextAttempted) ? errors.governorate : null}
+                                />
+                            )}
+                        />
+                        <Controller
+                            name="city"
+                            control={control}
+                            render={({ field }) => (
+                                <Select
+                                    label="المدينة"
+                                    options={cities?.map(city => ({ value: city.id, label: city.name_ar || city.name || '---' }))}
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    placeholder="اختر المدينة"
+                                    error={errors.city && (touchedFields.city || wasNextAttempted) ? errors.city : null}
+                                    isLoading={isLoadingLocations}
+                                    disabled={!watch('governorate')}
+                                />
+                            )}
+                        />
                     </div>
                     <Input
                         label="العنوان بالتفصيل"
@@ -1080,7 +1077,7 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
     )
 }
 
-const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, wasNextAttempted, watch, setValue, governorates, cities, isLoadingLocations, handleImmediateUpload, checkingFields, handleCheckAvailability }) => {
+const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, wasNextAttempted, watch, setValue, control, governorates, cities, isLoadingLocations, handleImmediateUpload, checkingFields, handleCheckAvailability }) => {
     const vType = watch('vehicleType')
 
     return (
@@ -1090,22 +1087,25 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
                     <div className="space-y-4">
                         <h3 className="text-[13px] font-black text-[#064e3b] flex items-center gap-2 border-r-4 border-[#064e3b] pr-3 leading-none">البيانات الأساسية للمركبة</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold text-slate-600 pr-1">نوع المركبة</label>
-                                <div className="relative">
-                                    <select
-                                        {...register('vehicleType')}
-                                        className="w-full h-14 px-4 rounded-2xl border-2 border-slate-100 bg-slate-50/50 font-black text-sm outline-none focus:border-brand-primary transition-colors cursor-pointer appearance-none"
-                                    >
-                                        <option value="ربع نقل">ربع نقل</option>
-                                        <option value="نصف نقل">نصف نقل</option>
-                                        <option value="سوزوكي/فان">سوزوكي / فان</option>
-                                        <option value="تروسيكل">تروسيكل</option>
-                                        <option value="أخرى">أخرى</option>
-                                    </select>
-                                    <ChevronRight className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none rotate-90" />
-                                </div>
-                            </div>
+                            <Controller
+                                name="vehicleType"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        label="نوع المركبة"
+                                        options={[
+                                            { value: 'ربع نقل', label: 'ربع نقل' },
+                                            { value: 'نصف نقل', label: 'نصف نقل' },
+                                            { value: 'سوزوكي/فان', label: 'سوزوكي / فان' },
+                                            { value: 'تروسيكل', label: 'تروسيكل' },
+                                            { value: 'أخرى', label: 'أخرى' }
+                                        ]}
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        placeholder="اختر نوع المركبة"
+                                    />
+                                )}
+                            />
                             <Input
                                 label="ماركة المركبة"
                                 {...register('vehicleBrand')}
@@ -1211,42 +1211,36 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
                 </>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-600 pr-1">المحافظة</label>
-                        <div className="relative">
-                            <select
-                                {...register('governorate')}
-                                className="w-full h-14 px-4 rounded-2xl border-2 border-slate-100 bg-slate-50/50 font-black text-sm outline-none focus:border-brand-primary transition-colors cursor-pointer appearance-none"
-                            >
-                                <option value="">اختر المحافظة</option>
-                                {governorates?.map(gov => (
-                                    <option key={gov.id} value={gov.id}>{gov.name_ar || gov.name || '---'}</option>
-                                ))}
-                            </select>
-                            <ChevronRight className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none rotate-90" />
-                        </div>
-                        {errors.governorate && (touchedFields.governorate || wasNextAttempted) && <p className="text-[11px] text-red-500 font-bold pr-1">{errors.governorate.message}</p>}
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-600 pr-1 flex items-center gap-2">
-                            المدينة
-                            {isLoadingLocations && <Loading minimal={true} className="inline-flex mr-2 scale-75" />}
-                        </label>
-                        <div className="relative">
-                            <select
-                                {...register('city')}
-                                className="w-full h-14 px-4 rounded-2xl border-2 border-slate-100 bg-slate-50/50 font-black text-sm outline-none focus:border-brand-primary transition-colors cursor-pointer appearance-none"
-                                disabled={!watch('governorate') || isLoadingLocations}
-                            >
-                                <option value="">اختر المدينة</option>
-                                {cities?.map(city => (
-                                    <option key={city.id} value={city.id}>{city.name_ar || city.name || '---'}</option>
-                                ))}
-                            </select>
-                            <ChevronRight className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none rotate-90" />
-                        </div>
-                        {errors.city && (touchedFields.city || wasNextAttempted) && <p className="text-[11px] text-red-500 font-bold pr-1">{errors.city.message}</p>}
-                    </div>
+                    <Controller
+                        name="governorate"
+                        control={control}
+                        render={({ field }) => (
+                            <Select
+                                label="المحافظة"
+                                options={governorates?.map(gov => ({ value: gov.id, label: gov.name_ar || gov.name || '---' }))}
+                                value={field.value}
+                                onChange={field.onChange}
+                                placeholder="اختر المحافظة"
+                                error={errors.governorate && (touchedFields.governorate || wasNextAttempted) ? errors.governorate : null}
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="city"
+                        control={control}
+                        render={({ field }) => (
+                            <Select
+                                label="المدينة"
+                                options={cities?.map(city => ({ value: city.id, label: city.name_ar || city.name || '---' }))}
+                                value={field.value}
+                                onChange={field.onChange}
+                                placeholder="اختر المدينة"
+                                error={errors.city && (touchedFields.city || wasNextAttempted) ? errors.city : null}
+                                isLoading={isLoadingLocations}
+                                disabled={!watch('governorate')}
+                            />
+                        )}
+                    />
                 </div>
             )}
 

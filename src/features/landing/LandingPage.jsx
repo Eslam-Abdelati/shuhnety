@@ -56,7 +56,7 @@ export const LandingPage = () => {
                             </Button>
                             <Button variant="outline" size="lg" asChild className="rounded-2xl px-10 h-12 text-sm font-black border-slate-200 hover:bg-slate-50 hover:border-brand-primary hover:text-brand-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 group cursor-pointer">
                                 <Link to="/register" className="flex items-center gap-2">
-                                    سجل كشريك نقل
+                                    سجل الان
                                 </Link>
                             </Button>
                         </div>
