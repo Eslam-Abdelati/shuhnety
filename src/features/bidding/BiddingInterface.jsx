@@ -350,7 +350,7 @@ export const BiddingInterface = () => {
                                                     <h4 className="font-black text-lg text-slate-900 dark:text-white">{offer.driver?.full_name || "كابتن شحن"}</h4>
                                                     <div className="flex items-center gap-1 px-2 py-0.5 bg-amber-50 rounded-lg text-amber-600 text-[10px] font-black border border-amber-100">
                                                         <Star className="h-3 w-3 fill-amber-500" />
-                                                        4.8
+                                                        {offer.driver?.averageRating || offer.driver?.score || offer.driver?.rating || '٠.٠'}
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2 text-[10px] font-bold text-slate-400">

@@ -49,7 +49,8 @@ export const ShipmentTracking = () => {
                             driverImage: accepted.driver?.driverDetails?.profile_picture,
                             driverPhone: accepted.driver?.phone_number,
                             amount: accepted.amount,
-                            estimatedTime: accepted.estimatedTime
+                            estimatedTime: accepted.estimatedTime,
+                            driverRating: accepted.driver?.averageRating || accepted.driver?.score || accepted.driver?.rating || '٠.٠'
                         })
                     } else {
                         setAcceptedOffer(null)
@@ -283,7 +284,7 @@ export const ShipmentTracking = () => {
                                     </div>
                                     <div>
                                         <h4 className="font-black text-slate-900">{acceptedOffer.driverName}</h4>
-                                        <p className="text-xs text-slate-500 font-bold">كابتن معتمد • ★ 4.9</p>
+                                        <p className="text-xs text-slate-500 font-bold">كابتن معتمد • ★ {acceptedOffer.driverRating}</p>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 py-4 border-t border-slate-50 font-cairo">

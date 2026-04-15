@@ -251,8 +251,8 @@ export const ShipmentDetailsPage = () => {
                                 </div>
                             </div>
                             <div className="flex items-center gap-1">
-                                {[1, 2, 3, 4, 5].map(star => (
-                                    <Star key={star} className={cn("h-4 w-4", (shipment.review?.score || shipment.review?.rating || score) >= star ? "fill-amber-500 text-amber-500" : "text-slate-200 dark:text-slate-700")} />
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star key={star} className={cn("h-4 w-4", (shipment.review?.score || score) >= star ? "fill-amber-500 text-amber-500" : "text-slate-200 dark:text-slate-700")} />
                                 ))}
                             </div>
                         </Card>
@@ -453,7 +453,9 @@ export const ShipmentDetailsPage = () => {
                                                         </div>
                                                         <div className="flex items-center gap-1">
                                                             <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                                                            <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 leading-none">4.9</span>
+                                                            <span className="text-[10px] font-black text-slate-800 dark:text-slate-200 leading-none">
+                                                                {acceptedOffer.driver?.averageRating || acceptedOffer.driver?.score || acceptedOffer.driver?.rating || '٠.٠'}
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 </div>

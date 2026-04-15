@@ -86,7 +86,13 @@ export const IncomingOffersPage = () => {
                                             )}
                                         </div>
                                         <div>
-                                            <h3 className="font-black text-lg text-slate-800 leading-none mb-1.5">{offer.driver?.full_name || "كابتن"}</h3>
+                                            <div className="flex items-center gap-2 mb-1.5">
+                                                <h3 className="font-black text-lg text-slate-800 leading-none">{offer.driver?.full_name || "كابتن"}</h3>
+                                                <div className="flex items-center gap-1 px-2 py-0.5 bg-amber-50 rounded-lg text-amber-600 text-[10px] font-black border border-amber-100">
+                                                    <Star className="h-2.5 w-2.5 fill-amber-500" />
+                                                    {offer.driver?.averageRating || offer.driver?.score || offer.driver?.rating || '٠.٠'}
+                                                </div>
+                                            </div>
                                             <p className="text-xs font-bold text-slate-400">مقدم عرض سعر لشحنتك</p>
                                         </div>
                                     </div>
