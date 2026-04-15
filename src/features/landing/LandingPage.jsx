@@ -37,27 +37,26 @@ export const LandingPage = () => {
                     <motion.div className="flex-1 text-center lg:text-right" {...fadeIn}>
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[#57534d] text-[9px] font-black tracking-widest uppercase mb-6 border border-slate-200/50">
                             <Zap className="h-3 w-3 text-brand-primary" />
-                            منصة ذكية تربط بين أصحاب الشحنات والكباتن في مكان واحد
+                            المنصة الرائدة لربط العملاء بمحترفي الشحن
                         </div>
 
                         <h1 className="text-xl lg:text-5xl font-black leading-[1.40] tracking-tight mb-6 text-brand-secondary">
 
-                            اشحن أو اشتغل بسهولة<br />
-                            <span className="text-brand-primary drop-shadow-sm">  في منصة واحدة ذكية </span>
+                            حلول شحن ذكية
                         </h1>
 
                         <p className="max-w-lg lg:mr-0 mx-auto text-base text-[#57534d] font-bold leading-relaxed mb-10 opacity-80">
-                            سواء كنت عميل عايز تشحن، أو كابتن بتدور على شغل —
-                            شحنتي بتوصلك للطرف المناسب بسرعة وبأفضل سعر.
+
+                            سواء كنت تبحث عن وسيلة شحن موثوقة أو تسعى لتعزيز دخلك كشريك محترف، شحنتي هي وجهتك المثالية.
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                             <Button size="lg" asChild className="rounded-2xl px-10 h-12 text-sm font-black bg-brand-secondary hover:bg-black shadow-2xl shadow-brand-secondary/20 transition-all duration-300 hover:-translate-y-1 active:scale-95 cursor-pointer">
-                                <Link to="/login"> اشحن الآن </Link>
+                                <Link to="/login"> ابدأ الشحن الآن </Link>
                             </Button>
                             <Button variant="outline" size="lg" asChild className="rounded-2xl px-10 h-12 text-sm font-black border-slate-200 hover:bg-slate-50 hover:border-brand-primary hover:text-brand-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 group cursor-pointer">
                                 <Link to="/register" className="flex items-center gap-2">
-                                    انضم ككابتن
+                                    سجل كشريك نقل
                                 </Link>
                             </Button>
                         </div>
@@ -75,7 +74,7 @@ export const LandingPage = () => {
                                 <div className="flex items-center gap-1 text-brand-primary mb-0.5 scale-90 origin-right">
                                     {[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-3 w-3 fill-current" />)}
                                 </div>
-                                <p className="text-[10px] font-black text-[#57534d]/60 uppercase tracking-widest"> ينضم إلينا عملاء / كباتن جدد يوميًا </p>
+                                <p className="text-[10px] font-black text-[#57534d]/60 uppercase tracking-widest"> انضم إلى آلاف المستخدمين الموثوقين يومياً </p>
                             </div>
                         </div>
                     </motion.div>
@@ -146,13 +145,13 @@ export const LandingPage = () => {
 
                     <div className="order-1 lg:order-2 space-y-10">
                         <div className="space-y-4">
-                            <h2 className="text-4xl font-black text-brand-secondary leading-tight tracking-tight">من نحن؟ رؤية تقنية <br /> لمستقبل النقل</h2>
+                            <h2 className="text-4xl font-black text-brand-secondary leading-tight tracking-tight">عن "شحنتي": رؤية طموحة <br /> لمستقبل الخدمات اللوجستية</h2>
                             <div className="h-1.5 w-20 bg-brand-primary rounded-full"></div>
                         </div>
 
                         <div className="space-y-6">
                             <p className="text-lg text-[#57534d] font-bold leading-relaxed">
-                                شحنتي هي منصة لوجستية رقمية تهدف إلى تطوير قطاع النقل والشحن داخل مصر، من خلال ربط التجار والمزارعين بالكباتن وشركات النقل في نظام واحد ذكي وسهل الاستخدام.
+                                شحنتي هي منصة تهدف إلى تطوير قطاع النقل والشحن داخل مصر، من خلال ربط أصحاب الشحنات بالكابتن أصحاب المركبات وشركات النقل في نظام واحد ذكي وسهل الاستخدام.
                             </p>
                             <p className="text-base text-[#57534d] font-medium leading-relaxed bg-brand-primary/5 p-6 rounded-3xl border-r-4 border-brand-primary">
                                 نعتمد على نظام <strong>المزايدة الحي</strong>، حيث يمكن للعميل استقبال عدة عروض أسعار من مختلف الكباتن، مع إمكانية <strong>التفاوض المباشر</strong> للوصول إلى السعر العادل الذي يضمن حقوق جميع الأطراف ويحقق أعلى كفاءة اقتصادية.
@@ -183,7 +182,7 @@ export const LandingPage = () => {
             <section id="solutions" className="py-20 bg-slate-50/50">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl font-black text-brand-secondary mb-3">  حلول ذكية لكل أطراف منظومة الشحن</h2>
+                        <h2 className="text-3xl font-black text-brand-secondary mb-3"> منظومة لوجستية ذكية تخدم كافة تطلعاتك </h2>
                         <div className="h-1 w-12 bg-brand-primary mx-auto rounded-full"></div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -209,8 +208,8 @@ export const LandingPage = () => {
             <section id="problem" className="py-24 bg-[#fdfcf6]">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-16 max-w-2xl mx-auto">
-                        <h2 className="text-4xl font-black text-brand-secondary mb-4 tracking-tight">لماذا صممنا "شحنتي"؟</h2>
-                        <p className="text-[#57534d] font-bold leading-relaxed">جئنا لنحل أزمات النقل التقليدي التي كانت تستنزف وقتك ومالك.</p>
+                        <h2 className="text-4xl font-black text-brand-secondary mb-4 tracking-tight">لماذا تختار منصة "شحنتي"؟</h2>
+                        <p className="text-[#57534d] font-bold leading-relaxed">نهدف إلى معالجة تحديات النقل التقليدية لضمان تجربة أكثر كفاءة وموثوقية.</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
@@ -235,7 +234,7 @@ export const LandingPage = () => {
             <section id="workflow" className="py-24 bg-white">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-20">
-                        <h2 className="text-4xl font-black text-brand-secondary mb-4 tracking-tight">خطوات بسيطة وذكية</h2>
+                        <h2 className="text-4xl font-black text-brand-secondary mb-4 tracking-tight">آلية عمل ذكية وبسيطة</h2>
                         <div className="h-1.5 w-20 bg-brand-primary rounded-full mx-auto mb-6"></div>
                     </div>
 
@@ -266,7 +265,7 @@ export const LandingPage = () => {
                     <div>
                         <h2 className="text-5xl font-black mb-6 leading-tight tracking-tight">نخدم مجتمعاً <br /> كاملاً من الرواد</h2>
                         <p className="text-white/60 font-bold text-lg max-w-md leading-relaxed">
-                            سواء كنت فرداً، أو شركة لوجستية كبرى، "شحنتي" توفر البيئة الرقمية المثالية لنمو عملك.
+                            سواء كنت فرداً، أو شركة كبرى، شحنتي توفر البيئة الرقمية المثالية لنمو عملك.
                         </p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">

@@ -64,7 +64,6 @@ export const shipmentService = {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.SHIPMENT.GET_DETAILS(id));
             const result = response.data;
-
             if (result.status && result.data) {
                 result.data = mapShipmentData(result.data);
             } else if (result.id || result._id) {
@@ -168,7 +167,6 @@ export const shipmentService = {
     getShipmentStats: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.SHIPMENT.ME_STATS);
-            console.log(response.data);
             return response.data;
         } catch (error) {
             console.error('Get shipment stats error:', error.response?.data || error.message);

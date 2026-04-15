@@ -451,10 +451,10 @@ export const RegisterPage = () => {
 
             const response = await authService.register(registerDto)
 
-            const successMsg = selectedRole === 'driver' 
+            const successMsg = selectedRole === 'driver'
                 ? 'تم التسجيل بنجاح 🙌 حسابك قيد المراجعة وسيتم تفعيله خلال 24 ساعة من قبل الإدارة.'
                 : 'تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني لتفعيل الحساب.';
-            
+
             toast.success(successMsg, { id: 'register' })
             // Navigate to verify email
             setTimeout(() => {
@@ -511,7 +511,7 @@ export const RegisterPage = () => {
 
                         <div className="space-y-4">
                             <h2 className="text-[30px] font-bold text-brand-secondary tracking-tight leading-tight">انضم لعائلة شحنتي</h2>
-                            <p className="text-[16px] text-[#57534d]">خطوات بسيطة لبدء تجربة لوجستية ذكية</p>
+                            <p className="text-[16px] text-[#57534d]">خطوات بسيطة لبدء تجربة شحن ونقل ذكية</p>
 
                             <div className="pt-2 flex items-center justify-center gap-6">
                                 <span className="flex items-center gap-1.5 text-xs font-black text-brand-secondary bg-brand-secondary/5 px-3 py-1.5 rounded-full">
@@ -535,10 +535,10 @@ export const RegisterPage = () => {
                         className="w-full max-w-[550px] mx-auto bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 p-8 md:p-12 relative"
                     >
                         <div className="text-center mb-8">
-                            <div className="inline-flex items-center justify-center h-16 w-16 bg-brand-primary rounded-2xl shadow-lg shadow-brand-primary/20 mb-6 text-white rotate-3">
+                            <div className="inline-flex items-center justify-center h-16 w-16 bg-brand-primary rounded-2xl shadow-lg shadow-brand-primary/20 mb-4 text-white rotate-0 group-hover:rotate-4 transition-transform duration-500">
                                 <Box className="h-9 w-9" />
                             </div>
-                            <h1 className="text-[30px] font-bold text-[#1c1919] mb-2">إنشاء حساب جديد</h1>
+                            <h2 className="text-[26px] font-bold text-[#1c1919] mb-2">إنشاء حساب جديد</h2>
                             <p className="text-[#57534d] text-[16px] tracking-tight">
                                 {step === 1 ? 'اختر نوع الحساب الذي يناسب احتياجاتك' :
                                     step === 2 ? 'المعلومات الشخصية' : 'تفاصيل إضافية'}
@@ -1290,17 +1290,18 @@ const Input = React.forwardRef(({ label, icon: Icon, error, isTouched, wasNextAt
                 <input
                     ref={ref}
                     className={cn(
-                        "w-full h-13 pr-11 pl-12 rounded-[1.25rem] border-2 outline-none transition-all font-bold text-[13px] bg-slate-50/50 placeholder:text-slate-300",
+                        "w-full h-13 pr-11 pl-4 rounded-[1.25rem] border-2 outline-none transition-all font-bold text-[13px] bg-slate-50/50 placeholder:text-slate-300",
                         showError ? "border-red-500" : "border-slate-100 focus:border-brand-primary"
                     )}
                     {...props}
                 />
-                {Icon && <Icon className="absolute right-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-slate-400 group-focus-within:text-brand-primary transition-colors" />}
-                {isLoading && (
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                        <Loading minimal={true} />
-                    </div>
-                )}
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                    {isLoading ? (
+                        <Loading minimal={true} text="" className="scale-110" />
+                    ) : (
+                        Icon && <Icon className="h-4.5 w-4.5 text-slate-400 group-focus-within:text-brand-primary transition-colors" />
+                    )}
+                </div>
             </div>
             {showError && <p className="text-[11px] text-red-500 font-bold pr-1">{error.message}</p>}
         </div>

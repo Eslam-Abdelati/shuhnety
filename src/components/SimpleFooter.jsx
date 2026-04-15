@@ -15,7 +15,7 @@ export const SimpleFooter = () => {
                             <span className="text-2xl font-black tracking-tighter">شحنتي</span>
                         </div>
                         <p className="text-sm text-white/50 leading-relaxed font-bold">
-                            المنصة الرقمية الأولى في جمهورية مصر العربية المتخصصة في ربط سلاسل النقل اللوجستي والتحصيل الرقمي عن طريق المزايدة والتفاوض.
+                            المنصة الرقمية الأولى في جمهورية مصر العربية المتخصصة في ربط سلاسل النقل والشحن عن طريق المزايدة والتفاوض.
                         </p>
                         <div className="flex gap-4">
                             <div className="h-10 w-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all cursor-pointer">

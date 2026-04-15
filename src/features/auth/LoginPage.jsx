@@ -137,11 +137,10 @@ export const LoginPage = () => {
                         <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 p-8 md:p-12 relative overflow-hidden">
 
                             <div className="text-center mb-10 group">
-                                <div className="inline-flex items-center justify-center h-16 w-16 bg-brand-primary rounded-2xl shadow-lg shadow-brand-primary/20 mb-6 text-white rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                                <div className="inline-flex items-center justify-center h-16 w-16 bg-brand-primary rounded-2xl shadow-lg shadow-brand-primary/20 mb-4 text-white rotate-0 group-hover:rotate-4 transition-transform duration-500">
                                     <Box className="h-9 w-9" />
                                 </div>
-                                <h1 className="text-[30px] font-bold text-[#1c1919] mb-4">منصة شحنتي</h1>
-                                <p className="text-[#57534d] text-[16px]">تسجيل الدخول </p>
+                                <h2 className="text-[26px] font-bold text-[#1c1919]"> تسجيل الدخول</h2>
                             </div>
 
                             <form onSubmit={handleSubmit(onLoginSubmit)} className="space-y-6">
