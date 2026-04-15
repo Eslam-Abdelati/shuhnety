@@ -208,7 +208,7 @@ export const LoginPage = () => {
                                     <Link to="/forgot-password" size="sm" className="text-sm font-bold text-brand-primary hover:underline">نسيت كلمة المرور؟</Link>
                                 </div>
 
-                                <div className="pt-4 text-center">
+                                <div className="text-center">
                                     <p className="text-sm font-bold text-[#57534d]">لا تملك حساب؟ <Link to="/register" className="text-brand-primary hover:text-orange-600 font-extrabold">سجل الآن</Link></p>
                                 </div>
 
