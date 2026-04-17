@@ -20,6 +20,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useThemeStore } from '@/store/useThemeStore'
 import { useUIStore } from '@/store/useUIStore'
 import { useNotificationStore } from '@/store/useNotificationStore'
+import { notificationService } from '@/services/notificationService'
 import { cn } from '@/utils/cn'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
@@ -30,7 +31,27 @@ export const Topbar = () => {
     const { user, logout, role } = useAuthStore()
     const { theme, toggleTheme } = useThemeStore()
     const { toggleSidebar, isSidebarOpen } = useUIStore()
-    const { notifications, clearAll, markAsRead, removeNotification } = useNotificationStore()
+    const { notifications, clearAll, markAsRead, removeNotification, setNotifications } = useNotificationStore()
+
+    // Fetch notifications on mount
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const res = await notificationService.getUserNotifications();
+                const data = res.data || res || [];
+                setNotifications(data);
+            } catch (err) {
+                console.warn('Failed to fetch notifications:', err);
+            }
+        };
+
+        if (user) {
+            fetchNotifications();
+            // Optional: Set up interval for polling
+            const interval = setInterval(fetchNotifications, 60000); // every minute
+            return () => clearInterval(interval);
+        }
+    }, [user]);
 
     // Filter notifications based on role
     const filteredNotifications = (notifications ?? []).filter(n => !n.recipientRole || n.recipientRole === role)
@@ -152,7 +173,7 @@ export const Topbar = () => {
                                         <h4 className="font-black text-slate-900 dark:text-white text-sm">التنبيهات</h4>
                                         <button
                                             onClick={() => clearAll(role)}
-                                            className="text-[10px] font-black text-slate-400 hover:text-brand-primary bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg uppercase tracking-wider transition-colors"
+                                            className="text-[10px] font-black text-slate-400 hover:text-brand-primary bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg uppercase tracking-wider transition-colors cursor-pointer"
                                         >
                                             مسح الكل
                                         </button>
@@ -164,60 +185,55 @@ export const Topbar = () => {
                                                     key={notif.id}
                                                     onClick={() => markAsRead(notif.id)}
                                                     className={cn(
-                                                        "p-5 transition-all border-b border-slate-50 dark:border-slate-800/60 cursor-pointer group relative",
+                                                        "p-4 transition-all border-b border-slate-50 dark:border-slate-800/60 group relative",
                                                         notif.active ? "bg-slate-50/50 dark:bg-slate-800/50" : "hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
                                                     )}
                                                 >
-                                                    {/* Unread Indicator Dot */}
-                                                    {notif.active && (
-                                                        <span className="absolute right-1.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-brand-primary rounded-full shadow-[0_0_8px_rgba(235,106,29,0.5)]"></span>
-                                                    )}
-
-                                                    <div className="flex gap-4 pl-10">
-                                                        {/* Icon with refined styling */}
-                                                        <div className={cn(
-                                                            "h-11 w-11 rounded-2xl flex items-center justify-center shrink-0 border-2 shadow-sm transition-transform group-hover:scale-105",
-                                                            notif.type === 'success' ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border-emerald-100/50 dark:border-emerald-500/20" :
-                                                                notif.type === 'warning' ? "bg-amber-50 dark:bg-amber-500/10 text-amber-600 border-amber-100/50 dark:border-amber-500/20" :
-                                                                    "bg-blue-50 dark:bg-blue-500/10 text-blue-600 border-blue-100/50 dark:border-blue-500/20"
-                                                        )}>
-                                                            {notif.type === 'success' ? <CheckCircle2 className="h-5 w-5" /> :
-                                                                notif.type === 'warning' ? <AlertTriangle className="h-5 w-5" /> : <Info className="h-5 w-5" />}
-                                                        </div>
-
-                                                        {/* Content Body */}
-                                                        <div className="flex-1 min-w-0">
-                                                            <div className="flex items-start justify-between mb-1 gap-2">
-                                                                <h5 className={cn(
-                                                                    "text-[13px] leading-snug truncate",
-                                                                    notif.active ? "font-black text-slate-900 dark:text-white" : "font-bold text-slate-600 dark:text-slate-300"
-                                                                )}>
-                                                                    {notif.title}
-                                                                </h5>
-                                                                <span className="text-[10px] font-bold text-slate-400 whitespace-nowrap pt-0.5">
-                                                                    {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true, locale: ar })}
-                                                                </span>
-                                                            </div>
-                                                            <p className={cn(
-                                                                "text-[11px] leading-relaxed line-clamp-2",
-                                                                notif.active ? "text-slate-600 dark:text-slate-300 font-bold" : "text-slate-500 dark:text-slate-400 font-medium"
+                                                    <div className="pl-12 pr-1">
+                                                        {/* Header: Icon + Title */}
+                                                        <div className="flex items-center gap-1.5 mb-1.5 flex-nowrap">
+                                                            <div className={cn(
+                                                                "shrink-0",
+                                                                notif.type === 'success' ? "text-emerald-500" :
+                                                                    notif.type === 'warning' ? "text-amber-500" :
+                                                                        "text-blue-500"
                                                             )}>
-                                                                {notif.desc}
-                                                            </p>
+                                                                {notif.type === 'success' ? <CheckCircle2 className="h-3.5 w-3.5" /> :
+                                                                    notif.type === 'warning' ? <AlertTriangle className="h-3.5 w-3.5" /> : <Info className="h-3.5 w-3.5" />}
+                                                            </div>
+                                                            <h5 className={cn(
+                                                                "text-[12px] leading-none truncate",
+                                                                notif.active ? "font-black text-slate-900 dark:text-white" : "font-bold text-slate-600 dark:text-slate-300"
+                                                            )}>
+                                                                {notif.title}
+                                                            </h5>
                                                         </div>
+
+                                                        {/* Body: Description */}
+                                                        <p className={cn(
+                                                            "text-[10px] leading-relaxed line-clamp-2 pr-1",
+                                                            notif.active ? "text-slate-600 dark:text-slate-300 font-bold" : "text-slate-500 dark:text-slate-400 font-medium"
+                                                        )}>
+                                                            {notif.desc}
+                                                        </p>
                                                     </div>
 
-                                                    {/* Unified Delete Button */}
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            removeNotification(notif.id);
-                                                        }}
-                                                        className="absolute left-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-xl flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all opacity-40 group-hover:opacity-100"
-                                                        title="حذف التنبيه"
-                                                    >
-                                                        <X className="h-4 w-4" />
-                                                    </button>
+                                                    {/* Left Sidebar: Close Icon (Top) & Time (Bottom) */}
+                                                    <div className="absolute left-2 top-3 bottom-3 flex flex-col items-center justify-between py-0.5">
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                removeNotification(notif.id);
+                                                            }}
+                                                            className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all opacity-40 group-hover:opacity-100"
+                                                            title="حذف التنبيه"
+                                                        >
+                                                            <X className="h-3.5 w-3.5" />
+                                                        </button>
+                                                        <span className="text-[7px] font-black text-slate-400 whitespace-nowrap opacity-60 uppercase tracking-tighter">
+                                                            {formatDistanceToNow(new Date(notif.createdAt || new Date()), { addSuffix: true, locale: ar })}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             ))
                                         ) : (
@@ -227,7 +243,7 @@ export const Topbar = () => {
                                             </div>
                                         )}
                                     </div>
-                                    <button className="w-full p-4 text-center text-[11px] font-black text-slate-400 hover:text-brand-primary transition-colors bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 border-t border-slate-50 dark:border-slate-800 uppercase tracking-widest">
+                                    <button className="w-full p-4 text-center text-[11px] font-black text-slate-400 hover:text-brand-primary transition-colors bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 border-t border-slate-50 dark:border-slate-800 uppercase tracking-widest cursor-pointer">
                                         مشاهدة جميع الاشعارات
                                     </button>
                                 </motion.div>

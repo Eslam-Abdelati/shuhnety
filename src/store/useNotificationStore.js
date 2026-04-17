@@ -1,9 +1,10 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     addNotification as addNotificationAction,
     markAsRead as markAsReadAction,
     clearAll as clearAllAction,
+    setNotifications as setNotificationsAction,
     removeNotification as removeNotificationAction
 } from './slices/notificationSlice';
 
@@ -17,6 +18,7 @@ export const useNotificationStore = (selector) => {
         markAsRead: (id) => dispatch(markAsReadAction(id)),
         clearAll: (role) => dispatch(clearAllAction(role)),
         removeNotification: (id) => dispatch(removeNotificationAction(id)),
+        setNotifications: (notifications) => dispatch(setNotificationsAction(notifications)),
     }), [state, dispatch]);
 
     return selector ? selector(store) : store;

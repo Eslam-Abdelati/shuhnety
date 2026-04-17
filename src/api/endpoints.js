@@ -45,4 +45,7 @@ export const API_ENDPOINTS = {
         GET_ACTIVE: '/road-alerts/active',
         CONFIRM: (id) => `/road-alerts/${id}/confirm`,
     },
+    NOTIFICATIONS: {
+        GET_USER: '/notifications/getUserNotifications',
+    },
 };

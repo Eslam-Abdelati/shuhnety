@@ -1,4 +1,4 @@
-﻿import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     notifications: [],
@@ -38,9 +38,32 @@ const notificationSlice = createSlice({
             const id = action.payload;
             state.notifications = state.notifications.filter(n => n.id !== id);
         },
+        setNotifications: (state, action) => {
+            state.notifications = action.payload.map(n => {
+                // Determine UI type based on backend type
+                let uiType = 'info';
+                if (n.type?.includes('accepted') || n.type?.includes('delivered') || n.type?.includes('success')) {
+                    uiType = 'success';
+                } else if (n.type?.includes('alert') || n.type?.includes('warning')) {
+                    uiType = 'warning';
+                } else if (n.type?.includes('canceled')) {
+                    uiType = 'error';
+                }
+
+                return {
+                    id: n.id || n._id,
+                    title: n.title || 'إشعار جديد',
+                    desc: n.message || n.desc || n.body || n.title,
+                    type: uiType,
+                    active: n.isRead === false || n.is_read === false || n.status === 'unread',
+                    createdAt: n.createDateTime || n.createdAt || n.created_at || new Date().toISOString(),
+                    recipientRole: n.recipientRole || null
+                };
+            });
+        }
     },
 });
 
-export const { addNotification, markAsRead, clearAll, removeNotification } = notificationSlice.actions;
+export const { addNotification, markAsRead, clearAll, removeNotification, setNotifications } = notificationSlice.actions;
 export default notificationSlice.reducer;
 
