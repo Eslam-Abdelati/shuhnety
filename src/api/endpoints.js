@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
         CHECK_AVAILABILITY: '/auth/check-availability',
         RESEND_VERIFICATION_CODE: '/auth/resend-verification-code',
         UPLOAD_IMAGE: '/auth/upload/image',
+        CONTACTS: '/auth/contacts',
     },
     USER: {
         PROFILE: '/users/me',

@@ -1,4 +1,4 @@
-﻿import axiosClient from '../api/axiosClient';
+import axiosClient from '../api/axiosClient';
 import { API_ENDPOINTS } from '../api/endpoints';
 import Cookies from 'js-cookie';
 
@@ -194,6 +194,20 @@ export const authService = {
         } catch (error) {
             console.error('Resend verification code error:', error);
             throw new Error(error.response?.data?.message || 'فشل إعادة إرسال رمز التحقق');
+        }
+    },
+
+    /**
+     * Send contact message to support
+     * @param {Object} contactData { email, full_name, subject, message }
+     */
+    submitContact: async (contactData) => {
+        try {
+            const response = await axiosClient.post(API_ENDPOINTS.AUTH.CONTACTS, contactData);
+            return response.data;
+        } catch (error) {
+            console.error('Contact submit error:', error);
+            throw new Error(error.response?.data?.message || 'فشل إرسال رسالتك، يرجى المحاولة مرة أخرى لاحقاً');
         }
     }
 };

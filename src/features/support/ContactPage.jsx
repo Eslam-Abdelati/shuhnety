@@ -1,18 +1,52 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Globe, ChevronRight } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Globe, ChevronRight, AlertCircle, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useState } from 'react'
 import { SimpleFooter } from '@/components/SimpleFooter'
 import { PublicNavbar } from '@/components/PublicNavbar'
+import { authService } from '@/services/authService'
 
 export const ContactPage = () => {
     const [formStatus, setFormStatus] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+    const [formData, setFormData] = useState({
+        full_name: '',
+        email: '',
+        subject: 'general',
+        message: ''
+    })
 
-    const handleSubmit = (e) => {
+    const handleInputChange = (e) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [id]: value
+        }));
+    }
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        setFormStatus('success')
-        setTimeout(() => setFormStatus(null), 5000)
+        setIsLoading(true)
+        setErrorMessage('')
+
+        try {
+            await authService.submitContact(formData);
+            setFormStatus('success');
+            // Reset form
+            setFormData({
+                full_name: '',
+                email: '',
+                subject: 'general',
+                message: ''
+            });
+            setTimeout(() => setFormStatus(null), 8000);
+        } catch (error) {
+            setErrorMessage(error.message || 'حدث خطأ أثناء إرسال الرسالة، يرجى المحاولة لاحقاً');
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const contactInfo = [
@@ -25,7 +59,7 @@ export const ContactPage = () => {
         {
             title: 'اتصل بنا',
             info: '+20 120 370 2198',
-            info2: '+02 122 680 6572',
+            info2: '+20 122 680 6572',
             icon: Phone,
             color: 'bg-emerald-50 text-emerald-600'
         }
@@ -61,7 +95,7 @@ export const ContactPage = () => {
                             transition={{ delay: 0.2 }}
                             className="text-white/60 text-lg font-bold leading-relaxed"
                         >
-                            نسعى دائماً لتوفير أفضل تجربة لوجستية، فريقنا جاهز للرد على استفساراتك على مدار الساعة.
+                            نسعى دائماً لتوفير أفضل تجربة ، فريقنا جاهز للرد على استفساراتك على مدار الساعة.
                         </motion.p>
                     </div>
                 </div>
@@ -137,31 +171,80 @@ export const ContactPage = () => {
                                 </motion.div>
                             ) : (
                                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {errorMessage && (
+                                        <div className="md:col-span-2 bg-rose-50 border border-rose-100 p-4 rounded-xl flex items-center gap-3 text-rose-600 animate-shake">
+                                            <AlertCircle className="h-5 w-5 shrink-0" />
+                                            <p className="text-sm font-bold">{errorMessage}</p>
+                                        </div>
+                                    )}
+
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-[#57534d] block pr-1 text-right">الأسم بالكامل</label>
-                                        <input type="text" required className="w-full h-14 bg-slate-50/50 border-2 border-slate-100 rounded-2xl px-6 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right" placeholder="ادخل اسمك هنا" />
+                                        <input
+                                            id="full_name"
+                                            type="text"
+                                            required
+                                            value={formData.full_name}
+                                            onChange={handleInputChange}
+                                            className="w-full h-14 bg-slate-50/50 border-2 border-slate-100 rounded-2xl px-6 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right"
+                                            placeholder="ادخل اسمك هنا"
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-[#57534d] block pr-1 text-right">البريد الإلكتروني</label>
-                                        <input type="email" required className="w-full h-14 bg-slate-50/50 border-2 border-slate-100 rounded-2xl px-6 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right" placeholder="email@example.com" />
+                                        <input
+                                            id="email"
+                                            type="email"
+                                            required
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            className="w-full h-14 bg-slate-50/50 border-2 border-slate-100 rounded-2xl px-6 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right"
+                                            placeholder="email@example.com"
+                                        />
                                     </div>
                                     <div className="md:col-span-2 space-y-2">
                                         <label className="text-sm font-bold text-[#57534d] block pr-1 text-right">الموضوع</label>
-                                        <select className="w-full h-14 bg-slate-50/50 border-2 border-slate-100 rounded-2xl px-6 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right appearance-none cursor-pointer">
-                                            <option>استفسار عام</option>
-                                            <option>مشكلة تقنية</option>
-                                            <option>شريك لوجستي (كابتن/شركة)</option>
-                                            <option>بلاغ عن شحنة</option>
+                                        <select
+                                            id="subject"
+                                            value={formData.subject}
+                                            onChange={handleInputChange}
+                                            className="w-full h-14 bg-slate-50/50 border-2 border-slate-100 rounded-2xl px-6 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right appearance-none cursor-pointer"
+                                        >
+                                            <option value="general">استفسار عام</option>
+                                            <option value="technical">مشكلة تقنية</option>
+                                            <option value="partner">شريك لوجستي (كابتن/شركة)</option>
+                                            <option value="complaint">بلاغ عن شحنة</option>
+                                            <option value="other">أخرى</option>
                                         </select>
                                     </div>
                                     <div className="md:col-span-2 space-y-2">
                                         <label className="text-sm font-bold text-[#57534d] block pr-1 text-right">رسالتك</label>
-                                        <textarea required rows={5} className="w-full bg-slate-50/50 border-2 border-slate-100 rounded-[2rem] px-6 py-5 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right resize-none" placeholder="اكتب استفسارك بالتفصيل هنا..."></textarea>
+                                        <textarea
+                                            id="message"
+                                            required
+                                            rows={5}
+                                            value={formData.message}
+                                            onChange={handleInputChange}
+                                            className="w-full bg-slate-50/50 border-2 border-slate-100 rounded-[2rem] px-6 py-5 font-bold text-sm outline-none focus:border-brand-primary transition-all text-right resize-none"
+                                            placeholder="اكتب استفسارك بالتفصيل هنا..."
+                                        ></textarea>
                                     </div>
 
                                     <div className="md:col-span-2 pt-4 flex justify-center">
-                                        <Button type="submit" size="lg" className="h-16 px-16 rounded-2xl bg-brand-primary hover:bg-orange-600 font-black text-lg shadow-xl shadow-brand-primary/20 transition-all hover:-translate-y-1">
-                                            إرسال
+                                        <Button
+                                            type="submit"
+                                            size="lg"
+                                            disabled={isLoading}
+                                            className="h-16 px-16 rounded-2xl bg-brand-primary hover:bg-orange-600 font-black text-lg shadow-xl shadow-brand-primary/20 transition-all hover:-translate-y-1 disabled:opacity-70 disabled:cursor-not-allowed group"
+                                        >
+                                            {isLoading ? (
+                                                <div className="flex items-center gap-2">
+                                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                                    جاري الإرسال...
+                                                </div>
+                                            ) : (
+                                                'إرسال'
+                                            )}
                                         </Button>
                                     </div>
                                 </form>
@@ -170,18 +253,9 @@ export const ContactPage = () => {
                     </div>
                 </div>
 
-                {/* Footer Back Button */}
-                <div className="mt-16 text-center">
-                    <Button asChild variant="ghost" className="rounded-2xl text-[#57534d] font-black hover:bg-slate-100">
-                        <Link to="/" className="flex items-center gap-2">
-                            العودة للرئيسية
-                            <ChevronRight className="h-4 w-4" />
-                        </Link>
-                    </Button>
-                </div>
             </div>
+            {/* Footer */}
             <SimpleFooter />
         </div>
     )
 }
-
