@@ -144,6 +144,7 @@ export const ShipmentsPage = () => {
             try {
                 await shipmentService.cancelShipment(id);
                 deleteShipment(id); // Remove from store state locally
+                toast.success('تم إلغاء الشحنة بنجاح');
                 // fetchStats(); // Refresh stats if needed
             } catch (error) {
                 console.error('Cancellation failed:', error);

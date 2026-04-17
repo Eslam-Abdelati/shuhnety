@@ -53,7 +53,6 @@ export const BiddingInterface = () => {
                 if (firstActive) {
                     const fullId = firstActive.id || firstActive._id;
                     const fullData = await shipmentService.getShipmentById(fullId);
-                    console.log('Shipment Details:', fullData);
                     setShipment(fullData);
                 } else {
                     setShipment(null)
@@ -68,14 +67,12 @@ export const BiddingInterface = () => {
                 toast.error(errorMsg);
             }
         } finally {
-            console.log('[BiddingInterface] fetchShipmentData completed');
             if (showLoading) setLoading(false)
         }
     }
 
     useEffect(() => {
         fetchShipmentData()
-
     }, [shipmentId])
 
 
@@ -129,7 +126,6 @@ export const BiddingInterface = () => {
     const handleRejectOffer = async (offerId) => {
         try {
             await shipmentService.updateBidStatus(offerId, 'rejected');
-            // Relying on Backend Sockets for rejection notification
             await fetchShipmentData(false)
         } catch (error) {
             toast.error(error.message)
@@ -190,7 +186,6 @@ export const BiddingInterface = () => {
                         </p>
                     </div>
 
-                    {/* Unified Minimalist Search & Button */}
                     <div className="relative group w-full md:w-80">
                         <div className="flex items-center gap-1.5">
                             <div className="relative flex-1">
@@ -218,7 +213,6 @@ export const BiddingInterface = () => {
             {/* Premium Shipment Summary Header */}
             <div className="relative overflow-hidden bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem] shadow-xl shadow-slate-200/20 dark:shadow-none p-1">
                 <div className="bg-white dark:bg-slate-900 rounded-[1.8rem] p-4 md:p-6 lg:p-8">
-                    {/* Top Stats Grid */}
                     <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
                         <div className="group/stat">
                             <div className="flex items-center gap-3 mb-2">
@@ -283,7 +277,6 @@ export const BiddingInterface = () => {
                         )}
                     </div>
 
-                    {/* Bottom Route Bar */}
                     <div className="relative pt-6 border-t border-slate-100 dark:border-slate-800">
                         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
                             <div className="flex items-center gap-4">
@@ -305,14 +298,12 @@ export const BiddingInterface = () => {
                                 </div>
                             </div>
                         </div>
-
-                        {/* High-end decorative pattern */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 rounded-full blur-[40px] pointer-events-none"></div>
                     </div>
                 </div>
             </div>
 
-            {/* Offers List - Completely Rebuilt for Responsiveness */}
+            {/* Offers List */}
             <div className="space-y-6">
                 <div className="flex items-center gap-3 px-2">
                     <div className="h-6 w-1.5 bg-brand-primary rounded-full"></div>
@@ -333,10 +324,7 @@ export const BiddingInterface = () => {
                                     isAccepted ? "border-emerald-500 bg-emerald-50/10 shadow-xl shadow-emerald-500/5" : "border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg hover:shadow-slate-200/30 dark:hover:shadow-none"
                                 )}>
 
-                                    {/* 1. Header: Driver Info & Price/Time */}
                                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-8 pb-8 border-b border-slate-50 dark:border-slate-800/50">
-
-                                        {/* Driver Identity */}
                                         <div className="flex items-center gap-5">
                                             <div className="h-16 w-16 rounded-2xl bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
                                                 {offer.driver?.driverDetails?.profile_picture ? (
@@ -364,7 +352,6 @@ export const BiddingInterface = () => {
                                             </div>
                                         </div>
 
-                                        {/* Price & Time Summary */}
                                         <div className="flex flex-wrap items-center gap-6 lg:gap-10">
                                             <div className="flex items-center gap-3">
                                                 <div className="h-10 w-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-brand-primary shrink-0">
@@ -402,7 +389,6 @@ export const BiddingInterface = () => {
                                         </div>
                                     </div>
 
-                                    {/* 2. Captain Confirmation Alert (If negotiation accepted) */}
                                     {!isAnyOfferAccepted && offer.negotiatedAmount && (parseFloat(offer.amount) === parseFloat(offer.negotiatedAmount)) && (
                                         <div className="mb-6 p-4 bg-emerald-50 dark:bg-emerald-950/30 border-2 border-emerald-100 dark:border-emerald-800/50 rounded-2xl flex items-center gap-4 animate-in zoom-in duration-300">
                                             <div className="h-10 w-10 rounded-full bg-emerald-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-500/20">
@@ -415,7 +401,6 @@ export const BiddingInterface = () => {
                                         </div>
                                     )}
 
-                                    {/* 2. Message Body */}
                                     <div className="bg-slate-50/50 dark:bg-slate-800/40 p-5 rounded-2xl mb-8 relative">
                                         <div className="absolute -top-3 right-5 px-3 py-1 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-lg text-[9px] font-black text-slate-400 uppercase tracking-widest">ملاحظات الكابتن</div>
                                         <p className="text-sm font-bold text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -423,7 +408,6 @@ export const BiddingInterface = () => {
                                         </p>
                                     </div>
 
-                                    {/* 3. Action Area */}
                                     <div className="flex flex-col gap-4">
                                         {isAccepted ? (
                                             <div className="w-full bg-emerald-500 text-white h-14 rounded-2xl flex items-center justify-center gap-3 font-black text-sm shadow-xl shadow-emerald-500/20">
@@ -432,7 +416,6 @@ export const BiddingInterface = () => {
                                             </div>
                                         ) : (
                                             <>
-                                                {/* Action Buttons Row */}
                                                 <div className="flex flex-row items-center justify-between gap-4">
                                                     <div className="flex items-center gap-3 flex-1 sm:flex-none">
                                                         {!isAnyOfferAccepted && (
@@ -459,7 +442,6 @@ export const BiddingInterface = () => {
                                                         </Button>
                                                     </div>
 
-                                                    {/* On Desktop/SM+, show Accept button on the same line if NOT negotiating */}
                                                     {negotiatingOfferId !== (offer.id || offer._id) && !isAnyOfferAccepted && (
                                                         <Button
                                                             className="hidden sm:flex h-12 px-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-xs shadow-xl shadow-emerald-600/20 transition-all items-center justify-center cursor-pointer"
@@ -470,7 +452,6 @@ export const BiddingInterface = () => {
                                                     )}
                                                 </div>
 
-                                                {/* Negotiation Input Box (Middle Position) */}
                                                 {negotiatingOfferId === (offer.id || offer._id) && (
                                                     <motion.div
                                                         initial={{ opacity: 0, y: -10 }}
@@ -503,7 +484,6 @@ export const BiddingInterface = () => {
                                                     </motion.div>
                                                 )}
 
-                                                {/* Mobile Accept Button OR Negotiating Accept Button (Bottom Position) */}
                                                 {(negotiatingOfferId === (offer.id || offer._id) || true) && !isAnyOfferAccepted && (
                                                     <Button
                                                         className={cn(
@@ -542,4 +522,3 @@ export const BiddingInterface = () => {
         </div>
     )
 }
-

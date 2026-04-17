@@ -18,14 +18,14 @@ export const ContactPage = () => {
     const contactInfo = [
         {
             title: 'راسلنا مباشرة',
-            info: 'support@shuhnety.com',
+            info: 'noreplymailer4@gmail.com',
             icon: Mail,
             color: 'bg-blue-50 text-blue-600'
         },
         {
             title: 'اتصل بنا',
-            info: '+20 123 456 7890',
-            info2: '02 2345 6789',
+            info: '+20 120 370 2198',
+            info2: '+02 122 680 6572',
             icon: Phone,
             color: 'bg-emerald-50 text-emerald-600'
         }

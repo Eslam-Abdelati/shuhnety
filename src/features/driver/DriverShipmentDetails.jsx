@@ -468,11 +468,11 @@ export const DriverShipmentDetails = () => {
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between p-4 bg-slate-50 rounded-md">
                                     <div>
-                                        <p className="text-[9px] font-black text-slate-400 mb-1 uppercase">العميل</p>
-                                        <p className="text-sm font-black text-slate-900">{shipment.customerName}</p>
-                                        <p className="text-xs font-bold text-slate-500">{shipment.customerPhone}</p>
+                                        <p className="text-[9px] font-black text-slate-400 mb-1 uppercase">المرسل</p>
+                                        <p className="text-sm font-black text-slate-900">{shipment.senderName}</p>
+                                        <p className="text-xs font-bold text-slate-500">{shipment.senderPhone}</p>
                                     </div>
-                                    <button onClick={() => window.open(`tel:${shipment.customerPhone}`)} className="h-10 w-10 bg-emerald-500 text-white rounded-md flex items-center justify-center shadow-lg shadow-emerald-500/20 active:scale-90 transition-transform">
+                                    <button onClick={() => window.open(`tel:${shipment.senderPhone}`)} className="h-10 w-10 bg-emerald-500 text-white rounded-md flex items-center justify-center shadow-lg shadow-emerald-500/20 active:scale-90 transition-transform cursor-pointer">
                                         <Phone className="h-5 w-5" />
                                     </button>
                                 </div>
@@ -482,7 +482,7 @@ export const DriverShipmentDetails = () => {
                                         <p className="text-sm font-black text-slate-900">{shipment.recipientName}</p>
                                         <p className="text-xs font-bold text-slate-500">{shipment.recipientPhone}</p>
                                     </div>
-                                    <button onClick={() => window.open(`tel:${shipment.recipientPhone}`)} className="h-10 w-10 bg-blue-500 text-white rounded-md flex items-center justify-center shadow-lg shadow-blue-500/20 active:scale-90 transition-transform">
+                                    <button onClick={() => window.open(`tel:${shipment.recipientPhone}`)} className="h-10 w-10 bg-blue-500 text-white rounded-md flex items-center justify-center shadow-lg shadow-blue-500/20 active:scale-90 transition-transform cursor-pointer">
                                         <Phone className="h-5 w-5" />
                                     </button>
                                 </div>
@@ -493,7 +493,7 @@ export const DriverShipmentDetails = () => {
                                     <Lock className="h-6 w-6" />
                                 </div>
                                 <p className="text-[11px] font-black text-amber-700 leading-relaxed">
-                                    بيانات العميل والمستلم محجوبة حتى يتم قبول عرضك رسمياً
+                                    بيانات المرسل والمستلم محجوبة حتى يتم قبول عرضك رسمياً
                                 </p>
                             </div>
                         )}

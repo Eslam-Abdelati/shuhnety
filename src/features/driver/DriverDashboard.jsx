@@ -437,7 +437,9 @@ export const DriverDashboard = () => {
                                                     <div className="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
                                                     نقطة التحميل والعميل
                                                 </div>
-                                                <p className="text-xs font-bold text-slate-700 leading-tight mb-2 pr-3.5 border-r-2 border-emerald-100">{activeTrip.pickupPoint}</p>
+                                                <p className="text-xs font-bold text-slate-700 leading-tight mb-2 pr-3.5 border-r-2 border-emerald-100">
+                                                    {activeTrip.pickupAddress || activeTrip.pickupPoint}
+                                                </p>
 
                                                 <div className="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-100 shadow-sm transition-all hover:border-emerald-100">
                                                     <div className="flex items-center gap-3">
@@ -445,11 +447,11 @@ export const DriverDashboard = () => {
                                                             <UserIcon className="h-4 w-4" />
                                                         </div>
                                                         <div>
-                                                            <p className="text-xs font-black text-slate-900 leading-none mb-1">{activeTrip.customerName || '---'}</p>
-                                                            <p className="text-[10px] font-bold text-slate-400">{activeTrip.customerPhone || '---'}</p>
+                                                            <p className="text-xs font-black text-slate-900 leading-none mb-1">{activeTrip.senderName || '---'}</p>
+                                                            <p className="text-[10px] font-bold text-slate-400">{activeTrip.senderPhone || '---'}</p>
                                                         </div>
                                                     </div>
-                                                    <a href={`tel:${activeTrip.customerPhone}`} className="h-9 w-9 bg-emerald-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 active:scale-90 transition-all hover:bg-emerald-600">
+                                                    <a href={`tel:${activeTrip.senderPhone}`} className="h-9 w-9 bg-emerald-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 active:scale-90 transition-all hover:bg-emerald-600">
                                                         <Phone className="h-4.5 w-4.5" />
                                                     </a>
                                                 </div>
@@ -461,7 +463,9 @@ export const DriverDashboard = () => {
                                                     <div className="h-1.5 w-1.5 rounded-full bg-brand-primary"></div>
                                                     وجهة التوصيل والمستلم
                                                 </div>
-                                                <p className="text-xs font-bold text-slate-700 leading-tight mb-2 pr-3.5 border-r-2 border-orange-100">{activeTrip.destinationPoint}</p>
+                                                <p className="text-xs font-bold text-slate-700 leading-tight mb-2 pr-3.5 border-r-2 border-orange-100">
+                                                    {activeTrip.destinationAddress || activeTrip.destinationPoint}
+                                                </p>
 
                                                 <div className="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-100 shadow-sm transition-all hover:border-orange-100">
                                                     <div className="flex items-center gap-3">

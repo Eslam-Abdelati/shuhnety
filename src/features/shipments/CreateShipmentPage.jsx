@@ -324,6 +324,7 @@ export const CreateShipmentPage = () => {
             if (isEditMode) {
                 await shipmentService.updateShipment(editId, apiPayload)
                 updateShipment({ id: editId, ...formData })
+                toast.success('تم تحديث بيانات الشحنة بنجاح')
             } else {
                 const result = await shipmentService.createShipment(apiPayload)
                 addShipment({
@@ -335,6 +336,7 @@ export const CreateShipmentPage = () => {
                     customerPhone: user?.phone || '',
                     customerId: user?.id || ''
                 })
+                toast.success('تم إنشاء الشحنة بنجاح')
             }
 
             setTimeout(() => {

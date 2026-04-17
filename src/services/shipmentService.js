@@ -282,7 +282,7 @@ export const shipmentService = {
     getNewBids: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.BIDS.NEW);
-            console.log(response);
+            console.log('Offers Data fetched:', response.data);
 
             return response.data;
         } catch (error) {

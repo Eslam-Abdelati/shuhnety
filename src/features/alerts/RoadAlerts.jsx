@@ -56,35 +56,7 @@ export const RoadAlerts = () => {
         fetchActiveAlerts();
     }, []);
 
-    const alerts = [
-        {
-            id: 1,
-            type: 'accident',
-            location: 'طريق القاهرة الإسكندرية الصحراوي - كم 45',
-            time: 'منذ 5 دقائق',
-            reporter: 'كابتن محمود',
-            reliability: 85,
-            severity: 'high'
-        },
-        {
-            id: 2,
-            type: 'road_work',
-            location: 'محور 26 يوليو - اتجاه الشيخ زايد',
-            time: 'منذ 15 دقيقة',
-            reporter: 'كابتن ياسر',
-            reliability: 92,
-            severity: 'medium'
-        },
-        {
-            id: 3,
-            type: 'heavy_traffic',
-            location: 'الطريق الدائري - وصلة المريوطية',
-            time: 'منذ ساعة',
-            reporter: 'كابتن علي',
-            reliability: 40,
-            severity: 'low'
-        },
-    ]
+
 
     const alertTypes = [
         { id: 'accident', name: 'حادث', icon: AlertTriangle, color: 'bg-red-50 text-red-600' },
@@ -151,7 +123,7 @@ export const RoadAlerts = () => {
 
                 </div>
                 <Button
-                    className="rounded-2xl gap-2 px-8 h-12 bg-rose-500 hover:bg-rose-600 text-white shadow-lg shadow-rose-100 border-none transition-all active:scale-95 hover:scale-[1.02]"
+                    className="rounded-2xl gap-2 px-8 h-12 bg-brand-secondary hover:bg-[#054031] text-white shadow-lg shadow-emerald-900/10 border-none transition-all active:scale-95 hover:scale-[1.02]"
                     onClick={() => setShowReportModal(true)}
                 >
                     <Plus className="h-5 w-5" />
@@ -236,16 +208,16 @@ export const RoadAlerts = () => {
                                         </div>
                                         <div className="flex gap-2">
                                             {(() => {
-                                                const isMyAlert = alert.reporterId === user?.id || 
-                                                                 (typeof alert.reporter === 'object' && alert.reporter?.id === user?.id) ||
-                                                                 (alert.userId === user?.id);
-                                                
+                                                const isMyAlert = alert.reporterId === user?.id ||
+                                                    (typeof alert.reporter === 'object' && alert.reporter?.id === user?.id) ||
+                                                    (alert.userId === user?.id);
+
                                                 if (isMyAlert) return null;
 
                                                 return (
-                                                    <Button 
-                                                        variant="ghost" 
-                                                        size="sm" 
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
                                                         className="gap-2 text-slate-400 cursor-pointer hover:text-brand-primary transition-all"
                                                         onClick={() => handleConfirmAlert(alert.id)}
                                                         title="تأكيد صحة التنبيه"
@@ -322,7 +294,7 @@ export const RoadAlerts = () => {
                                 <div className="flex gap-4">
                                     <Button variant="outline" className="flex-1 h-14 rounded-2xl font-black" onClick={() => setShowReportModal(false)}>إلغاء</Button>
                                     <Button
-                                        className="flex-2 h-14 rounded-2xl font-black bg-rose-500 hover:bg-rose-600 shadow-xl shadow-rose-50 transition-all hover:scale-[1.01]"
+                                        className="flex-2 h-14 rounded-2xl font-black bg-brand-secondary hover:bg-[#054031] text-white shadow-xl shadow-brand-secondary/10 transition-all hover:scale-[1.01]"
                                         onClick={handleSubmitAlert}
                                         disabled={isSubmitting}
                                     >
