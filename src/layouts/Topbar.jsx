@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import {
     Bell,
     Search,
@@ -61,6 +62,9 @@ export const Topbar = () => {
 
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+    const [selectedNotification, setSelectedNotification] = useState(null)
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+    const [isDetailLoading, setIsDetailLoading] = useState(false)
 
     const notificationRef = useRef(null)
     const userMenuRef = useRef(null)
@@ -86,6 +90,23 @@ export const Topbar = () => {
         navigate('/login')
     }
 
+    const handleNotificationClick = async (notif) => {
+        setIsNotificationsOpen(false)
+        setIsDetailModalOpen(true)
+        setIsDetailLoading(true)
+        try {
+            const res = await notificationService.getNotificationDetail(notif.id)
+            setSelectedNotification(res.data || res || notif)
+            markAsRead(notif.id)
+        } catch (err) {
+            console.warn('Failed to fetch notification details, using existing data')
+            setSelectedNotification(notif)
+            markAsRead(notif.id)
+        } finally {
+            setIsDetailLoading(false)
+        }
+    }
+
     const getRoleName = (r) => {
         const roles = {
             'client': 'عميل',
@@ -107,23 +128,12 @@ export const Topbar = () => {
                 >
                     {isSidebarOpen ? <X className="h-5.5 w-5.5" /> : <Menu className="h-5.5 w-5.5" />}
                 </button>
-
-                <div className="flex-1 max-w-[320px] hidden lg:block">
-                    <div className="relative group">
-                        <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-brand-primary transition-colors" />
-                        <input
-                            type="text"
-                            placeholder="بحث سريع في المنصة..."
-                            className="w-full h-10 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/20 dark:border-slate-700/50 rounded-xl pr-10 pl-4 text-[12px] font-bold focus:bg-white dark:focus:bg-slate-900 focus:border-brand-primary/30 transition-all outline-none dark:text-slate-200"
-                        />
-                    </div>
-                </div>
             </div>
 
             <div className="flex items-center gap-4 md:gap-6">
                 <button
                     onClick={toggleTheme}
-                    className="h-10 w-10 flex items-center justify-center text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/40 dark:border-slate-700/50 rounded-xl transition-all group"
+                    className="h-10 w-10 flex items-center justify-center text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/40 dark:border-slate-700/50 rounded-xl transition-all group cursor-pointer"
                     title={theme === 'light' ? 'الوضع الليلي' : 'الوضع المضيء'}
                 >
                     <AnimatePresence mode="wait">
@@ -149,7 +159,7 @@ export const Topbar = () => {
                         <button
                             onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                             className={cn(
-                                "h-10 w-10 flex items-center justify-center rounded-xl transition-all relative group",
+                                "h-10 w-10 flex items-center justify-center rounded-xl transition-all relative group cursor-pointer",
                                 isNotificationsOpen ? "bg-brand-primary text-white shadow-lg shadow-brand-primary/20" : "text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-200/40 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800"
                             )}
                         >
@@ -180,18 +190,18 @@ export const Topbar = () => {
                                     </div>
                                     <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
                                         {filteredNotifications.length > 0 ? (
-                                            filteredNotifications.map((notif) => (
+                                            filteredNotifications.slice(0, 5).map((notif) => (
                                                 <div
                                                     key={notif.id}
-                                                    onClick={() => markAsRead(notif.id)}
+                                                    onClick={() => handleNotificationClick(notif)}
                                                     className={cn(
-                                                        "p-4 transition-all border-b border-slate-50 dark:border-slate-800/60 group relative",
-                                                        notif.active ? "bg-slate-50/50 dark:bg-slate-800/50" : "hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
+                                                        "px-5 py-4 transition-all border-b border-slate-50 dark:border-slate-800/60 group relative cursor-pointer",
+                                                        notif.active ? "bg-brand-primary/[0.04] dark:bg-brand-primary/[0.08] border-r-4 border-r-brand-primary shadow-[inset_0_0_0_1px_rgba(235,106,29,0.05)]" : "bg-white dark:bg-slate-900 hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
                                                     )}
                                                 >
-                                                    <div className="pl-12 pr-1">
-                                                        {/* Header: Icon + Title */}
-                                                        <div className="flex items-center gap-1.5 mb-1.5 flex-nowrap">
+                                                    {/* Row 1: Header (Icon + Title) & Close Button */}
+                                                    <div className="flex items-center justify-between gap-4 mb-2">
+                                                        <div className="flex items-center gap-2 min-w-0">
                                                             <div className={cn(
                                                                 "shrink-0",
                                                                 notif.type === 'success' ? "text-emerald-500" :
@@ -202,35 +212,34 @@ export const Topbar = () => {
                                                                     notif.type === 'warning' ? <AlertTriangle className="h-3.5 w-3.5" /> : <Info className="h-3.5 w-3.5" />}
                                                             </div>
                                                             <h5 className={cn(
-                                                                "text-[12px] leading-none truncate",
+                                                                "text-[12px] leading-tight truncate",
                                                                 notif.active ? "font-black text-slate-900 dark:text-white" : "font-bold text-slate-600 dark:text-slate-300"
                                                             )}>
                                                                 {notif.title}
                                                             </h5>
                                                         </div>
 
-                                                        {/* Body: Description */}
-                                                        <p className={cn(
-                                                            "text-[10px] leading-relaxed line-clamp-2 pr-1",
-                                                            notif.active ? "text-slate-600 dark:text-slate-300 font-bold" : "text-slate-500 dark:text-slate-400 font-medium"
-                                                        )}>
-                                                            {notif.desc}
-                                                        </p>
-                                                    </div>
-
-                                                    {/* Left Sidebar: Close Icon (Top) & Time (Bottom) */}
-                                                    <div className="absolute left-2 top-3 bottom-3 flex flex-col items-center justify-between py-0.5">
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 removeNotification(notif.id);
                                                             }}
-                                                            className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all opacity-40 group-hover:opacity-100"
+                                                            className="h-6 w-6 rounded-lg flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all opacity-40 group-hover:opacity-100 shrink-0"
                                                             title="حذف التنبيه"
                                                         >
                                                             <X className="h-3.5 w-3.5" />
                                                         </button>
-                                                        <span className="text-[7px] font-black text-slate-400 whitespace-nowrap opacity-60 uppercase tracking-tighter">
+                                                    </div>
+
+                                                    {/* Row 2: Description & Time */}
+                                                    <div className="flex items-end justify-between gap-4">
+                                                        <p className={cn(
+                                                            "text-[10px] leading-relaxed line-clamp-2 flex-1",
+                                                            notif.active ? "text-slate-600 dark:text-slate-300 font-bold" : "text-slate-500 dark:text-slate-400 font-medium"
+                                                        )}>
+                                                            {notif.desc}
+                                                        </p>
+                                                        <span className="text-[9px] font-black text-slate-400 whitespace-nowrap opacity-60 uppercase tracking-tighter shrink-0 pb-0.5">
                                                             {formatDistanceToNow(new Date(notif.createdAt || new Date()), { addSuffix: true, locale: ar })}
                                                         </span>
                                                     </div>
@@ -243,7 +252,10 @@ export const Topbar = () => {
                                             </div>
                                         )}
                                     </div>
-                                    <button className="w-full p-4 text-center text-[11px] font-black text-slate-400 hover:text-brand-primary transition-colors bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 border-t border-slate-50 dark:border-slate-800 uppercase tracking-widest cursor-pointer">
+                                    <button
+                                        onClick={() => { navigate(`/${role === 'client' ? 'customer' : role}/notifications`); setIsNotificationsOpen(false); }}
+                                        className="w-full p-5 text-center text-[11px] font-black text-slate-400 hover:text-brand-primary transition-colors bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 border-t border-slate-50 dark:border-slate-800 uppercase tracking-widest cursor-pointer"
+                                    >
                                         مشاهدة جميع الاشعارات
                                     </button>
                                 </motion.div>
@@ -323,7 +335,7 @@ export const Topbar = () => {
                                     <div className="p-2 space-y-1 bg-white dark:bg-slate-900">
                                         <button
                                             onClick={() => { navigate(`/${role === 'client' ? 'customer' : role}/profile`); setIsUserMenuOpen(false); }}
-                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-brand-primary hover:bg-brand-primary/5 dark:hover:bg-brand-primary/10 rounded-xl transition-all group"
+                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-brand-primary hover:bg-brand-primary/5 dark:hover:bg-brand-primary/10 rounded-xl transition-all group cursor-pointer"
                                         >
                                             <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-brand-primary/10 transition-colors">
                                                 <User className="h-4 w-4" />
@@ -332,7 +344,7 @@ export const Topbar = () => {
                                         </button>
                                         <button
                                             onClick={() => { navigate(`/${role === 'client' ? 'customer' : role}/settings`); setIsUserMenuOpen(false); }}
-                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-brand-primary hover:bg-brand-primary/5 dark:hover:bg-brand-primary/10 rounded-xl transition-all group"
+                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-brand-primary hover:bg-brand-primary/5 dark:hover:bg-brand-primary/10 rounded-xl transition-all group cursor-pointer"
                                         >
                                             <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-brand-primary/10 transition-colors">
                                                 <Settings className="h-4 w-4" />
@@ -341,7 +353,7 @@ export const Topbar = () => {
                                         </button>
                                         <button
                                             onClick={() => { navigate(`/${role === 'client' ? 'customer' : role}/billing`); setIsUserMenuOpen(false); }}
-                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-brand-primary hover:bg-brand-primary/5 dark:hover:bg-brand-primary/10 rounded-xl transition-all group"
+                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-brand-primary hover:bg-brand-primary/5 dark:hover:bg-brand-primary/10 rounded-xl transition-all group cursor-pointer"
                                         >
                                             <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-brand-primary/10 transition-colors">
                                                 <CreditCard className="h-4 w-4" />
@@ -353,7 +365,7 @@ export const Topbar = () => {
                                     <div className="p-2 mt-1 border-t border-slate-50 dark:border-slate-800 bg-white dark:bg-slate-900">
                                         <button
                                             onClick={handleLogout}
-                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-black text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all group"
+                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-black text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all group cursor-pointer"
                                         >
                                             <div className="h-8 w-8 rounded-lg bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center group-hover:bg-rose-500/20 transition-colors">
                                                 <LogOut className="h-4 w-4" />
@@ -367,6 +379,92 @@ export const Topbar = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Notification Detail Modal */}
+            {isDetailModalOpen && createPortal(
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                    <AnimatePresence>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsDetailModalOpen(false)}
+                            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm cursor-pointer"
+                        />
+                    </AnimatePresence>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border border-slate-200/50 dark:border-slate-800 overflow-hidden"
+                    >
+                        {isDetailLoading ? (
+                            <div className="p-20 text-center">
+                                <div className="h-12 w-12 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                <p className="text-slate-500 font-bold">جاري تحميل التفاصيل...</p>
+                            </div>
+                        ) : selectedNotification ? (
+                            <div className="p-8">
+                                <div className="flex items-center justify-between mb-8">
+                                    <div className="flex items-center gap-4">
+                                        <div className={cn(
+                                            "h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg",
+                                            (selectedNotification.type === 'success' || selectedNotification.type === 'offer_accepted') ? "bg-emerald-500/10 text-emerald-500 shadow-emerald-500/10" :
+                                                (selectedNotification.type === 'warning' || selectedNotification.type === 'alert') ? "bg-amber-500/10 text-amber-500 shadow-amber-500/10" :
+                                                    selectedNotification.type === 'new_bid' ? "bg-indigo-500/10 text-indigo-500 shadow-indigo-500/10" :
+                                                        "bg-blue-500/10 text-blue-500 shadow-blue-500/10"
+                                        )}>
+                                            {(selectedNotification.type === 'success' || selectedNotification.type === 'offer_accepted') ? <CheckCircle2 className="h-7 w-7" /> :
+                                                (selectedNotification.type === 'warning' || selectedNotification.type === 'alert') ? <AlertTriangle className="h-7 w-7" /> :
+                                                    selectedNotification.type === 'new_bid' ? <CreditCard className="h-7 w-7" /> :
+                                                        <Info className="h-7 w-7" />}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-black text-slate-900 dark:text-white leading-tight">
+                                                {selectedNotification.title}
+                                            </h3>
+                                            <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-wider">
+                                                {formatDistanceToNow(new Date(selectedNotification.createDateTime || selectedNotification.createdAt || new Date()), { addSuffix: true, locale: ar })}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setIsDetailModalOpen(false)}
+                                        className="h-10 w-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all cursor-pointer"
+                                    >
+                                        <X className="h-5 w-5" />
+                                    </button>
+                                </div>
+
+                                <div className="bg-slate-50/50 dark:bg-slate-800/30 p-6 rounded-[1.5rem] border border-slate-100 dark:border-slate-800/50 mb-8">
+                                    <p className="text-slate-600 dark:text-slate-300 text-base leading-relaxed font-bold">
+                                        {selectedNotification.body || selectedNotification.desc || selectedNotification.message}
+                                    </p>
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => setIsDetailModalOpen(false)}
+                                        className="grow bg-brand-primary hover:bg-brand-primary/90 text-white font-black py-4 px-6 rounded-2xl transition-all shadow-lg shadow-brand-primary/20 cursor-pointer"
+                                    >
+                                        فهمت ذلك
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            removeNotification(selectedNotification.id);
+                                            setIsDetailModalOpen(false);
+                                        }}
+                                        className="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-500 font-bold py-4 px-6 rounded-2xl transition-all cursor-pointer"
+                                    >
+                                        حذف الإشعار
+                                    </button>
+                                </div>
+                            </div>
+                        ) : null}
+                    </motion.div>
+                </div>,
+                document.body
+            )}
         </header>
     )
 }

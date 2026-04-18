@@ -28,7 +28,6 @@ export const mapShipmentData = (s) => {
         'arrived': 'تم الوصول',
         'delivered': 'تم التسليم',
         'canceled': 'ملغي',
-
     };
 
     return {

@@ -8,12 +8,25 @@ export const notificationService = {
     getUserNotifications: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.NOTIFICATIONS.GET_USER);
-            console.log(response.data);
-
             return response.data;
         } catch (error) {
             console.error('Get user notifications error:', error.response?.data || error.message);
             throw new Error(error.response?.data?.message || 'فشل في تحميل الإشعارات');
+        }
+    },
+
+    /**
+     * Get details of a specific notification by its ID
+     */
+    getNotificationDetail: async (id) => {
+        try {
+            const response = await axiosClient.get(API_ENDPOINTS.NOTIFICATIONS.GET_DETAILS(id));
+            console.log(response.data);
+
+            return response.data;
+        } catch (error) {
+            console.error('Get notification detail error:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'فشل في تحميل تفاصيل الإشعار');
         }
     }
 };

@@ -57,7 +57,6 @@ export const RoadAlerts = () => {
     }, []);
 
 
-
     const alertTypes = [
         { id: 'accident', name: 'حادث', icon: AlertTriangle, color: 'bg-red-50 text-red-600' },
         { id: 'road_work', name: 'أعمال طريق', icon: Navigation, color: 'bg-slate-50 text-slate-600' },

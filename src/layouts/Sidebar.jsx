@@ -38,8 +38,8 @@ const navigation = {
         { name: 'سجل رحلاتي', href: '/driver/active', icon: Truck },
         { name: 'تنبيهات الطريق', href: '/driver/alerts', icon: AlertTriangle },
         { name: 'التقارير', href: '/driver/reports', icon: BarChart3 },
-        { name: 'الحساب', href: '/driver/profile', icon: Users },
         { name: 'الدعم الفني', href: '/driver/report', icon: MessageSquare },
+        { name: 'الإعدادات', href: '/driver/settings', icon: Settings },
     ],
     company: [
         { name: 'الأسطول', href: '/company', icon: Truck },
@@ -145,7 +145,7 @@ export const Sidebar = () => {
 
                 <button
                     onClick={logout}
-                    className="flex w-full items-center justify-center gap-2 group px-4 py-3.5 text-xs font-black text-slate-400 hover:text-white bg-white/5 hover:bg-rose-500/10 border border-white/5 hover:border-rose-500/20 rounded-xl transition-all"
+                    className="flex w-full items-center justify-center gap-2 group px-4 py-3.5 text-xs font-black text-slate-400 hover:text-white bg-white/5 hover:bg-rose-500/10 border border-white/5 hover:border-rose-500/20 rounded-xl transition-all cursor-pointer"
                 >
                     <LogOut className="h-4 w-4 text-slate-500 group-hover:text-rose-400 transition-colors" />
                     تسجيل الخروج

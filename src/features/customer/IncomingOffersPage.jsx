@@ -35,7 +35,6 @@ export const IncomingOffersPage = () => {
                 ...offer,
                 shipment: offer.shipment ? mapShipmentData(offer.shipment) : null
             }))
-            console.log('Incoming Offers List:', processedOffers)
             setOffers(processedOffers)
         } catch (err) {
             setError('فشل في تحميل العروض الجديدة')

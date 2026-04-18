@@ -167,6 +167,8 @@ export const shipmentService = {
     getShipmentStats: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.SHIPMENT.ME_STATS);
+            console.log(response.data);
+
             return response.data;
         } catch (error) {
             console.error('Get shipment stats error:', error.response?.data || error.message);

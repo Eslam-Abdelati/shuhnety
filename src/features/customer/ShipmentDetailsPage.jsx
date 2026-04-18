@@ -192,7 +192,7 @@ export const ShipmentDetailsPage = () => {
             {/* Driver Rating Section (Top on Mobile only) */}
             {(role === 'customer' && (shipment.status === 'تم التسليم' || shipment.status === 'delivered') && (
                 <div className="animate-in fade-in slide-in-from-top-4 duration-700 mb-5 md:mb-6 lg:hidden">
-                    {!shipment.review && !isReviewed ? (
+                    {!shipment.review && !(shipment.ratings && shipment.ratings.length > 0) && !isReviewed ? (
                         <Card className="rounded-[1.25rem] md:rounded-[2rem] border-none shadow-xl bg-gradient-to-br from-slate-900 to-slate-800 text-white overflow-hidden relative group">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
                             <CardContent className="p-6 md:p-8 relative z-10">
@@ -258,7 +258,7 @@ export const ShipmentDetailsPage = () => {
                             </div>
                             <div className="flex items-center gap-1">
                                 {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star key={star} className={cn("h-4 w-4", (shipment.review?.score || score) >= star ? "fill-amber-500 text-amber-500" : "text-slate-200 dark:text-slate-700")} />
+                                    <Star key={star} className={cn("h-4 w-4", (shipment.review?.score || shipment.ratings?.[0]?.score || score) >= star ? "fill-amber-500 text-amber-500" : "text-slate-200 dark:text-slate-700")} />
                                 ))}
                             </div>
                         </Card>
@@ -540,7 +540,7 @@ export const ShipmentDetailsPage = () => {
                     {/* Driver Rating Card (Desktop only - Top of Sidebar) */}
                     {role === 'customer' && (shipment.status === 'تم التسليم' || shipment.status === 'delivered') && (
                         <div className="hidden lg:block animate-in zoom-in-95 duration-700">
-                            {!shipment.review && !isReviewed ? (
+                            {!shipment.review && !(shipment.ratings && shipment.ratings.length > 0) && !isReviewed ? (
                                 <Card className="rounded-[2rem] border-none shadow-xl bg-gradient-to-br from-slate-900 to-slate-800 text-white overflow-hidden relative group">
                                     <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
                                     <CardContent className="p-6 relative z-10">
@@ -601,7 +601,7 @@ export const ShipmentDetailsPage = () => {
                                         <h4 className="font-black text-slate-900 dark:text-white text-sm">تم التقييم بنجاح</h4>
                                         <div className="flex items-center justify-center gap-1 mt-1">
                                             {[1, 2, 3, 4, 5].map(star => (
-                                                <Star key={star} className={cn("h-3 w-3", (shipment.review?.score || shipment.review?.rating || score) >= star ? "fill-amber-500 text-amber-500" : "text-slate-200 dark:text-slate-700")} />
+                                                <Star key={star} className={cn("h-3 w-3", (shipment.review?.score || shipment.ratings?.[0]?.score || shipment.review?.rating || score) >= star ? "fill-amber-500 text-amber-500" : "text-slate-200 dark:text-slate-700")} />
                                             ))}
                                         </div>
                                     </div>

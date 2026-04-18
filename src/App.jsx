@@ -41,6 +41,7 @@ import { ContactPage } from './features/support/ContactPage'
 import { FaqPage } from './features/support/FaqPage'
 import { ReportIssuePage } from './features/support/ReportIssuePage'
 import { AllReportsPage } from './features/support/AllReportsPage'
+import { NotificationsPage } from './features/notifications/NotificationsPage'
 import { SocketSync } from './components/SocketSync'
 import ScrollToTop from './components/ScrollToTop'
 
@@ -142,6 +143,7 @@ function App() {
                                                     <Route path="/report" element={<ReportIssuePage />} />
                                                     <Route path="/reports-history" element={<AllReportsPage />} />
                                                     <Route path="/profile" element={<ProfilePage />} />
+                                                    <Route path="/notifications" element={<NotificationsPage />} />
                                                     <Route path="*" element={<Placeholder title="قيد التطوير" />} />
 
                                                 </>
@@ -156,6 +158,7 @@ function App() {
                                                     <Route path="/report" element={<ReportIssuePage />} />
                                                     <Route path="/reports-history" element={<AllReportsPage />} />
                                                     <Route path="/profile" element={<ProfilePage />} />
+                                                    <Route path="/notifications" element={<NotificationsPage />} />
                                                     <Route path="*" element={<Placeholder title="قيد التطوير" />} />
 
                                                 </>
@@ -166,6 +169,7 @@ function App() {
                                                     <Route path="/drivers" element={<DriverManagement />} />
                                                     <Route path="/contracts" element={<DigitalContracts />} />
                                                     <Route path="/profile" element={<ProfilePage />} />
+                                                    <Route path="/notifications" element={<NotificationsPage />} />
                                                     <Route path="*" element={<Placeholder title="قيد التطوير" />} />
 
                                                 </>
@@ -174,6 +178,7 @@ function App() {
                                                     <Route path="/" element={<GovDashboard />} />
                                                     <Route path="/fees" element={<GovDashboard />} />
                                                     <Route path="/profile" element={<ProfilePage />} />
+                                                    <Route path="/notifications" element={<NotificationsPage />} />
                                                     <Route path="*" element={<Placeholder title="قيد التطوير" />} />
 
                                                 </>
@@ -205,6 +210,7 @@ function App() {
                                         <Route path="/contracts" element={<DigitalContracts />} />
                                         <Route path="/settings" element={<SystemSettings />} />
                                         <Route path="/profile" element={<ProfilePage />} />
+                                        <Route path="/notifications" element={<NotificationsPage />} />
                                         <Route path="*" element={<Placeholder title="قيد التطوير" />} />
                                     </Routes>
                                 </DashboardLayout>

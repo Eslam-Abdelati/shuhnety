@@ -268,9 +268,18 @@ export const DriverDashboard = () => {
 
                             <div className="flex items-center justify-between border-b border-slate-50 pb-3">
                                 <div className="flex items-center gap-3">
-                                    <span className="text-sm font-bold text-slate-600">قيد الوصول</span>
+                                    <span className="text-sm font-bold text-slate-600">قيد التنفيذ</span>
                                 </div>
-                                <span className="text-lg font-black text-slate-900">
+                                <span className="text-lg font-black text-blue-600">
+                                    {stats?.shipmentCounts?.assignedShipments || 0}
+                                </span>
+                            </div>
+
+                            <div className="flex items-center justify-between border-b border-slate-50 pb-3">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-sm font-bold text-slate-600">تم الوصول</span>
+                                </div>
+                                <span className="text-lg font-black text-orange-600">
                                     {stats?.shipmentCounts?.inProgressShipments || 0}
                                 </span>
                             </div>
