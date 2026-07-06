@@ -175,7 +175,7 @@ export const LoginPage = () => {
 
                 {/* Footer Copyright */}
                 <div className="text-center pt-8 text-[11px] text-slate-400 font-bold">
-                    © {new Date().getFullYear()} شحنتي. جميع الحقوق محفوظة.
+                    © {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شحنتي
                 </div>
             </div>
 

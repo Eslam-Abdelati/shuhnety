@@ -61,7 +61,7 @@ export const SimpleFooter = () => {
 
                 <div className="pt-8 border-t border-white/5 flex flex-col justify-center items-center gap-2">
                     <p className="text-xs text-white/30 font-bold tracking-wide text-center">
-                        جميع الحقوق محفوظة شحنتي {new Date().getFullYear()} ©.
+                        © {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شحنتي
                     </p>
                 </div>
             </div>

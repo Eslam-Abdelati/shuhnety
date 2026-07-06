@@ -185,7 +185,7 @@ export const LandingPage = () => {
 
                     <div className="order-1 lg:order-2 space-y-10">
                         <div className="space-y-4">
-                            <h2 className="text-3xl sm:text-4xl font-black text-brand-secondary leading-tight tracking-tight">عن "شحنتي": رؤية طموحة <br /> لمستقبل الخدمات اللوجستية</h2>
+                            <h2 className="text-3xl sm:text-4xl font-black text-brand-secondary leading-tight tracking-tight">عن "شحنتي": نقل ذكي، مباشر وآمن</h2>
                             <div className="h-1.5 w-20 bg-brand-primary rounded-full"></div>
                         </div>
 

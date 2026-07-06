@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Truck } from 'lucide-react'
 
 export const AuthLayout = ({ children, title, subtitle }) => {
@@ -29,7 +29,7 @@ export const AuthLayout = ({ children, title, subtitle }) => {
                 {/* Footer text in Auth */}
                 <div className="mt-12 text-center space-y-4">
                     <p className="text-sm text-slate-400 font-bold tracking-wide">
-                        جميع الحقوق محفوظة © لمنصة شحنتي {new Date().getFullYear()}
+                        © {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شحنتي
                     </p>
                     <div className="flex justify-center gap-6 text-xs font-bold text-slate-300">
                         <a href="#" className="hover:text-brand-secondary transition-colors underline decoration-slate-200 underline-offset-4">سياسة الخصوصية</a>
