@@ -51,18 +51,18 @@ export const LandingPage = () => {
                         {/* Tag/Badge */}
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white text-[10px] font-black tracking-widest uppercase mb-8 border border-white/10 backdrop-blur-md">
                             <Zap className="h-3.5 w-3.5 text-brand-primary animate-pulse" />
-                            المنصة الرائدة لربط العملاء بمحترفي الشحن
+                            المنصة الرائدة لربط العملاء بمحترفي النقل
                         </div>
 
                         {/* Title */}
                         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.3] mb-6 text-white max-w-3xl drop-shadow-md">
-                            حلول شحن ذكية وسلسة <br className="hidden sm:inline" />
+                            حلول نقل ذكية وسلسة <br className="hidden sm:inline" />
                             <span className="text-brand-primary">لكافة احتياجاتك</span>
                         </h1>
 
                         {/* Description */}
                         <p className="max-w-2xl text-base sm:text-lg text-slate-200 font-bold leading-relaxed mb-12 drop-shadow-sm opacity-90">
-                            سواء كنت تبحث عن وسيلة شحن موثوقة أو تسعى لتعزيز دخلك كشريك محترف، شحنتي هي وجهتك المثالية لربط التجار بأفضل الكباتن وشركات النقل.
+                            سواء كنت تبحث عن وسيلة نقل موثوقة أو تسعى لتعزيز دخلك كشريك محترف، شحنتي هي وجهتك المثالية لربط التجار بأفضل الكباتن وشركات النقل.
                         </p>
 
                         {/* Call to Actions */}
