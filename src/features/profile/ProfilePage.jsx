@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     User, Mail, Phone, MapPin, Shield, Camera,
@@ -7,17 +7,130 @@ import {
     Briefcase, Globe, Settings, Bell, Lock,
     CreditCard, MapPinned, Hash, Info,
     ChevronRight, ExternalLink, Award, Share2,
-    LogOut, Smartphone, Fingerprint, Eye, EyeOff
+    LogOut, Smartphone, Fingerprint, Eye, EyeOff, Loader2, X
 } from 'lucide-react';
 import { getVehicleTypeLabel } from '@/utils/shipmentUtils';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { cn } from '@/utils/cn';
+import { authService } from '@/services/authService';
+import { toast } from 'react-hot-toast';
+import { API_BASE_URL } from '@/api/axiosClient';
 
 export const ProfilePage = () => {
-    const { user, role, logout } = useAuthStore();
+    const { user, role, logout, updateUser } = useAuthStore();
     const [activeSection, setActiveSection] = useState('profile');
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        full_name: '',
+        phone_number: '',
+        address: '',
+        birth_date: '',
+    });
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+        setFormData({
+            full_name: user?.full_name || '',
+            phone_number: user?.phone_number || '',
+            address: user?.address || '',
+            birth_date: user?.birth_date ? user.birth_date.split('T')[0] : '',
+        });
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+    };
+
+    const handleChange = (e) => {
+        setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
+    const handleSaveProfile = async () => {
+        try {
+            setIsUpdating(true);
+            const payload = {
+                ...formData
+            };
+            const res = await authService.updateProfile(payload);
+            toast.success('تم تحديث البيانات بنجاح');
+            setIsEditing(false);
+            
+            if (res.user || res.data) {
+                 updateUser(res.user || res.data);
+            }
+            
+            // Reload the page to reflect changes from API
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000); // Small delay to let the user see the success toast
+        } catch (error) {
+            toast.error(error.message);
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsUploadingImage(true);
+        const formDataToSend = new FormData();
+        formDataToSend.append('key', 'profile_picture');
+        formDataToSend.append('prefix', role === 'driver' ? 'driver' : 'client');
+        formDataToSend.append('file', file);
+
+        try {
+            const res = await authService.uploadImage(formDataToSend);
+
+            let extractedUrl = res?.data?.url || res?.url || res;
+            if (typeof extractedUrl === 'object') {
+                extractedUrl = extractedUrl.url || extractedUrl.file;
+            }
+
+            if (!extractedUrl && res) {
+                const search = (obj) => {
+                    if (typeof obj === 'string' && (obj.startsWith('http') || obj.includes('.'))) return obj;
+                    if (typeof obj !== 'object' || obj === null) return null;
+                    for (let v of Object.values(obj)) {
+                        const r = search(v);
+                        if (r) return r;
+                    }
+                    return null;
+                }
+                extractedUrl = search(res);
+            }
+
+            if (extractedUrl && typeof extractedUrl === 'string') {
+                if (!extractedUrl.startsWith('http')) {
+                    extractedUrl = extractedUrl.startsWith('/') ? API_BASE_URL + extractedUrl : API_BASE_URL + '/' + extractedUrl;
+                }
+
+                const payload = { profile_picture: extractedUrl };
+
+                const updateRes = await authService.updateProfile(payload);
+                toast.success('تم تحديث الصورة بنجاح');
+
+                if (updateRes.user || updateRes.data) {
+                    updateUser(updateRes.user || updateRes.data);
+                }
+
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                toast.error('حدث خطأ أثناء استخراج رابط الصورة');
+            }
+        } catch (error) {
+            toast.error(error.message || 'فشل رفع الصورة');
+        } finally {
+            setIsUploadingImage(false);
+        }
+    };
 
     const menuItems = [
         { id: 'profile', label: 'المعلومات الشخصية', icon: User, color: 'emerald' },
@@ -70,18 +183,49 @@ export const ProfilePage = () => {
                         {/* User Identity Preview */}
                         <div className="text-center mb-8">
                             <div className="relative inline-block group">
-                                <div className="h-24 w-24 rounded-3xl bg-white dark:bg-slate-800 p-1 shadow-md mx-auto">
-                                    <div className="h-full w-full rounded-[1.2rem] bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary overflow-hidden">
-                                        {(user?.driverDetails?.profile_picture || user?.avatar) ? (
-                                            <img src={user?.driverDetails?.profile_picture || user?.avatar} alt={user.full_name} className="h-full w-full object-cover" />
+                                <div 
+                                    className="h-24 w-24 rounded-3xl bg-white dark:bg-slate-800 p-1 shadow-md mx-auto cursor-pointer"
+                                    onClick={() => {
+                                        if (user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar) {
+                                            setIsImageModalOpen(true);
+                                        }
+                                    }}
+                                >
+                                    <div className="h-full w-full rounded-[1.2rem] bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary overflow-hidden relative">
+                                        {(user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar) ? (
+                                            <img src={user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar} alt={user.full_name} className="h-full w-full object-cover" />
                                         ) : (
                                             <User className="h-10 w-10 stroke-[1.5]" />
                                         )}
+                                        
+                                        {/* Hover Overlay for viewing */}
+                                        {(user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar) && (
+                                            <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <Eye className="h-6 w-6 text-white mb-1" />
+                                            </div>
+                                        )}
+
+                                        {/* Loading Overlay */}
+                                        {isUploadingImage && (
+                                            <div className="absolute inset-0 bg-white/80 dark:bg-slate-800/80 flex flex-col items-center justify-center z-10 backdrop-blur-sm">
+                                                <Loader2 className="h-6 w-6 text-brand-primary animate-spin" />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                                <button className="absolute -bottom-1 -left-1 h-8 w-8 bg-brand-primary text-white rounded-xl shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
-                                    <Camera className="h-3.5 w-3.5" />
-                                </button>
+                                
+                                {/* Edit Button Below Image */}
+                                <div className="mt-2">
+                                    <button 
+                                        onClick={() => !isUploadingImage && document.getElementById('profile-upload-input').click()}
+                                        disabled={isUploadingImage}
+                                        className="inline-flex items-center gap-1.5 text-slate-400 hover:text-brand-primary dark:text-slate-500 dark:hover:text-brand-primary text-[11px] font-medium transition-colors mx-auto"
+                                    >
+                                        <Edit2 className="h-3 w-3" />
+                                        تعديل الصورة
+                                    </button>
+                                    <input type="file" id="profile-upload-input" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={isUploadingImage} />
+                                </div>
                             </div>
                             <h2 className="mt-4 text-lg font-black text-slate-800 dark:text-white leading-tight">
                                 {user?.full_name || 'مستخدم النظام'}
@@ -142,58 +286,95 @@ export const ProfilePage = () => {
                                                 <h3 className="text-xl font-black text-slate-800 dark:text-white">المعلومات الشخصية</h3>
                                                 <p className="text-slate-400 text-xs font-bold mt-1">عرض وتعديل معلومات حسابك الأساسية</p>
                                             </div>
-                                            <Button variant="outline" className="h-9 rounded-lg border-slate-200 text-[11px] font-black px-4">
-                                                تعديل
-                                            </Button>
+                                            {!isEditing ? (
+                                                <Button onClick={handleEditClick} variant="outline" className="h-9 rounded-lg border-slate-200 text-[11px] font-black px-4">
+                                                    تعديل
+                                                </Button>
+                                            ) : (
+                                                <div className="flex items-center gap-2">
+                                                    <Button onClick={handleCancelEdit} variant="ghost" className="h-9 rounded-lg text-[11px] font-black px-4 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">
+                                                        إلغاء
+                                                    </Button>
+                                                    <Button onClick={handleSaveProfile} disabled={isUpdating} className="h-9 rounded-lg bg-brand-primary text-white text-[11px] font-black px-4">
+                                                        {isUpdating ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                                                    </Button>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-10 pt-2">
-                                            {[
-                                                { label: 'الاسم بالكامل', value: user?.full_name, icon: User },
-                                                { label: 'البريد الإلكتروني', value: user?.email, icon: Mail },
-                                                { label: 'رقم الجوال', value: user?.phone_number, icon: Phone },
-                                                { label: 'المحافظة', value: user?.governorate?.name_ar || 'غير محدد', icon: MapPinned },
-                                                { label: 'المدينة', value: user?.city?.name_ar || 'غير محدد', icon: MapPinned },
-                                                { label: 'العنوان', value: user?.address || 'غير محدد', icon: MapPin },
-                                                { label: 'تاريخ الميلاد', value: user?.birth_date, icon: Calendar },
-                                                ...(role === 'driver' ? [{ label: 'الرقم القومي', value: user?.driverDetails?.national_id, icon: CreditCard }] : []),
-                                            ].map((field, i) => (
-                                                <div key={i} className="group cursor-pointer">
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1.5 transition-colors group-hover:text-brand-primary">
-                                                        <field.icon className="h-2.5 w-2.5" /> {field.label}
-                                                    </p>
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-[15px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-brand-primary transition-colors">
-                                                            {field.value || '---'}
-                                                        </span>
-                                                        <Edit2 className="h-2.5 w-2.5 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            {!isEditing ? (
+                                                [
+                                                    { label: 'الاسم بالكامل', value: user?.full_name, icon: User },
+                                                    { label: 'البريد الإلكتروني', value: user?.email, icon: Mail },
+                                                    { label: 'رقم الجوال', value: user?.phone_number, icon: Phone },
+                                                    { label: 'المحافظة', value: user?.governorate?.name_ar || 'غير محدد', icon: MapPinned },
+                                                    { label: 'المدينة', value: user?.city?.name_ar || 'غير محدد', icon: MapPinned },
+                                                    { label: 'العنوان', value: user?.address || 'غير محدد', icon: MapPin },
+                                                    { label: 'تاريخ الميلاد', value: user?.birth_date?.split('T')[0], icon: Calendar },
+                                                    ...(role === 'driver' ? [{ label: 'الرقم القومي', value: user?.driverDetails?.national_id, icon: CreditCard }] : []),
+                                                ].map((field, i) => (
+                                                    <div key={i} className="group cursor-pointer">
+                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1.5 transition-colors group-hover:text-brand-primary">
+                                                            <field.icon className="h-2.5 w-2.5" /> {field.label}
+                                                        </p>
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-[15px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-brand-primary transition-colors">
+                                                                {field.value || '---'}
+                                                            </span>
+                                                        </div>
+                                                        <div className="h-px bg-slate-50 dark:bg-slate-800/50 mt-3 group-hover:bg-brand-primary/10 transition-colors"></div>
                                                     </div>
-                                                    <div className="h-px bg-slate-50 dark:bg-slate-800/50 mt-3 group-hover:bg-brand-primary/10 transition-colors"></div>
-                                                </div>
-                                            ))}
+                                                ))
+                                            ) : (
+                                                <>
+                                                    <div className="space-y-2">
+                                                        <label className="text-[11px] font-black text-slate-500 flex items-center gap-1.5"><User className="h-3.5 w-3.5" /> الاسم بالكامل</label>
+                                                        <input type="text" name="full_name" value={formData.full_name} onChange={handleChange} className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold bg-white dark:bg-slate-800 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all dark:text-white" />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-[11px] font-black text-slate-500 flex items-center gap-1.5"><Phone className="h-3.5 w-3.5" /> رقم الجوال</label>
+                                                        <input type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold bg-white dark:bg-slate-800 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all dark:text-white" />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-[11px] font-black text-slate-500 flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> العنوان</label>
+                                                        <input type="text" name="address" value={formData.address} onChange={handleChange} className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold bg-white dark:bg-slate-800 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all dark:text-white" />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-[11px] font-black text-slate-500 flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" /> تاريخ الميلاد</label>
+                                                        <input type="date" name="birth_date" value={formData.birth_date} onChange={handleChange} className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold bg-white dark:bg-slate-800 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all dark:text-white" />
+                                                    </div>
+                                                    <div className="space-y-2 opacity-60">
+                                                        <label className="text-[11px] font-black text-slate-500 flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> البريد الإلكتروني (غير قابل للتعديل)</label>
+                                                        <input type="text" value={user?.email || ''} disabled className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-bold bg-slate-50 dark:bg-slate-900 cursor-not-allowed dark:text-white" />
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
 
-                                        {/* Status Cards */}
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                                            <div className="p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-500/5 border border-emerald-100 dark:border-emerald-500/10 flex items-center gap-4">
-                                                <div className="h-11 w-11 bg-emerald-500 rounded-xl flex items-center justify-center text-white">
-                                                    <CheckCircle2 className="h-6 w-6" />
+                                        {/* Status Cards - Only for Drivers */}
+                                        {role === 'driver' && (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                                                <div className="p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-500/5 border border-emerald-100 dark:border-emerald-500/10 flex items-center gap-4">
+                                                    <div className="h-11 w-11 bg-emerald-500 rounded-xl flex items-center justify-center text-white">
+                                                        <CheckCircle2 className="h-6 w-6" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-black text-emerald-800 dark:text-emerald-400">حالة الحساب</p>
+                                                        <p className="text-[11px] font-bold text-emerald-600/70">نشط وموثق بالكامل</p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="text-xs font-black text-emerald-800 dark:text-emerald-400">حالة الحساب</p>
-                                                    <p className="text-[11px] font-bold text-emerald-600/70">نشط وموثق بالكامل</p>
+                                                <div className="p-5 rounded-2xl bg-indigo-50 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/10 flex items-center gap-4">
+                                                    <div className="h-11 w-11 bg-indigo-500 rounded-xl flex items-center justify-center text-white">
+                                                        <Award className="h-6 w-6" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-black text-indigo-800 dark:text-indigo-400">مستوى العضوية</p>
+                                                        <p className="text-[11px] font-bold text-indigo-600/70">عضوية برونزية (مبتدئ)</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="p-5 rounded-2xl bg-indigo-50 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/10 flex items-center gap-4">
-                                                <div className="h-11 w-11 bg-indigo-500 rounded-xl flex items-center justify-center text-white">
-                                                    <Award className="h-6 w-6" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs font-black text-indigo-800 dark:text-indigo-400">مستوى العضوية</p>
-                                                    <p className="text-[11px] font-bold text-indigo-600/70">عضوية برونزية (مبتدئ)</p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
                                 )}
 
@@ -382,6 +563,35 @@ export const ProfilePage = () => {
 
                 </div>
             </motion.div>
+
+            {/* Image Modal */}
+            <AnimatePresence>
+                {isImageModalOpen && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+                        onClick={() => setIsImageModalOpen(false)}
+                    >
+                        <button 
+                            className="absolute top-6 right-6 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full p-2 transition-all"
+                            onClick={() => setIsImageModalOpen(false)}
+                        >
+                            <X className="h-6 w-6" />
+                        </button>
+                        <motion.img 
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            src={user?.driverDetails?.profile_picture || user?.profile_picture || user?.avatar} 
+                            alt={user.full_name} 
+                            className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl"
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

@@ -39,8 +39,7 @@ export const Topbar = () => {
         const fetchNotifications = async () => {
             try {
                 const res = await notificationService.getUserNotifications();
-                const data = res.data || res || [];
-                setNotifications(data);
+                setNotifications(res);
             } catch (err) {
                 console.warn('Failed to fetch notifications:', err);
             }
@@ -56,7 +55,7 @@ export const Topbar = () => {
 
     // Filter notifications based on role
     const filteredNotifications = (notifications ?? []).filter(n => !n.recipientRole || n.recipientRole === role)
-    const activeNotifications = filteredNotifications.filter(n => n.active)
+    const activeNotifications = filteredNotifications.filter(n => !n.isRead)
 
     const navigate = useNavigate()
 
@@ -95,11 +94,12 @@ export const Topbar = () => {
         setIsDetailModalOpen(true)
         setIsDetailLoading(true)
         try {
-            const res = await notificationService.getNotificationDetail(notif.id)
-            setSelectedNotification(res.data || res || notif)
+            // Use PATCH API to mark as read
+            await notificationService.markAsRead(notif.id)
+            setSelectedNotification(notif)
             markAsRead(notif.id)
         } catch (err) {
-            console.warn('Failed to fetch notification details, using existing data')
+            console.warn('Failed to mark as read on server:', err)
             setSelectedNotification(notif)
             markAsRead(notif.id)
         } finally {
@@ -181,12 +181,6 @@ export const Topbar = () => {
                                 >
                                     <div className="p-5 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
                                         <h4 className="font-black text-slate-900 dark:text-white text-sm">التنبيهات</h4>
-                                        <button
-                                            onClick={() => clearAll(role)}
-                                            className="text-[10px] font-black text-slate-400 hover:text-brand-primary bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg uppercase tracking-wider transition-colors cursor-pointer"
-                                        >
-                                            مسح الكل
-                                        </button>
                                     </div>
                                     <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
                                         {filteredNotifications.length > 0 ? (
@@ -196,7 +190,7 @@ export const Topbar = () => {
                                                     onClick={() => handleNotificationClick(notif)}
                                                     className={cn(
                                                         "px-5 py-4 transition-all border-b border-slate-50 dark:border-slate-800/60 group relative cursor-pointer",
-                                                        notif.active ? "bg-brand-primary/[0.04] dark:bg-brand-primary/[0.08] border-r-4 border-r-brand-primary shadow-[inset_0_0_0_1px_rgba(235,106,29,0.05)]" : "bg-white dark:bg-slate-900 hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
+                                                        !notif.isRead ? "bg-brand-primary/[0.04] dark:bg-brand-primary/[0.08] border-r-4 border-r-brand-primary shadow-[inset_0_0_0_1px_rgba(235,106,29,0.05)]" : "bg-white dark:bg-slate-900 hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
                                                     )}
                                                 >
                                                     {/* Row 1: Header (Icon + Title) & Close Button */}
@@ -213,29 +207,18 @@ export const Topbar = () => {
                                                             </div>
                                                             <h5 className={cn(
                                                                 "text-[12px] leading-tight truncate",
-                                                                notif.active ? "font-black text-slate-900 dark:text-white" : "font-bold text-slate-600 dark:text-slate-300"
+                                                                !notif.isRead ? "font-black text-slate-900 dark:text-white" : "font-bold text-slate-600 dark:text-slate-300"
                                                             )}>
                                                                 {notif.title}
                                                             </h5>
                                                         </div>
-
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                removeNotification(notif.id);
-                                                            }}
-                                                            className="h-6 w-6 rounded-lg flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all opacity-40 group-hover:opacity-100 shrink-0"
-                                                            title="حذف التنبيه"
-                                                        >
-                                                            <X className="h-3.5 w-3.5" />
-                                                        </button>
                                                     </div>
 
                                                     {/* Row 2: Description & Time */}
                                                     <div className="flex items-end justify-between gap-4">
                                                         <p className={cn(
                                                             "text-[10px] leading-relaxed line-clamp-2 flex-1",
-                                                            notif.active ? "text-slate-600 dark:text-slate-300 font-bold" : "text-slate-500 dark:text-slate-400 font-medium"
+                                                            !notif.isRead ? "text-slate-600 dark:text-slate-300 font-bold" : "text-slate-500 dark:text-slate-400 font-medium"
                                                         )}>
                                                             {notif.desc}
                                                         </p>
@@ -314,7 +297,6 @@ export const Topbar = () => {
                                             <div className="min-w-0">
                                                 <h5 className="font-black text-slate-900 dark:text-white text-sm leading-none mb-1.5 truncate max-w-[140px]">{user?.full_name || 'المستخدم'}</h5>
                                                 <p className="text-[10px] font-bold text-slate-500 mb-1.5 truncate max-w-[140px]">{user?.email}</p>
-                                                <span className="text-[10px] font-black text-brand-primary bg-brand-primary/10 px-2 py-0.5 rounded-md uppercase tracking-widest">{getRoleName(user?.role || role)}</span>
                                             </div>
                                         </div>
                                         <div className="flex gap-2">
@@ -322,13 +304,15 @@ export const Topbar = () => {
                                                 <p className="text-[9px] font-black text-slate-400 uppercase mb-0.5">الرصيد</p>
                                                 <p className="text-xs font-black text-slate-900 dark:text-white">٠ EGP</p>
                                             </div>
-                                            <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-2 rounded-xl text-center">
-                                                <p className="text-[9px] font-black text-slate-400 uppercase mb-0.5">التقييم</p>
-                                                <p className="text-[10px] font-black text-slate-900 dark:text-white flex items-center justify-center gap-1">
-                                                    <Star className="h-2.5 w-2.5 text-amber-500 fill-current" />
-                                                    {user?.averageRating || user?.driverDetails?.averageRating || '٠.٠'}
-                                                </p>
-                                            </div>
+                                            {role === 'driver' && (
+                                                <div className="flex-1 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-2 rounded-xl text-center">
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase mb-0.5">التقييم</p>
+                                                    <p className="text-[10px] font-black text-slate-900 dark:text-white flex items-center justify-center gap-1">
+                                                        <Star className="h-2.5 w-2.5 text-amber-500 fill-current" />
+                                                        {user?.averageRating || user?.driverDetails?.averageRating || '٠.٠'}
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -448,15 +432,6 @@ export const Topbar = () => {
                                         className="grow bg-brand-primary hover:bg-brand-primary/90 text-white font-black py-4 px-6 rounded-2xl transition-all shadow-lg shadow-brand-primary/20 cursor-pointer"
                                     >
                                         فهمت ذلك
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            removeNotification(selectedNotification.id);
-                                            setIsDetailModalOpen(false);
-                                        }}
-                                        className="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-500 font-bold py-4 px-6 rounded-2xl transition-all cursor-pointer"
-                                    >
-                                        حذف الإشعار
                                     </button>
                                 </div>
                             </div>

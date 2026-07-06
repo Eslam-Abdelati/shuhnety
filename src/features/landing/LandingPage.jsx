@@ -28,88 +28,128 @@ export const LandingPage = () => {
                 <GlobalNotification />
             </div>
 
-            {/* Premium Hero Section - Spacing Fixed */}
-            <section className="relative pt-32 pb-16 lg:pt-40 overflow-hidden">
+            {/* Premium Hero Section - Full Width Background Image Overlay */}
+            <section className="relative min-h-[85vh] flex items-center justify-center pt-24 pb-20 overflow-hidden bg-slate-900">
+                {/* Background Image & Gradients */}
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1600"
+                        className="w-full h-full object-cover opacity-40 select-none pointer-events-none"
+                        alt="Modern Logistics Background"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-brand-secondary/50 via-slate-950/75 to-slate-950/95 z-0"></div>
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(235,106,29,0.15)_0%,transparent_70%)] z-0"></div>
+                </div>
 
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_20%,rgba(235,106,29,0.05)_0%,transparent_50%)] pointer-events-none"></div>
-
-                <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-16 relative z-10">
-                    <motion.div className="flex-1 text-center lg:text-right" {...fadeIn}>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[#57534d] text-[9px] font-black tracking-widest uppercase mb-6 border border-slate-200/50">
-                            <Zap className="h-3 w-3 text-brand-primary" />
+                <div className="max-w-5xl mx-auto px-6 relative z-10 text-center flex flex-col items-center">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="w-full flex flex-col items-center"
+                    >
+                        {/* Tag/Badge */}
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white text-[10px] font-black tracking-widest uppercase mb-8 border border-white/10 backdrop-blur-md">
+                            <Zap className="h-3.5 w-3.5 text-brand-primary animate-pulse" />
                             المنصة الرائدة لربط العملاء بمحترفي الشحن
                         </div>
 
-                        <h1 className="text-xl lg:text-5xl font-black leading-[1.40] tracking-tight mb-6 text-brand-secondary">
-
-                            حلول شحن ذكية
+                        {/* Title */}
+                        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.3] mb-6 text-white max-w-3xl drop-shadow-md">
+                            حلول شحن ذكية وسلسة <br className="hidden sm:inline" />
+                            <span className="text-brand-primary">لكافة احتياجاتك</span>
                         </h1>
 
-                        <p className="max-w-lg lg:mr-0 mx-auto text-base text-[#57534d] font-bold leading-relaxed mb-10 opacity-80">
-
-                            سواء كنت تبحث عن وسيلة شحن موثوقة أو تسعى لتعزيز دخلك كشريك محترف، شحنتي هي وجهتك المثالية.
+                        {/* Description */}
+                        <p className="max-w-2xl text-base sm:text-lg text-slate-200 font-bold leading-relaxed mb-12 drop-shadow-sm opacity-90">
+                            سواء كنت تبحث عن وسيلة شحن موثوقة أو تسعى لتعزيز دخلك كشريك محترف، شحنتي هي وجهتك المثالية لربط التجار بأفضل الكباتن وشركات النقل.
                         </p>
 
-                        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                            <Button size="lg" asChild className="rounded-2xl px-10 h-12 text-sm font-black bg-brand-secondary hover:bg-black shadow-2xl shadow-brand-secondary/20 transition-all duration-300 hover:-translate-y-1 active:scale-95 cursor-pointer">
+                        {/* Call to Actions */}
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+                            <Button size="lg" asChild className="w-full sm:w-auto rounded-2xl px-12 h-14 text-sm font-black bg-brand-primary hover:bg-[#d95d18] text-white shadow-2xl shadow-brand-primary/30 transition-all duration-300 hover:-translate-y-1 active:scale-95 cursor-pointer">
                                 <Link to="/login"> ابدأ الشحن الآن </Link>
                             </Button>
-                            <Button variant="outline" size="lg" asChild className="rounded-2xl px-10 h-12 text-sm font-black border-slate-200 hover:bg-slate-50 hover:border-brand-primary hover:text-brand-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 group cursor-pointer">
-                                <Link to="/register" className="flex items-center gap-2">
+                            <Button variant="outline" size="lg" asChild className="w-full sm:w-auto rounded-2xl px-12 h-14 text-sm font-black border-white/20 text-white bg-white/5 hover:bg-white hover:text-brand-secondary hover:border-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 group cursor-pointer backdrop-blur-sm">
+                                <Link to="/register" className="flex items-center justify-center gap-2">
                                     سجل الان
                                 </Link>
                             </Button>
                         </div>
 
                         {/* Social Proof */}
-                        <div className="mt-14 flex items-center justify-center lg:justify-start gap-10">
+                        <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-6">
                             <div className="flex -space-x-3 rtl:space-x-reverse">
                                 {[1, 2, 3, 4].map(i => (
-                                    <div key={i} className="h-9 w-9 rounded-full border-2 border-white bg-slate-200 overflow-hidden shadow-sm">
+                                    <div key={i} className="h-10 w-10 rounded-full border-2 border-slate-900 bg-slate-200 overflow-hidden shadow-md">
                                         <img src={`https://i.pravatar.cc/150?u=${i + 10}`} alt="avatar" />
                                     </div>
                                 ))}
                             </div>
-                            <div className="text-right">
-                                <div className="flex items-center gap-1 text-brand-primary mb-0.5 scale-90 origin-right">
-                                    {[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-3 w-3 fill-current" />)}
+                            <div className="text-center sm:text-right">
+                                <div className="flex items-center justify-center sm:justify-start gap-1 text-brand-primary mb-1 scale-95 origin-center sm:origin-right">
+                                    {[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-3.5 w-3.5 fill-current" />)}
                                 </div>
-                                <p className="text-[10px] font-black text-[#57534d]/60 uppercase tracking-widest"> انضم إلى آلاف المستخدمين الموثوقين يومياً </p>
+                                <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest">
+                                    انضم إلى آلاف المستخدمين الموثوقين يومياً في مصر
+                                </p>
                             </div>
                         </div>
                     </motion.div>
+                </div>
 
-                    <motion.div
-                        className="flex-1 relative"
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8 }}
+                {/* Decorative Bottom Curve / Fade */}
+                <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none z-10"></div>
+            </section>
+
+            {/* Stats Section */}
+            <section className="relative z-20 -mt-10 max-w-7xl mx-auto px-6">
+                <div className="bg-white/80 backdrop-blur-md rounded-[2.5rem] border border-slate-100/80 shadow-[0_30px_60px_-15px_rgba(20,83,45,0.05)] p-8 md:p-10 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x md:divide-x-reverse divide-slate-100">
+                    <motion.div 
+                        className="flex items-center justify-center gap-5 md:px-6"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5 }}
                     >
-                        <div className="relative z-10 w-full aspect-square max-w-[500px] mx-auto">
-                            <div className="absolute inset-0 bg-brand-primary/10 rounded-[4rem] rotate-6"></div>
-                            <div className="relative h-full w-full rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(6,78,59,0.15)] bg-slate-100 group">
-                                <img
-                                    src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1000"
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    alt="Modern Logistics"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/40 to-transparent"></div>
-                            </div>
+                        <div className="h-14 w-14 rounded-2xl bg-brand-primary/10 flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="h-7 w-7 text-brand-primary" />
+                        </div>
+                        <div>
+                            <h3 className="text-3xl font-black text-brand-secondary mb-1 tracking-tight">+10,000</h3>
+                            <p className="text-xs text-slate-500 font-semibold">شحنة مكتملة بنجاح</p>
+                        </div>
+                    </motion.div>
 
-                            {/* Floating Elements */}
-                            <motion.div
-                                className="absolute -bottom-6 -right-6 bg-white p-6 rounded-[2.5rem] shadow-2xl border border-slate-50 flex items-center gap-4 z-20"
-                                animate={{ y: [0, -10, 0] }}
-                                transition={{ repeat: Infinity, duration: 4 }}
-                            >
-                                <div className="h-12 w-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shadow-inner">
-                                    <CheckCircle2 className="h-6 w-6" />
-                                </div>
-                                <div>
-                                    <p className="text-xs font-black text-[#1c1919]">شحنة مكتملة</p>
-                                    <p className="text-[10px] text-[#57534d] font-bold">تم التحصيل بنجاح</p>
-                                </div>
-                            </motion.div>
+                    <motion.div 
+                        className="flex items-center justify-center gap-5 pt-6 md:pt-0 md:px-6"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                    >
+                        <div className="h-14 w-14 rounded-2xl bg-brand-secondary/10 flex items-center justify-center shrink-0">
+                            <Truck className="h-7 w-7 text-brand-secondary" />
+                        </div>
+                        <div>
+                            <h3 className="text-3xl font-black text-brand-secondary mb-1 tracking-tight">+1,500</h3>
+                            <p className="text-xs text-slate-500 font-semibold">كابتن معتمد</p>
+                        </div>
+                    </motion.div>
+
+                    <motion.div 
+                        className="flex items-center justify-center gap-5 pt-6 md:pt-0 md:px-6"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                    >
+                        <div className="h-14 w-14 rounded-2xl bg-brand-primary/10 flex items-center justify-center shrink-0">
+                            <TrendingUp className="h-7 w-7 text-brand-primary" />
+                        </div>
+                        <div>
+                            <h3 className="text-3xl font-black text-brand-secondary mb-1 tracking-tight">99.4%</h3>
+                            <p className="text-xs text-slate-500 font-semibold">نسبة نجاح التوصيل</p>
                         </div>
                     </motion.div>
                 </div>
@@ -145,15 +185,15 @@ export const LandingPage = () => {
 
                     <div className="order-1 lg:order-2 space-y-10">
                         <div className="space-y-4">
-                            <h2 className="text-4xl font-black text-brand-secondary leading-tight tracking-tight">عن "شحنتي": رؤية طموحة <br /> لمستقبل الخدمات اللوجستية</h2>
+                            <h2 className="text-3xl sm:text-4xl font-black text-brand-secondary leading-tight tracking-tight">عن "شحنتي": رؤية طموحة <br /> لمستقبل الخدمات اللوجستية</h2>
                             <div className="h-1.5 w-20 bg-brand-primary rounded-full"></div>
                         </div>
 
                         <div className="space-y-6">
-                            <p className="text-lg text-[#57534d] font-bold leading-relaxed">
+                            <p className="text-base sm:text-lg text-slate-600 font-medium leading-relaxed">
                                 شحنتي هي منصة تهدف إلى تطوير قطاع النقل والشحن داخل مصر، من خلال ربط أصحاب الشحنات بالكابتن أصحاب المركبات وشركات النقل في نظام واحد ذكي وسهل الاستخدام.
                             </p>
-                            <p className="text-base text-[#57534d] font-medium leading-relaxed bg-brand-primary/5 p-6 rounded-3xl border-r-4 border-brand-primary">
+                            <p className="text-sm sm:text-base text-slate-700 font-medium leading-relaxed bg-brand-primary/5 p-6 rounded-3xl border-r-4 border-brand-primary">
                                 نعتمد على نظام <strong>المزايدة الحي</strong>، حيث يمكن للعميل استقبال عدة عروض أسعار من مختلف الكباتن، مع إمكانية <strong>التفاوض المباشر</strong> للوصول إلى السعر العادل الذي يضمن حقوق جميع الأطراف ويحقق أعلى كفاءة اقتصادية.
                             </p>
                         </div>
@@ -168,8 +208,8 @@ export const LandingPage = () => {
                                         <item.icon className="h-6 w-6 text-brand-primary" />
                                     </div>
                                     <div>
-                                        <h5 className="font-black text-[#1c1919] mb-1">{item.title}</h5>
-                                        <p className="text-sm text-[#57534d] font-bold">{item.desc}</p>
+                                        <h5 className="font-black text-slate-900 mb-1">{item.title}</h5>
+                                        <p className="text-xs sm:text-sm text-slate-500 font-medium">{item.desc}</p>
                                     </div>
                                 </div>
                             ))}
@@ -182,7 +222,7 @@ export const LandingPage = () => {
             <section id="solutions" className="py-20 bg-slate-50/50">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl font-black text-brand-secondary mb-3"> منظومة لوجستية ذكية تخدم كافة تطلعاتك </h2>
+                        <h2 className="text-3xl font-black text-brand-secondary mb-3">منظومة لوجستية ذكية تخدم كافة تطلعاتك</h2>
                         <div className="h-1 w-12 bg-brand-primary mx-auto rounded-full"></div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -196,8 +236,8 @@ export const LandingPage = () => {
                                 <div className="h-12 w-12 mx-auto rounded-2xl bg-slate-50 flex items-center justify-center mb-6 group-hover:bg-brand-primary group-hover:text-white transition-colors">
                                     <item.icon className="h-6 w-6" />
                                 </div>
-                                <h4 className="text-lg font-black text-[#1c1919] mb-2">{item.title}</h4>
-                                <p className="text-xs text-[#57534d] font-bold leading-relaxed">{item.desc}</p>
+                                <h4 className="text-lg font-black text-slate-900 mb-2">{item.title}</h4>
+                                <p className="text-xs text-slate-500 font-medium leading-relaxed">{item.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -205,11 +245,11 @@ export const LandingPage = () => {
             </section>
 
             {/* Problem Section - Enhanced Hover Aesthetics */}
-            <section id="problem" className="py-24 bg-[#fdfcf6]">
+            <section id="problem" className="py-24 bg-white">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-16 max-w-2xl mx-auto">
-                        <h2 className="text-4xl font-black text-brand-secondary mb-4 tracking-tight">لماذا تختار منصة "شحنتي"؟</h2>
-                        <p className="text-[#57534d] font-bold leading-relaxed">نهدف إلى معالجة تحديات النقل التقليدية لضمان تجربة أكثر كفاءة وموثوقية.</p>
+                        <h2 className="text-3xl sm:text-4xl font-black text-brand-secondary mb-4 tracking-tight">لماذا تختار منصة "شحنتي"؟</h2>
+                        <p className="text-sm sm:text-base text-slate-500 font-semibold leading-relaxed">نهدف إلى معالجة تحديات النقل التقليدية لضمان تجربة أكثر كفاءة وموثوقية.</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
@@ -217,13 +257,13 @@ export const LandingPage = () => {
                             { title: 'عشوائية الرسوم', desc: 'مفيش نظام واضح لتحديد السعر. وغالبًا بتدفع أكتر من اللازم', icon: Wallet },
                             { title: 'ضياع الشحنات', desc: 'انعدام تكنولوجيا التتبع اللحظي مما عرض بضاعتك للخطر.', icon: MapPin },
                         ].map((item, i) => (
-                            <div key={i} className="group relative bg-white p-10 rounded-[3rem] border border-slate-100/50 hover:shadow-[0_40px_80px_-20px_rgba(235,106,29,0.12)] hover:-translate-y-2 transition-all duration-500 text-center overflow-hidden">
+                            <div key={i} className="group relative bg-slate-50/20 p-10 rounded-[3rem] border border-slate-100/50 hover:shadow-[0_40px_80px_-20px_rgba(235,106,29,0.12)] hover:-translate-y-2 transition-all duration-500 text-center overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <div className="relative z-10 h-16 w-16 mx-auto rounded-2xl bg-[#fffbeb] flex items-center justify-center mb-8 border border-orange-100 shadow-inner group-hover:bg-brand-primary group-hover:text-white transition-colors duration-500 group-hover:rotate-6">
+                                <div className="relative z-10 h-16 w-16 mx-auto rounded-2xl bg-amber-50 flex items-center justify-center mb-8 border border-orange-100 shadow-inner group-hover:bg-brand-primary group-hover:text-white transition-colors duration-500 group-hover:rotate-6">
                                     <item.icon className="h-8 w-8 text-brand-primary group-hover:text-white" />
                                 </div>
-                                <h4 className="relative z-10 text-xl font-black text-[#1c1919] mb-4 tracking-wide group-hover:text-brand-primary transition-colors">{item.title}</h4>
-                                <p className="relative z-10 text-sm text-[#57534d] font-bold leading-relaxed">{item.desc}</p>
+                                <h4 className="relative z-10 text-xl font-black text-slate-900 mb-4 tracking-wide group-hover:text-brand-primary transition-colors">{item.title}</h4>
+                                <p className="relative z-10 text-sm text-slate-500 font-medium leading-relaxed">{item.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -258,13 +298,78 @@ export const LandingPage = () => {
                 </div>
             </section>
 
+            {/* Testimonials Section */}
+            <section id="testimonials" className="py-24 bg-slate-50/50 relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="text-center mb-16 max-w-2xl mx-auto">
+                        <span className="text-xs font-black text-brand-primary tracking-widest uppercase mb-3 block">شركاء النجاح</span>
+                        <h2 className="text-3xl sm:text-4xl font-black text-brand-secondary mb-4 tracking-tight">ماذا يقولون عن "شحنتي"؟</h2>
+                        <p className="text-sm sm:text-base text-slate-500 font-semibold leading-relaxed">قصص نجاح حقيقية من التجار والكباتن الذين اعتمدوا على منصتنا لتطوير أعمالهم.</p>
+                        <div className="h-1.5 w-16 bg-brand-primary rounded-full mx-auto mt-4"></div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                            {
+                                name: "أحمد مصطفى",
+                                role: "تاجر جملة - القاهرة",
+                                comment: "منصة شحنتي غيرت طريقتنا في شحن البضائع. بفضل نظام المزايدات العادل، أصبحنا نحصل على أفضل الأسعار ونختار الكباتن بناءً على تقييماتهم وموثوقيتهم.",
+                                rating: 5,
+                                avatar: "https://i.pravatar.cc/150?u=11"
+                            },
+                            {
+                                name: "كابتن محمد محمود",
+                                role: "كابتن نقل ثقيل - الغربية",
+                                comment: "شغل يومي مضمون ورحلات مستمرة. المزايدة واضحة والتحصيل فوري عند التسليم. شحنتي وفرت لنا عناء البحث عن حمولات في مواقف السيارات التقليدية.",
+                                rating: 5,
+                                avatar: "https://i.pravatar.cc/150?u=12"
+                            },
+                            {
+                                name: "م. سارة الصاوي",
+                                role: "مديرة لوجستيات بشركة النور",
+                                comment: "التتبع اللحظي للشحنات أعطانا راحة بال كاملة. بالإضافة إلى سهولة إدارة أسطولنا والتوثيق الرقمي للعقود، شحنتي هي شريكنا الاستراتيجي الأول.",
+                                rating: 5,
+                                avatar: "https://i.pravatar.cc/150?u=13"
+                            }
+                        ].map((t, i) => (
+                            <motion.div 
+                                key={i}
+                                className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:shadow-[0_45px_90px_-20px_rgba(20,83,45,0.08)] hover:-translate-y-2 transition-all duration-500 flex flex-col justify-between"
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, delay: i * 0.1 }}
+                            >
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-1 text-amber-400">
+                                        {[...Array(t.rating)].map((_, idx) => (
+                                            <Star key={idx} className="h-4 w-4 fill-current" />
+                                        ))}
+                                    </div>
+                                    <p className="text-slate-600 font-medium leading-relaxed text-sm">
+                                        "{t.comment}"
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-4 mt-8 pt-6 border-t border-slate-50">
+                                    <img src={t.avatar} className="h-12 w-12 rounded-full object-cover border-2 border-brand-primary/20" alt={t.name} />
+                                    <div>
+                                        <h4 className="font-black text-brand-secondary text-sm">{t.name}</h4>
+                                        <p className="text-xs text-slate-500 font-semibold mt-0.5">{t.role}</p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
             {/* Beneficiaries Section - Keep User's Fav Dark Green Style */}
             <section className="mt-20 bg-brand-secondary py-20 text-white rounded-t-[5rem] relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_80%,rgba(235,106,29,0.1)_0%,transparent_50%)]"></div>
                 <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div>
-                        <h2 className="text-5xl font-black mb-6 leading-tight tracking-tight">نخدم مجتمعاً <br /> كاملاً من الرواد</h2>
-                        <p className="text-white/60 font-bold text-lg max-w-md leading-relaxed">
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-6 leading-tight tracking-tight">نخدم مجتمعاً <br /> كاملاً من الرواد</h2>
+                        <p className="text-white/70 font-medium text-base sm:text-lg max-w-md leading-relaxed">
                             سواء كنت فرداً، أو شركة كبرى، شحنتي توفر البيئة الرقمية المثالية لنمو عملك.
                         </p>
                     </div>

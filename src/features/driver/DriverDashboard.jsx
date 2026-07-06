@@ -6,7 +6,7 @@ import {
     ChevronLeft, Navigation, Phone, User as UserIcon,
     MessageSquare, CheckCircle2, Box, Bell, Zap,
     Star, ArrowUpRight, Search, LayoutGrid, Timer,
-    Weight, ArrowRightLeft, AlertTriangle, Eye, ShieldCheck
+    Weight, ArrowRightLeft, AlertTriangle, Eye, ShieldCheck, Loader2
 } from 'lucide-react'
 import { useShipmentStore } from '@/store/useShipmentStore'
 import { useOfferStore } from '@/store/useOfferStore'
@@ -638,7 +638,11 @@ export const DriverDashboard = () => {
                                             disabled={isConfirmingDelivery || otpValue.length < 4}
                                             className="w-full h-14 bg-emerald-600 text-white rounded-xl font-black"
                                         >
-                                            {isConfirmingDelivery ? "جاري التأكيد..." : "تأكيد واستلام الأرباح"}
+                                            {isConfirmingDelivery ? (
+                                                <div className="flex items-center justify-center">
+                                                    <Loader2 className="h-6 w-6 animate-spin text-white" />
+                                                </div>
+                                            ) : "تأكيد واستلام الأرباح"}
                                         </Button>
                                         <Button
                                             variant="ghost"

@@ -26,6 +26,7 @@ const notificationSlice = createSlice({
             const notification = state.notifications.find(n => n.id === id);
             if (notification) {
                 notification.active = false;
+                notification.isRead = true;
             }
         },
         clearAll: (state, action) => {
@@ -39,7 +40,15 @@ const notificationSlice = createSlice({
             state.notifications = state.notifications.filter(n => n.id !== id);
         },
         setNotifications: (state, action) => {
-            state.notifications = action.payload.map(n => {
+            const payload = action.payload;
+            // Handle various response shapes, specifically data.notifications
+            const notificationsArray = 
+                Array.isArray(payload) ? payload :
+                Array.isArray(payload?.data?.notifications) ? payload.data.notifications :
+                Array.isArray(payload?.data) ? payload.data :
+                Array.isArray(payload?.notifications) ? payload.notifications : [];
+                
+            state.notifications = notificationsArray.map(n => {
                 // Determine UI type based on backend type
                 let uiType = 'info';
                 if (n.type?.includes('accepted') || n.type?.includes('delivered') || n.type?.includes('success')) {
@@ -50,12 +59,15 @@ const notificationSlice = createSlice({
                     uiType = 'error';
                 }
 
+                const isRead = n.isRead ?? n.is_read ?? (n.status === 'read') ?? false;
+
                 return {
                     id: n.id || n._id,
                     title: n.title || 'إشعار جديد',
                     desc: n.message || n.desc || n.body || n.title,
                     type: uiType,
-                    active: n.isRead === false || n.is_read === false || n.status === 'unread',
+                    isRead: isRead,
+                    active: !isRead,
                     createdAt: n.createDateTime || n.createdAt || n.created_at || new Date().toISOString(),
                     recipientRole: n.recipientRole || null
                 };

@@ -23,26 +23,16 @@ import { AvailableShipments } from './features/driver/AvailableShipments'
 import { DriverShipmentDetails } from './features/driver/DriverShipmentDetails'
 import { ActiveShipments } from './features/driver/ActiveShipments'
 import { DriverReports } from './features/driver/DriverReports'
-import { FleetManagement } from './features/fleet/FleetManagement'
-import { GovDashboard } from './features/governorate/GovDashboard'
-import { AdminDashboard } from './features/admin/AdminDashboard'
-import { DriverVerification } from './features/admin/DriverVerification'
-import { AdminReports } from './features/admin/AdminReports'
-import { PlatformManagement } from './features/admin/PlatformManagement'
-import { SystemSettings } from './features/admin/SystemSettings'
 import { ShipmentTracking } from './features/tracking/ShipmentTracking'
 import { RoadAlerts } from './features/alerts/RoadAlerts'
-import { DriverManagement } from './features/company/DriverManagement'
-import { DisputeResolution } from './features/admin/DisputeResolution'
-import { DigitalContracts } from './features/admin/DigitalContracts'
 import { ProfilePage } from './features/profile/ProfilePage'
 import { TermsPage } from './features/legal/TermsPage'
+import { PrivacyPage } from './features/legal/PrivacyPage'
 import { ContactPage } from './features/support/ContactPage'
 import { FaqPage } from './features/support/FaqPage'
 import { ReportIssuePage } from './features/support/ReportIssuePage'
 import { AllReportsPage } from './features/support/AllReportsPage'
 import { NotificationsPage } from './features/notifications/NotificationsPage'
-import { SocketSync } from './components/SocketSync'
 import ScrollToTop from './components/ScrollToTop'
 
 // Placeholders for features
@@ -87,7 +77,6 @@ function App() {
 
     return (
         <>
-            <SocketSync />
             <Toaster
                 position="top-center"
                 reverseOrder={false}
@@ -118,9 +107,7 @@ function App() {
                     {/* Roles with Protection */}
                     {[
                         { role: 'customer', path: '/customer' },
-                        { role: 'driver', path: '/driver' },
-                        { role: 'company', path: '/company' },
-                        { role: 'governorate', path: '/gov' }
+                        { role: 'driver', path: '/driver' }
                     ].map(({ role, path }) => (
                         <Route
                             key={role}
@@ -147,7 +134,7 @@ function App() {
                                                     <Route path="*" element={<Placeholder title="قيد التطوير" />} />
 
                                                 </>
-                                            ) : role === 'driver' ? (
+                                            ) : (
                                                 <>
                                                     <Route path="/" element={<DriverDashboard />} />
                                                     <Route path="/available" element={<AvailableShipments />} />
@@ -162,31 +149,6 @@ function App() {
                                                     <Route path="*" element={<Placeholder title="قيد التطوير" />} />
 
                                                 </>
-                                            ) : role === 'company' ? (
-                                                <>
-                                                    <Route path="/" element={<FleetManagement />} />
-                                                    <Route path="/fleet" element={<FleetManagement />} />
-                                                    <Route path="/drivers" element={<DriverManagement />} />
-                                                    <Route path="/contracts" element={<DigitalContracts />} />
-                                                    <Route path="/profile" element={<ProfilePage />} />
-                                                    <Route path="/notifications" element={<NotificationsPage />} />
-                                                    <Route path="*" element={<Placeholder title="قيد التطوير" />} />
-
-                                                </>
-                                            ) : role === 'governorate' ? (
-                                                <>
-                                                    <Route path="/" element={<GovDashboard />} />
-                                                    <Route path="/fees" element={<GovDashboard />} />
-                                                    <Route path="/profile" element={<ProfilePage />} />
-                                                    <Route path="/notifications" element={<NotificationsPage />} />
-                                                    <Route path="*" element={<Placeholder title="قيد التطوير" />} />
-
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Route path="/" element={<Placeholder title={`لوحة تحكم ${role}`} />} />
-                                                    <Route path="*" element={<Placeholder title="قيد التطوير" />} />
-                                                </>
                                             )}
                                         </Routes>
                                     </DashboardLayout>
@@ -195,30 +157,8 @@ function App() {
                         />
                     ))}
 
-                    <Route
-                        path="/admin/*"
-                        element={
-                            <ProtectedRoute allowedRoles={['admin']}>
-                                <DashboardLayout>
-                                    <Routes>
-                                        <Route path="/" element={<AdminDashboard />} />
-                                        <Route path="/users" element={<AdminDashboard />} />
-                                        <Route path="/verification" element={<DriverVerification />} />
-                                        <Route path="/operations" element={<PlatformManagement />} />
-                                        <Route path="/reports" element={<AdminReports />} />
-                                        <Route path="/disputes" element={<DisputeResolution />} />
-                                        <Route path="/contracts" element={<DigitalContracts />} />
-                                        <Route path="/settings" element={<SystemSettings />} />
-                                        <Route path="/profile" element={<ProfilePage />} />
-                                        <Route path="/notifications" element={<NotificationsPage />} />
-                                        <Route path="*" element={<Placeholder title="قيد التطوير" />} />
-                                    </Routes>
-                                </DashboardLayout>
-                            </ProtectedRoute>
-                        }
-                    />
-
                     <Route path="/terms" element={<TermsPage />} />
+                    <Route path="/privacy" element={<PrivacyPage />} />
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="/faq" element={<FaqPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />

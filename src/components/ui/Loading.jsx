@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Truck, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
  * @param {string} className - Additional CSS classes.
  */
 export const Loading = ({ 
-    text = "جاري التحميل...", 
+    text = null, 
     fullScreen = false, 
     section = false, 
     minimal = false,
@@ -32,11 +32,11 @@ export const Loading = ({
 
     if (minimal) {
         return (
-            <div className={cn("flex items-center gap-2", className)}>
-                <motion.div animate={spinnerRotation}>
-                    <Loader2 className="h-4 w-4 text-brand-primary" />
+            <div className={cn("flex items-center justify-center gap-2", className)}>
+                <motion.div animate={spinnerRotation} className="flex items-center justify-center">
+                    <Loader2 className="h-5 w-5" />
                 </motion.div>
-                {text && <span className="text-xs font-bold text-slate-500">{text}</span>}
+                {text && <span className="text-sm font-bold">{text}</span>}
             </div>
         );
     }

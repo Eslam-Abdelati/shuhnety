@@ -1,13 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import {
-    Mail, Lock, Eye, EyeOff, User,
-    Shield, Box, Truck, Warehouse, CheckCircle2, ArrowLeft
-} from 'lucide-react'
+import { Eye, EyeOff, Truck } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useAuthStore } from '@/store/useAuthStore'
 import { cn } from '@/utils/cn'
@@ -40,8 +36,6 @@ export const LoginPage = () => {
 
     const onLoginSubmit = async (data) => {
         setIsLoading(true)
-
-
         const trimmedData = {
             ...data,
             email: data.email.trim()
@@ -53,13 +47,21 @@ export const LoginPage = () => {
 
             // extract data exactly as it comes from API (it might be nested in response.data)
             const apiData = response.data || response;
-            const { access_token, full_name, role: rawRole } = apiData;
+            const { access_token, isVerified, is_verified, role: rawRole } = apiData;
+            const verified = isVerified ?? is_verified;
 
-            // console.log('Logged in user data:', apiData);
+            if (!access_token && verified === false) {
+                toast.error('يجب تفعيل البريد الإلكتروني أولاً قبل تسجيل الدخول');
 
-            if (!access_token) {
-                console.error('Login failed: Token not found in response', response);
-                throw new Error('فشل تسجيل الدخول: لم يتم العثور على رمز الوصول');
+                setTimeout(() => {
+                    navigate('/verify-email', {
+                        state: {
+                            email: data.email.trim(),
+                            role: rawRole === 'client' ? 'customer' : rawRole
+                        }
+                    });
+                }, 2000);
+                return;
             }
 
             toast.success("تم تسجيل الدخول بنجاح")
@@ -83,153 +85,124 @@ export const LoginPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#fffcf8] font-cairo flex flex-col relative overflow-hidden" dir="rtl">
-            <div className="flex-1 flex items-center justify-center p-4 lg:p-12">
-                <div className="max-w-[1240px] w-full grid lg:grid-cols-2 gap-16 items-center">
-
-                    {/* Left Side: Visual Branding Card */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="hidden lg:flex flex-col items-center justify-center text-center space-y-10"
-                    >
-                        <motion.div
-                            animate={{ y: [0, -15, 0] }}
-                            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                            className="relative"
-                        >
-                            <div className="absolute -bottom-4 -left-4 -right-4 h-24 bg-brand-primary/20 blur-2xl rounded-full"></div>
-                            <div className="relative bg-white p-2.5 rounded-[3rem] shadow-2xl">
-                                <img
-                                    src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=800"
-                                    className="w-[480px] h-[360px] object-cover rounded-[2.5rem]"
-                                    alt="Logistics containers"
-                                />
-                            </div>
-                        </motion.div>
-
-                        <div className="space-y-4">
-                            <h2 className="text-[30px] font-bold text-brand-secondary tracking-tight"> سيطر على شحناتك بسهولة وذكاء </h2>
-                            <p className="text-[#57534d]  text-[16px]"> آلاف شركاء النقل مستعدين لخدمتك — اختر العرض المناسب وابدأ رحلتك فورًا. </p>
-
-                            <div className="pt-2 flex items-center justify-center gap-6">
-                                <span className="flex items-center gap-1.5 text-xs font-black text-brand-secondary bg-brand-secondary/5 px-3 py-1.5 rounded-full">
-                                    <Shield className="h-3.5 w-3.5" /> آمن
-                                </span>
-                                <span className="flex items-center gap-1.5 text-xs font-black text-brand-secondary bg-brand-secondary/5 px-3 py-1.5 rounded-full">
-                                    <Box className="h-3.5 w-3.5" /> سريع
-                                </span>
-                                <span className="flex items-center gap-1.5 text-xs font-black text-brand-secondary bg-brand-secondary/5 px-3 py-1.5 rounded-full">
-                                    <CheckCircle2 className="h-3.5 w-3.5" /> موثوق
-                                </span>
-                            </div>
+        <div className="min-h-screen flex flex-col md:flex-row w-full h-screen overflow-hidden font-cairo bg-white" dir="rtl">
+            {/* Form inputs side */}
+            <div className="w-full md:w-1/2 h-full flex flex-col justify-between p-6 sm:p-12 md:py-12 md:px-16 lg:py-16 lg:px-24 overflow-y-auto md:overflow-hidden bg-white">
+                {/* Top Logo / Navigation */}
+                <div className="flex items-center justify-between mb-8">
+                    <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity group">
+                        <div className="h-9 w-9 bg-brand-primary rounded-xl flex items-center justify-center text-white shadow-md shadow-brand-primary/25 transition-all duration-300 group-hover:rotate-[10deg] group-hover:scale-105">
+                            <Truck className="h-4 w-4" />
                         </div>
-                    </motion.div>
-
-                    {/* Right Side: Login Form Card */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.6 }}
-                        className="w-full max-w-[550px] mx-auto"
-                    >
-                        <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 p-8 md:p-12 relative overflow-hidden">
-
-                            <div className="text-center mb-10 group">
-                                <div className="inline-flex items-center justify-center h-16 w-16 bg-brand-primary rounded-2xl shadow-lg shadow-brand-primary/20 mb-4 text-white rotate-0 group-hover:rotate-4 transition-transform duration-500">
-                                    <Box className="h-9 w-9" />
-                                </div>
-                                <h2 className="text-[26px] font-bold text-[#1c1919]"> تسجيل الدخول</h2>
-                            </div>
-
-                            <form onSubmit={handleSubmit(onLoginSubmit)} className="space-y-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-[#57534d] block pr-1">البريد الإلكتروني</label>
-                                    <div className="relative group">
-                                        <input
-                                            {...register('email')}
-                                            placeholder="user@example.com"
-                                            className={cn(
-                                                "w-full h-14 pr-12 pl-4 rounded-2xl border-2 outline-none transition-all font-bold text-sm bg-slate-50/50",
-                                                errors.email ? "border-red-500 focus:border-red-500" : "border-slate-100 focus:border-brand-primary"
-                                            )}
-                                        />
-                                        <Mail className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-brand-primary" />
-                                    </div>
-                                    {errors.email && <p className="text-xs text-red-500 font-bold pr-1">{errors.email.message}</p>}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-[#57534d] block pr-1">كلمة المرور</label>
-                                    <div className="relative group">
-                                        <input
-                                            {...register('password')}
-                                            type={showPassword ? 'text' : 'password'}
-                                            placeholder="••••••••"
-                                            className={cn(
-                                                "w-full h-14 pr-12 pl-12 rounded-2xl border-2 outline-none transition-all font-bold text-sm bg-slate-50/50",
-                                                errors.password ? "border-red-500 focus:border-red-500" : "border-slate-100 focus:border-brand-primary"
-                                            )}
-                                        />
-                                        <Lock className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-brand-primary" />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-primary transition-colors"
-                                        >
-                                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                                        </button>
-                                    </div>
-                                    {errors.password && <p className="text-xs text-red-500 font-bold pr-1">{errors.password.message}</p>}
-                                </div>
-
-
-
-
-                                <Button
-                                    type="submit"
-                                    className={cn(
-                                        "w-full h-14 rounded-2xl text-base font-black transition-all shadow-lg",
-                                        "bg-brand-primary hover:bg-orange-600 text-white shadow-brand-primary/20",
-                                        isLoading && "opacity-80 cursor-not-allowed"
-                                    )}
-                                    disabled={isLoading}
-                                >
-                                    {isLoading ? (
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-5 w-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
-                                            <span>جاري تسجيل الدخول...</span>
-                                        </div>
-                                    ) : 'تسجيل الدخول'}
-                                </Button>
-
-                                <div className="text-center">
-                                    <Link to="/forgot-password" size="sm" className="text-sm font-bold text-brand-primary hover:underline">نسيت كلمة المرور؟</Link>
-                                </div>
-
-                                <div className="text-center">
-                                    <p className="text-sm font-bold text-[#57534d]">لا تملك حساب؟ <Link to="/register" className="text-brand-primary hover:text-orange-600 font-extrabold">سجل الآن</Link></p>
-                                </div>
-
-
-                            </form>
-
-                            <div className="mt-10 pt-8 border-t border-slate-100 flex items-center justify-center gap-8 text-[11px] font-bold text-[#57534d]">
-                                <span className="flex items-center gap-1.5"><Shield className="h-4 w-4" /> منصة لوجستية موثوقة</span>
-                                <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4" /> آمنة ومشفرة</span>
-                            </div>
-                        </div>
-                    </motion.div>
+                        <span className="text-xl font-black text-brand-secondary tracking-tight">شحنتي</span>
+                    </Link>
                 </div>
 
-                {/* Back Button */}
-                <Link to="/" className="absolute top-8 right-8 flex items-center gap-2 text-xs font-bold text-[#57534d] hover:text-brand-primary transition-all group">
-                    <span>العودة للرئيسية</span>
-                    <div className="h-8 w-8 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all">
-                        <ArrowLeft className="h-4 w-4 rotate-180" />
+                {/* Form Wrapper */}
+                <div className="my-auto max-w-sm w-full mx-auto space-y-8">
+                    <div className="space-y-3">
+                        <h1 className="text-3xl font-black text-slate-900">تسجيل الدخول</h1>
+                        <p className="text-sm text-slate-500 font-medium">مرحباً بك مجدداً! يرجى إدخال بياناتك للدخول لحسابك.</p>
                     </div>
-                </Link>
+
+                    <form onSubmit={handleSubmit(onLoginSubmit)} className="space-y-5">
+                        <div className="space-y-1.5 text-sm">
+                            <span className="text-slate-700 font-bold block">البريد الإلكتروني</span>
+                            <input
+                                {...register('email')}
+                                className={cn(
+                                    "block w-full text-sm rounded-xl border focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary px-4 py-3.5 transition-all bg-slate-50/50 hover:bg-slate-50",
+                                    errors.email ? "border-red-500" : "border-slate-200"
+                                )}
+                                placeholder="example@mail.com"
+                            />
+                            {errors.email && <span className="text-xs text-red-500 mt-1 block font-semibold">{errors.email.message}</span>}
+                        </div>
+
+                        <div className="space-y-1.5 text-sm relative">
+                            <span className="text-slate-700 font-bold block">كلمة المرور</span>
+                            <div className="relative">
+                                <input
+                                    {...register('password')}
+                                    type={showPassword ? 'text' : 'password'}
+                                    className={cn(
+                                        "block w-full text-sm rounded-xl border focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary pr-4 pl-12 py-3.5 transition-all bg-slate-50/50 hover:bg-slate-50",
+                                        errors.password ? "border-red-500" : "border-slate-200"
+                                    )}
+                                    placeholder="••••••••"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                >
+                                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                </button>
+                            </div>
+                            {errors.password && <span className="text-xs text-red-500 mt-1 block font-semibold">{errors.password.message}</span>}
+                        </div>
+
+                        <div className="text-left">
+                            <Link
+                                className="text-xs font-bold text-brand-primary hover:underline"
+                                to="/forgot-password"
+                            >
+                                نسيت كلمة المرور؟
+                            </Link>
+                        </div>
+
+                        <Button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full h-14 rounded-xl text-sm font-black text-white bg-brand-secondary hover:bg-black transition-all shadow-xl shadow-brand-secondary/15 flex items-center justify-center cursor-pointer"
+                        >
+                            {isLoading ? <Loading minimal={true} className="text-white mx-auto" /> : 'تسجيل الدخول'}
+                        </Button>
+                    </form>
+
+                    <div className="text-center pt-2">
+                        <p className="text-sm font-medium text-slate-500">
+                            ليس لديك حساب؟{" "}
+                            <Link
+                                className="font-bold text-brand-primary hover:underline"
+                                to="/register"
+                            >
+                                إنشاء حساب جديد
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+
+                {/* Footer Copyright */}
+                <div className="text-center pt-8 text-[11px] text-slate-400 font-bold">
+                    © {new Date().getFullYear()} شحنتي. جميع الحقوق محفوظة.
+                </div>
+            </div>
+
+            {/* Split Screen Image side */}
+            <div className="hidden md:block w-1/2 h-full relative bg-slate-900">
+                <img
+                    aria-hidden="true"
+                    className="object-cover w-full h-full opacity-70 select-none pointer-events-none"
+                    src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1200"
+                    alt="Shahnti Logistics split screen image"
+                />
+                {/* Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-brand-secondary/80 to-slate-900/50 mix-blend-multiply"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(235,106,29,0.15)_0%,transparent_60%)]"></div>
+
+                {/* Floating Brand Text */}
+                <div className="absolute bottom-24 right-20 left-20 text-white space-y-4">
+                    <span className="inline-block px-3 py-1 rounded-full bg-white/10 text-white text-[10px] font-black tracking-widest uppercase border border-white/10 backdrop-blur-md">
+                        سرعة 🛡️ أمان 🛡️ شفافية
+                    </span>
+                    <h2 className="text-4xl font-black leading-tight drop-shadow-md">
+                        طريقك الأسرع لتوصيل <br /> شحناتك بأمان وثقة
+                    </h2>
+                    <p className="text-slate-200/80 font-bold max-w-sm leading-relaxed text-sm">
+                        منصة شحنتي توفر لك البيئة الرقمية الأكثر كفاءة للتفاوض المباشر وتتبع شحنتك لحظة بلحظة.
+                    </p>
+                </div>
             </div>
         </div>
     )

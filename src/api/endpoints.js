@@ -48,6 +48,6 @@ export const API_ENDPOINTS = {
     },
     NOTIFICATIONS: {
         GET_USER: '/notifications/getUserNotifications',
-        GET_DETAILS: (id) => `/notifications/${id}`,
+        MARK_AS_READ: (id) => `/notifications/${id}`,
     },
 };

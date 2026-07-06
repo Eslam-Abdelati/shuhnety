@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { HashLink } from 'react-router-hash-link'
 import { Truck, ChevronLeft, Globe, Heart } from 'lucide-react'
 
@@ -41,7 +41,7 @@ export const SimpleFooter = () => {
                         <h5 className="font-black text-brand-primary tracking-widest uppercase text-xs">الدعم والمساعدة</h5>
                         <ul className="space-y-4 text-sm text-white/60 font-bold">
                             <li><Link to="/faq" className="hover:text-white transition-colors">الأسئلة الشائعة</Link></li>
-                            {/* <li><a href="#" className="hover:text-white transition-colors">سياسة الخصوصية</a></li> */}
+                            <li><Link to="/privacy" className="hover:text-white transition-colors">سياسة الاستخدام والخصوصية</Link></li>
                             <li><Link to="/terms" className="hover:text-white transition-colors"> الشروط والأحكام</Link></li>
                             <li><Link to="/contact" className="hover:text-white transition-colors">تواصل معنا</Link></li>
                         </ul>

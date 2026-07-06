@@ -238,9 +238,8 @@ export const ContactPage = () => {
                                             className="h-16 px-16 rounded-2xl bg-brand-primary hover:bg-orange-600 font-black text-lg shadow-xl shadow-brand-primary/20 transition-all hover:-translate-y-1 disabled:opacity-70 disabled:cursor-not-allowed group"
                                         >
                                             {isLoading ? (
-                                                <div className="flex items-center gap-2">
-                                                    <Loader2 className="h-5 w-5 animate-spin" />
-                                                    جاري الإرسال...
+                                                <div className="flex items-center justify-center">
+                                                    <Loader2 className="h-6 w-6 animate-spin" />
                                                 </div>
                                             ) : (
                                                 'إرسال'

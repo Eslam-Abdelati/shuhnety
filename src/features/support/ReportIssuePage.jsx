@@ -238,8 +238,12 @@ export const ReportIssuePage = () => {
                                     )}
                                 </div>
 
-                                <Button type="submit" disabled={submitting} className="w-full h-15 bg-slate-900 text-white rounded-2xl font-black shadow-xl shadow-slate-900/20">
-                                    {submitting ? "جاري الإرسال..." : "إرسال البلاغ"}
+                                <Button type="submit" disabled={submitting} className="w-full h-15 bg-slate-900 text-white rounded-2xl font-black shadow-xl shadow-slate-900/20 flex items-center justify-center">
+                                    {submitting ? (
+                                        <div className="flex items-center justify-center">
+                                            <Loader2 className="h-6 w-6 animate-spin text-white" />
+                                        </div>
+                                    ) : "إرسال البلاغ"}
                                 </Button>
                             </form>
                         </CardContent>

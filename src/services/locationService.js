@@ -1,4 +1,4 @@
-﻿import axiosClient from "../api/axiosClient";
+import axiosClient from "../api/axiosClient";
 import { API_ENDPOINTS } from "../api/endpoints";
 
 export const locationService = {
@@ -6,28 +6,37 @@ export const locationService = {
    * جلب جميع المحافظات
    */
   getGovernorates: async () => {
-    const response = await axiosClient.get(API_ENDPOINTS.LOCATION.GOVERNORATES);
-    // console.log('Governorates Raw Response:', response.data);
+    try {
+      const response = await axiosClient.get(API_ENDPOINTS.LOCATION.GOVERNORATES);
 
-    // استخراج المصفوفة بشكل مرن جداً
-    if (Array.isArray(response.data)) return response.data;
-    if (Array.isArray(response.data?.data)) return response.data.data;
-    if (Array.isArray(response.data?.governorates)) return response.data.governorates;
+      if (Array.isArray(response.data)) return response.data;
+      if (Array.isArray(response.data?.data)) return response.data.data;
+      if (Array.isArray(response.data?.data?.data)) return response.data.data.data;
+      if (Array.isArray(response.data?.governorates)) return response.data.governorates;
+      if (Array.isArray(response.data?.data?.governorates)) return response.data.data.governorates;
 
-    return []; // إرجاع مصفوفة فارغة كحمابة بدلاً من undefined
+      return [];
+    } catch (error) {
+      console.error("Error fetching governorates:", error);
+      return [];
+    }
   },
 
-  /**
-   * جلب المدن بناءً على معرف المحافظة
-   */
   getCities: async (governorateId) => {
-    const response = await axiosClient.get(API_ENDPOINTS.LOCATION.CITIES(governorateId));
+    try {
+      const response = await axiosClient.get(API_ENDPOINTS.LOCATION.CITIES(governorateId));
 
-    if (Array.isArray(response.data)) return response.data;
-    if (Array.isArray(response.data?.data)) return response.data.data;
-    if (Array.isArray(response.data?.cities)) return response.data.cities;
+      if (Array.isArray(response.data)) return response.data;
+      if (Array.isArray(response.data?.data)) return response.data.data;
+      if (Array.isArray(response.data?.data?.data)) return response.data.data.data;
+      if (Array.isArray(response.data?.cities)) return response.data.cities;
+      if (Array.isArray(response.data?.data?.cities)) return response.data.data.cities;
 
-    return [];
+      return [];
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+      return [];
+    }
   }
 };
 

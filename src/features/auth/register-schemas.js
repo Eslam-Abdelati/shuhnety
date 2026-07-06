@@ -1,53 +1,80 @@
-﻿import * as z from 'zod'
+import * as z from 'zod'
 
-// --- Step 2: Personal Info Base ---
-export const step2BaseSchema = z.object({
-    fullName: z.string().min(5, 'الأسم الكامل يجب أن يكون أكثر من 5 أحرف'),
-    email: z.string().email('بريد إلكتروني غير صالح'),
-    phone: z.string().regex(/^01[0125]\d{8}$/, 'رقم هاتف مصري غير صالح'),
-    password: z.string().min(8, 'كلمة المرور يجب أن لا تقل عن 8 أحرف'),
-})
+// --- Enums for Backend ---
+export const UserRole = {
+    CLIENT: 'client',
+    DRIVER: 'driver',
+};
 
-// --- Driver Extensions ---
-export const driverStep1Schema = step2BaseSchema.extend({
-    nationalId: z.string().length(14, 'الرقم القومي يجب أن يكون 14 رقم'),
-    dob: z.string().min(1, 'تاريخ الميلاد مطلوب').refine(date => {
-        const age = new Date().getFullYear() - new Date(date).getFullYear()
-        return age >= 21
-    }, 'يجب أن يكون عمر الكابتن 21 سنة على الأقل'),
-    personalPhoto: z.string().min(1, 'الصورة الشخصية مطلوبة'),
-})
+// --- Base Personal Info ---
+export const personalInfoSchema = z.object({
+    fullName: z.string().trim().min(5, 'الأسم الكامل يجب أن يكون أكثر من 5 أحرف'),
+    email: z.string().trim().email('بريد إلكتروني غير صالح'),
+    phone: z.string().trim().regex(/^01[0125]\d{8}$/, 'رقم هاتف مصري غير صالح'),
+    password: z.string()
+        .min(8, 'كلمة المرور يجب أن لا تقل عن 8 أحرف')
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/,
+            'يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل وتشمل حرف كبير وصغير ورقم ورمز خاص'),
+    confirmPassword: z.string().min(8, 'تأكيد كلمة المرور مطلوب'),
+    birthDate: z.string().min(1, 'تاريخ الميلاد مطلوب'),
+}).refine(data => data.password === data.confirmPassword, {
+    message: "كلمات المرور غير متطابقة",
+    path: ["confirmPassword"]
+});
 
-export const driverStep2Schema = z.object({
+// --- Address Schema ---
+export const addressSchema = z.object({
     governorate: z.string().min(1, 'المحافظة مطلوبة'),
-    city: z.string().min(2, 'المدينة مطلوبة'),
+    city: z.string().min(1, 'المدينة مطلوبة'),
     addressDetail: z.string().min(10, 'العنوان يجب أن يكون مفصلاً'),
-    licenseNumber: z.string().min(5, 'رقم الرخصة مطلوب'),
+});
+
+// --- Driver Specific (Personal Info Extension) ---
+export const driverPersonalInfoSchema = personalInfoSchema.extend({
+    nationalId: z.string().regex(/^\d{14}$/, 'الرقم القومي يجب أن يكون 14 رقم'),
+    licenseNumber: z.string().min(5, 'رقم الرخصة غير صالح'),
     licenseExpiry: z.string().min(1, 'تاريخ انتهاء الرخصة مطلوب'),
-    licenseFront: z.string().min(1, 'صورة وجه الرخصة مطلوبة'),
-    licenseBack: z.string().min(1, 'صورة ظهر الرخصة مطلوبة'),
-    vehicleType: z.enum(['ربع نقل', 'نصف نقل', 'سزوكي/فان', 'ملاكي', 'أخرى']),
-    vehicleBrand: z.string().min(2, 'ماركة المركبة مطلوبة'),
-    vehicleModel: z.string().min(1, 'موديل المركبة مطلوب'),
-    vehicleColor: z.string().min(2, 'لون المركبة مطلوب'),
-    plateNumber: z.string().min(3, 'رقم اللوحة مطلوب'),
-    vehicleLicenseExpiry: z.string().min(1, 'تاريخ انتهاء رخصة المركبة مطلوب'),
-    vehicleLicenseFront: z.string().min(1, 'صورة وجه رخصة المركبة مطلوبة'),
-    vehicleLicenseBack: z.string().min(1, 'صورة ظهر رخصة المركبة مطلوبة'),
-    agreeCorrectInfo: z.boolean().refine(val => val === true, 'يجب الإقرار بصحة البيانات'),
-    agreeTerms: z.boolean().refine(val => val === true, 'يجب الموافقة على الشروط'),
-})
+    driverPhoto: z.any().refine(v => !!v, 'صورة الكابتن مطلوبة'),
+    licenseFront: z.any().refine(v => !!v, 'صورة وجه الرخصة مطلوبة'),
+    licenseBack: z.any().refine(v => !!v, 'صورة ظهر الرخصة مطلوبة'),
+    nationalIdFront: z.any().refine(v => !!v, 'صورة وجه البطاقة مطلوبة'),
+    nationalIdBack: z.any().refine(v => !!v, 'صورة ظهر البطاقة مطلوبة'),
+    ...addressSchema.shape
+}).refine(data => {
+    const birth = new Date(data.birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
+    return age >= 21;
+}, {
+    message: 'يجب أن يكون العمر 21 عاماً على الأقل للكباتن',
+    path: ['birthDate']
+});
 
-// --- Customer Extensions ---
-export const customerSchema = z.object({
-    governorate: z.string().min(1, 'المحافظة مطلوبة'),
-    city: z.string().min(2, 'المدينة مطلوبة'),
-    addressDetail: z.string().min(10, 'العنوان يجب أن يكون مفصلاً'),
-    agreeCorrectInfo: z.boolean().refine(val => val === true, 'يجب الإقرار بصحة البيانات'),
-    agreeTerms: z.boolean().refine(val => val === true, 'يجب الموافقة على الشروط'),
-})
+// --- Driver Vehicle Details ---
+export const vehicleSchema = z.object({
+    vehicleType: z.string().min(1, 'نوع المركبة مطلوب'),
+    vehicleTypeOther: z.string().optional(),
+    vehicleBrand: z.string().min(1, 'ماركة المركبة مطلوبة'),
+    vehicleModel: z.string().min(1, 'الموديل مطلوب'),
+    vehicleColor: z.string().min(1, 'اللون مطلوب'),
+    plateNumber: z.string().min(1, 'رقم اللوحة مطلوب'),
+    vehicleLicenseExpiry: z.string().min(1, 'تاريخ انتهاء الرخصة مطلوب'),
+    vehicleLicensePhoto: z.any().refine(v => !!v, 'صورة وجه رخصة المركبة مطلوبة'),
+    vehicleLicensePhotoBack: z.any().refine(v => !!v, 'صورة ظهر رخصة المركبة مطلوبة'),
+    agreeCorrectInfo: z.boolean().refine(v => v === true, 'يجب الإقرار بصحة البيانات'),
+    agreeTerms: z.boolean().refine(v => v === true, 'يجب الموافقة على الشروط الأتفاقية'),
+}).refine(data => {
+    if (data.vehicleType === 'أخرى' && !data.vehicleTypeOther) return false;
+    return true;
+}, { message: "يرجى إدخال نوع المركبة", path: ["vehicleTypeOther"] });
 
-// --- Final Combined Schemas ---
-export const finalDriverSchema = driverStep1Schema.merge(driverStep2Schema)
-export const finalCustomerSchema = step2BaseSchema.merge(customerSchema)
+// --- Combined Driver Schema ---
+export const finalDriverSchema = driverPersonalInfoSchema.merge(vehicleSchema);
 
+// --- Client Schema ---
+export const finalCustomerSchema = personalInfoSchema.extend({
+    ...addressSchema.shape,
+    agreeCorrectInfo: z.boolean().refine(v => v === true, 'يجب الإقرار بصحة البيانات'),
+    agreeTerms: z.boolean().refine(v => v === true, 'يجب الموافقة على الشروط الأتفاقية'),
+});

@@ -8,7 +8,6 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { ar } from 'date-fns/locale'
 import { useState, useEffect, useRef } from 'react'
 import { shipmentService } from '@/services/shipmentService'
-import { socketService } from '@/services/socketService'
 import { getGoodsTypeLabel, getStatusStyles } from '@/utils/shipmentUtils'
 import DashboardStats from './components/DashboardStats'
 
@@ -80,20 +79,7 @@ export const CustomerDashboard = () => {
         fetchInitialData()
     }, [])
 
-    useEffect(() => {
-        const handleUpdates = (data) => {
-            console.log('📡 [Dashboard] Real-time update received:', data);
-            fetchInitialData();
-        };
 
-        const events = ['new_bid', 'bid_received', 'notification', 'new_notification'];
-
-        events.forEach(event => socketService.on(event, handleUpdates));
-
-        return () => {
-            events.forEach(event => socketService.off(event, handleUpdates));
-        };
-    }, []);
 
     return (
         <div className="space-y-10 font-cairo">

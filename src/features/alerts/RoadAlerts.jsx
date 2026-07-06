@@ -158,80 +158,87 @@ export const RoadAlerts = () => {
                             <Clock className="h-10 w-10 text-slate-200 mx-auto mb-4" />
                             <p className="text-slate-400 font-bold">جاري تحميل التنبيهات النشطة...</p>
                         </div>
-                    ) : (activeAlerts.length > 0 ? activeAlerts : alerts).map((alert, idx) => {
-                        const typeInfo = alertTypes.find(t => t.id === alert.type) || { name: alert.type || 'تنبيه', icon: AlertTriangle, color: 'bg-slate-50 text-slate-600' };
+                    ) : activeAlerts.length > 0 ? (
+                        activeAlerts.map((alert, idx) => {
+                            const typeInfo = alertTypes.find(t => t.id === alert.type) || { name: alert.type || 'تنبيه', icon: AlertTriangle, color: 'bg-slate-50 text-slate-600' };
 
-                        return (
-                            <Card key={alert.id || idx} className="group hover:-translate-y-1 transition-all">
-                                <CardContent className="p-6">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className={cn(
-                                                "h-12 w-12 rounded-2xl flex items-center justify-center transition-colors",
-                                                typeInfo.color
-                                            )}>
-                                                <typeInfo.icon className="h-6 w-6" />
+                            return (
+                                <Card key={alert.id || idx} className="group hover:-translate-y-1 transition-all">
+                                    <CardContent className="p-6">
+                                        <div className="flex justify-between items-start mb-6">
+                                            <div className="flex items-center gap-4">
+                                                <div className={cn(
+                                                    "h-12 w-12 rounded-2xl flex items-center justify-center transition-colors",
+                                                    typeInfo.color
+                                                )}>
+                                                    <typeInfo.icon className="h-6 w-6" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-black text-lg text-slate-900">{typeInfo.name}</h4>
+                                                    <p className="text-xs text-slate-500 font-bold flex items-center gap-1">
+                                                        <MapPin className="h-3.5 w-3.5" />
+                                                        {alert.locationText || alert.location}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4 className="font-black text-lg text-slate-900">{typeInfo.name}</h4>
-                                                <p className="text-xs text-slate-500 font-bold flex items-center gap-1">
-                                                    <MapPin className="h-3.5 w-3.5" />
-                                                    {alert.locationText || alert.location}
+                                            <div className="text-left">
+                                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-tight">
+                                                    {(() => {
+                                                        const dateObj = alert.createDateTime ? new Date(alert.createDateTime) : (alert.createdAt ? new Date(alert.createdAt) : null);
+                                                        if (!dateObj && alert.time) return alert.time;
+                                                        if (!dateObj) return 'الآن';
+
+                                                        const d = dateObj.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' });
+                                                        const t = dateObj.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                                                        return `تاريخ ${d} - وقت ${t}`;
+                                                    })()}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between pt-6 border-t border-slate-50">
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-xl">
+                                                    <ThumbsUp className="h-3.5 w-3.5" />
+                                                    <span>{alert.reliabilityScore || alert.reliability || 100}% موثوقية</span>
+                                                </div>
+                                                <p className="text-xs font-bold text-brand-primary">
+                                                    بواسطة: {typeof alert.reporter === 'object' ? (alert.reporter?.full_name || 'نظام شحنتي') : (alert.reporter || 'نظام شحنتي')}
                                                 </p>
                                             </div>
-                                        </div>
-                                        <div className="text-left">
-                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-tight">
+                                            <div className="flex gap-2">
                                                 {(() => {
-                                                    const dateObj = alert.createDateTime ? new Date(alert.createDateTime) : (alert.createdAt ? new Date(alert.createdAt) : null);
-                                                    if (!dateObj && alert.time) return alert.time;
-                                                    if (!dateObj) return 'الآن';
+                                                    const isMyAlert = alert.reporterId === user?.id ||
+                                                        (typeof alert.reporter === 'object' && alert.reporter?.id === user?.id) ||
+                                                        (alert.userId === user?.id);
 
-                                                    const d = dateObj.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' });
-                                                    const t = dateObj.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-                                                    return `تاريخ ${d} - وقت ${t}`;
+                                                    if (isMyAlert) return null;
+
+                                                    return (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="gap-2 text-slate-400 cursor-pointer hover:text-brand-primary transition-all"
+                                                            onClick={() => handleConfirmAlert(alert.id)}
+                                                            title="تأكيد صحة التنبيه"
+                                                        >
+                                                            <MessageSquare className="h-4 w-4" />
+                                                            <span>تأكيد {alert.confirmationsCount > 0 ? `(${alert.confirmationsCount})` : ''}</span>
+                                                        </Button>
+                                                    );
                                                 })()}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center justify-between pt-6 border-t border-slate-50">
-                                        <div className="flex items-center gap-4">
-                                            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-xl">
-                                                <ThumbsUp className="h-3.5 w-3.5" />
-                                                <span>{alert.reliabilityScore || alert.reliability || 100}% موثوقية</span>
                                             </div>
-                                            <p className="text-xs font-bold text-brand-primary">
-                                                بواسطة: {typeof alert.reporter === 'object' ? (alert.reporter?.full_name || 'نظام شحنتي') : (alert.reporter || 'نظام شحنتي')}
-                                            </p>
                                         </div>
-                                        <div className="flex gap-2">
-                                            {(() => {
-                                                const isMyAlert = alert.reporterId === user?.id ||
-                                                    (typeof alert.reporter === 'object' && alert.reporter?.id === user?.id) ||
-                                                    (alert.userId === user?.id);
-
-                                                if (isMyAlert) return null;
-
-                                                return (
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        className="gap-2 text-slate-400 cursor-pointer hover:text-brand-primary transition-all"
-                                                        onClick={() => handleConfirmAlert(alert.id)}
-                                                        title="تأكيد صحة التنبيه"
-                                                    >
-                                                        <MessageSquare className="h-4 w-4" />
-                                                        <span>تأكيد {alert.confirmationsCount > 0 ? `(${alert.confirmationsCount})` : ''}</span>
-                                                    </Button>
-                                                );
-                                            })()}
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        );
-                    })}
+                                    </CardContent>
+                                </Card>
+                            );
+                        })
+                    ) : (
+                        <div className="p-12 text-center bg-white rounded-[2.5rem] border-2 border-dashed border-slate-100">
+                            <ShieldAlert className="h-10 w-10 text-slate-200 mx-auto mb-4" />
+                            <p className="text-slate-400 font-bold">لا توجد تنبيهات نشطة حالياً على الطريق</p>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -297,7 +304,11 @@ export const RoadAlerts = () => {
                                         onClick={handleSubmitAlert}
                                         disabled={isSubmitting}
                                     >
-                                        {isSubmitting ? 'جاري الإرسال...' : 'إرسال التنبيه الآن'}
+                                        {isSubmitting ? (
+                                            <div className="flex items-center justify-center">
+                                                <AlertTriangle className="h-6 w-6 animate-spin text-white" />
+                                            </div>
+                                        ) : 'إرسال التنبيه الآن'}
                                     </Button>
                                 </div>
                             </div>

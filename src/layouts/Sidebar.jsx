@@ -41,28 +41,6 @@ const navigation = {
         { name: 'الدعم الفني', href: '/driver/report', icon: MessageSquare },
         { name: 'الإعدادات', href: '/driver/settings', icon: Settings },
     ],
-    company: [
-        { name: 'الأسطول', href: '/company', icon: Truck },
-        { name: 'الكباتن', href: '/company/drivers', icon: Users },
-        { name: 'العقود الرقمية', href: '/company/contracts', icon: ShieldCheck },
-        { name: 'التقارير', href: '/company/reports', icon: BarChart3 },
-        { name: 'الإعدادات', href: '/company/settings', icon: Settings },
-    ],
-    governorate: [
-        { name: 'المراقبة', href: '/gov', icon: BarChart3 },
-        { name: 'إدارة الرسوم', href: '/gov/fees', icon: Wallet },
-        { name: 'التحقق من الإيصالات', href: '/gov/verification', icon: ShieldCheck },
-    ],
-    admin: [
-        { name: 'نظرة عامة', href: '/admin', icon: LayoutDashboard },
-        { name: 'المستخدمين', href: '/admin/users', icon: Users },
-        { name: 'مراجعة الكباتن', href: '/admin/verification', icon: ShieldCheck },
-        { name: 'إدارة العمليات', href: '/admin/operations', icon: Truck },
-        { name: 'التقارير', href: '/admin/reports', icon: BarChart3 },
-        { name: 'النزاعات', href: '/admin/disputes', icon: AlertTriangle },
-        { name: 'العقود', href: '/admin/contracts', icon: FileSearch },
-        { name: 'الإعدادات', href: '/admin/settings', icon: Settings },
-    ],
 }
 
 export const Sidebar = () => {
@@ -70,8 +48,7 @@ export const Sidebar = () => {
     const { isSidebarOpen, closeSidebar } = useUIStore()
     const location = useLocation()
 
-    const currentRole = location.pathname.startsWith('/admin') ? 'admin' : role
-    const links = navigation[currentRole] || []
+    const links = navigation[role] || []
 
     return (
         <aside className={cn(

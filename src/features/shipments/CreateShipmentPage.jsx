@@ -18,7 +18,8 @@ import {
     Upload,
     Camera,
     Plus,
-    X
+    X,
+    Loader2
 } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
@@ -361,9 +362,21 @@ export const CreateShipmentPage = () => {
                 <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-[24px] font-black text-[#1c1919] dark:text-white mb-2 tracking-tight">
                     {isEditMode ? `تعديل شحنة: ${displayId}` : 'إنشاء شحنة جديدة'}
                 </h1>
-                <p className="text-sm sm:text-base lg:text-md text-[#57534d] dark:text-slate-400 font-bold">
+                <p className="text-sm sm:text-base lg:text-md text-[#57534d] dark:text-slate-400 font-bold mb-6">
                     {isEditMode ? 'يمكنك تعديل تفاصيل شحنتك قبل قبول أي عرض' : 'يرجى إدخال كافة بيانات الشحنة بدقة ليتمكن الكباتن من تقديم أفضل العروض'}
                 </p>
+                
+                <div className="bg-brand-primary/5 border border-brand-primary/10 p-5 rounded-[2rem] flex items-start gap-4">
+                    <div className="h-10 w-10 bg-brand-primary/10 rounded-2xl flex items-center justify-center shrink-0">
+                        <Info className="h-5 w-5 text-brand-primary" />
+                    </div>
+                    <div className="space-y-1">
+                        <h5 className="font-black text-brand-primary text-sm">سياسة الشحن للمنصة</h5>
+                        <p className="text-xs font-bold text-slate-500 leading-relaxed">
+                            منصتنا متخصصة في دعم محافظة الوادي الجديد. يجب أن تكون نقطة الانطلاق أو نقطة الوصول هي "الوادي الجديد".
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <Card className="mt-6 border-slate-100/50 shadow-sm rounded-[2.5rem] overflow-hidden">
@@ -542,20 +555,7 @@ export const CreateShipmentPage = () => {
                             </div>
 
                             {/* --- المسار والعناوين --- */}
-                            <div className="pt-8 border-t border-slate-100 space-y-8">
-                                <div className="bg-brand-primary/5 border border-brand-primary/10 p-5 rounded-[2rem] flex items-start gap-4">
-                                    <div className="h-10 w-10 bg-brand-primary/10 rounded-2xl flex items-center justify-center shrink-0">
-                                        <Info className="h-5 w-5 text-brand-primary" />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <h5 className="font-black text-brand-primary text-sm">سياسة الشحن للمنصة</h5>
-                                        <p className="text-xs font-bold text-slate-500 leading-relaxed">
-                                            منصتنا متخصصة في دعم محافظة الوادي الجديد. يجب أن تكون نقطة الانطلاق أو نقطة الوصول هي "الوادي الجديد".
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-6">
+                            <div className="pt-8 border-t border-slate-100 space-y-8">                                <div className="space-y-6">
                                     <div className="p-6 bg-emerald-50/50 rounded-[2rem] border border-emerald-100/50">
                                         <h4 className="flex items-center gap-2 font-black text-emerald-700 mb-6 px-1">
                                             <div className="h-8 w-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center">
@@ -824,8 +824,16 @@ export const CreateShipmentPage = () => {
                                 )}
                                 onClick={handlePublish}
                             >
-                                {isEditMode ? 'حفظ التعديلات' : 'نشر الشحنة الآن'}
-                                {isEditMode ? <CheckCircle2 className="h-5 w-5" /> : <Truck className="h-5 w-5" />}
+                                {isSubmitting ? (
+                                    <div className="flex items-center justify-center">
+                                        <Loader2 className="h-6 w-6 animate-spin text-white" />
+                                    </div>
+                                ) : (
+                                    <>
+                                        {isEditMode ? 'حفظ التعديلات' : 'نشر الشحنة الآن'}
+                                        {isEditMode ? <CheckCircle2 className="h-5 w-5" /> : <Truck className="h-5 w-5" />}
+                                    </>
+                                )}
                             </Button>
                         )}
                     </div>

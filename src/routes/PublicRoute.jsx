@@ -7,9 +7,15 @@ import { useAuthStore } from '../store/useAuthStore'
  * Redirects them back to their respective dashboard.
  */
 export const PublicRoute = ({ children }) => {
-    const { isAuthenticated, role } = useAuthStore()
+    const { isAuthenticated, role, user } = useAuthStore()
 
     if (isAuthenticated && role) {
+        // If user is not verified, they should stay on public pages (like verify-email)
+        const isVerified = user?.is_verified ?? user?.isVerified;
+        if (isVerified === false) {
+            return children
+        }
+
         // Redirect to their dashboard home based on role
         const validRoles = ['customer', 'driver', 'company', 'governorate', 'admin'];
         if (validRoles.includes(role)) {

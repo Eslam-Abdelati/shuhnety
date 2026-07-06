@@ -157,10 +157,25 @@ export const authService = {
     getProfile: async () => {
         try {
             const response = await axiosClient.get(API_ENDPOINTS.USER.PROFILE);
+            console.log('Profile API Response:', response.data);
             return response.data;
         } catch (error) {
             console.error('Get profile error:', error);
             throw new Error(error.response?.data?.message || 'فشل في جلب بيانات الملف الشخصي');
+        }
+    },
+
+    /**
+     * Update current user profile
+     * @param {Object} profileData 
+     */
+    updateProfile: async (profileData) => {
+        try {
+            const response = await axiosClient.put(API_ENDPOINTS.USER.UPDATE_PROFILE, profileData);
+            return response.data;
+        } catch (error) {
+            console.error('Update profile error:', error);
+            throw new Error(error.response?.data?.message || 'فشل تحديث بيانات الملف الشخصي');
         }
     },
 

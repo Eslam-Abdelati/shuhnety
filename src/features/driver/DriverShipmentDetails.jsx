@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     MapPin, Truck, Box, Calendar, Weight, Package,
     Maximize, Navigation, CheckCircle2, ShieldCheck,
-    ArrowRight, AlertCircle, Phone, Clock, ChevronLeft, Map, Info, Lock, TrendingUp
+    ArrowRight, AlertCircle, Phone, Clock, ChevronLeft, Map, Info, Lock, TrendingUp, Loader2
 } from 'lucide-react';
 import { Loading } from '@/components/ui/Loading';
 import {
@@ -803,7 +803,11 @@ export const DriverShipmentDetails = () => {
                                         disabled={isConfirmingDelivery || otpValue.length < 4}
                                         className="w-full h-14 bg-emerald-600 text-white rounded-xl font-black"
                                     >
-                                        {isConfirmingDelivery ? "جاري التأكيد..." : "تأكيد واستلام الأرباح"}
+                                        {isConfirmingDelivery ? (
+                                            <div className="flex items-center justify-center">
+                                                <Loader2 className="h-6 w-6 animate-spin text-white" />
+                                            </div>
+                                        ) : "تأكيد واستلام الأرباح"}
                                     </Button>
                                     <Button
                                         variant="ghost"

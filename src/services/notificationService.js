@@ -5,10 +5,12 @@ export const notificationService = {
     /**
      * Get all notifications for the authenticated user
      */
-    getUserNotifications: async () => {
+    getUserNotifications: async (isRead = null) => {
         try {
-            const response = await axiosClient.get(API_ENDPOINTS.NOTIFICATIONS.GET_USER);
+            const params = isRead !== null ? { isRead } : {};
+            const response = await axiosClient.get(API_ENDPOINTS.NOTIFICATIONS.GET_USER, { params });
             return response.data;
+
         } catch (error) {
             console.error('Get user notifications error:', error.response?.data || error.message);
             throw new Error(error.response?.data?.message || 'فشل في تحميل الإشعارات');
@@ -16,17 +18,15 @@ export const notificationService = {
     },
 
     /**
-     * Get details of a specific notification by its ID
+     * Mark a specific notification as read
      */
-    getNotificationDetail: async (id) => {
+    markAsRead: async (id) => {
         try {
-            const response = await axiosClient.get(API_ENDPOINTS.NOTIFICATIONS.GET_DETAILS(id));
-            console.log(response.data);
-
+            const response = await axiosClient.patch(API_ENDPOINTS.NOTIFICATIONS.MARK_AS_READ(id));
             return response.data;
         } catch (error) {
-            console.error('Get notification detail error:', error.response?.data || error.message);
-            throw new Error(error.response?.data?.message || 'فشل في تحميل تفاصيل الإشعار');
+            console.error('Mark notification as read error:', error.response?.data || error.message);
+            throw new Error(error.response?.data?.message || 'فشل في تحديث حالة الإشعار');
         }
     }
 };

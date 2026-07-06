@@ -151,8 +151,7 @@ const driverStep2Schema = z.object({
     vehicleLicenseExpiry: z.string().min(1, 'تاريخ انتهاء الرخصة مطلوب'),
     vehicleLicensePhoto: z.any().refine(v => !!v, 'صورة وجه رخصة المركبة مطلوبة'),
     vehicleLicensePhotoBack: z.any().refine(v => !!v, 'صورة ظهر رخصة المركبة مطلوبة'),
-    agreeCorrectInfo: z.boolean().refine(v => v === true, 'يجب الإقرار بصحة البيانات'),
-    agreeTerms: z.boolean().refine(v => v === true, 'يجب الموافقة على الشروط الأتفاقية'),
+    agreeTerms: z.boolean().refine(v => v === true, 'يجب قبول الشروط والأحكام العامة وسياسة الاستخدام والخصوصية'),
 }).refine(data => {
     if (data.vehicleType === 'أخرى' && !data.vehicleTypeOther) return false;
     return true;
@@ -161,8 +160,7 @@ const driverStep2Schema = z.object({
 const finalDriverSchema = driverStep1Schema.merge(driverStep2Schema)
 const finalCustomerSchema = customerStep1Schema.extend({
     ...addressSchema.shape,
-    agreeCorrectInfo: z.boolean().refine(v => v === true, 'يجب الإقرار بصحة البيانات'),
-    agreeTerms: z.boolean().refine(v => v === true, 'يجب الموافقة على الشروط الأتفاقية'),
+    agreeTerms: z.boolean().refine(v => v === true, 'يجب قبول الشروط والأحكام العامة وسياسة الاستخدام والخصوصية'),
 })
 
 const STEPS = ['نوع الحساب', 'المعلومات الشخصية', 'تفاصيل إضافية']
@@ -171,7 +169,9 @@ export const RegisterPage = () => {
     const [searchParams] = useSearchParams()
     const initialRole = searchParams.get('role') === 'driver' ? 'driver' : (searchParams.get('role') === 'customer' ? 'customer' : null)
 
-    const [step, setStep] = useState(initialRole ? 1 : 1) // Start at step 1 but with role set
+    const [step, setStep] = useState(initialRole ? 2 : 1)
+    const [uploadingFields, setUploadingFields] = useState({})
+    const isUploading = Object.values(uploadingFields).some(val => val === true)
     const [selectedRole, setSelectedRole] = useState(initialRole)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -233,7 +233,6 @@ export const RegisterPage = () => {
             licenseBack: null,
             vehicleLicensePhoto: null,
             vehicleLicensePhotoBack: null,
-            agreeCorrectInfo: false,
             agreeTerms: false
         }
     })
@@ -283,6 +282,9 @@ export const RegisterPage = () => {
         formData.append('prefix', prefix);
         formData.append('file', file); // Sending the actual File object
 
+        // Set uploading state
+        setUploadingFields(prev => ({ ...prev, [fieldName]: true }));
+
         try {
             const res = await authService.uploadImage(formData);
 
@@ -299,8 +301,11 @@ export const RegisterPage = () => {
             } else {
                 console.warn(`Could not extract URL from response for ${fieldName}`, res);
             }
+            setUploadingFields(prev => ({ ...prev, [fieldName]: false }));
         } catch (err) {
+            setUploadingFields(prev => ({ ...prev, [fieldName]: false }));
             console.error(`Failed to upload ${fieldName}:`, err);
+            toast.error(`فشل رفع الملف: ${err.message}`);
         }
     };
 
@@ -391,6 +396,17 @@ export const RegisterPage = () => {
     const onSubmit = async (data) => {
         setIsLoading(true)
         try {
+            // Helper to get a valid URL for documents
+            const getDocUrl = (val) => {
+                if (typeof val === 'string' && val.startsWith('http')) return val;
+                return "https://shuhnety-bucket.s3.amazonaws.com/placeholders/document-placeholder.jpg";
+            };
+
+            // Root profile picture: use uploaded photo for drivers, or dynamic avatar for customers
+            const profile_picture = (data.driverPhoto && typeof data.driverPhoto === 'string' && data.driverPhoto.startsWith('http'))
+                ? data.driverPhoto
+                : `https://ui-avatars.com/api/?name=${encodeURIComponent(data.fullName)}&background=random&color=fff&size=128`;
+
             // Map data to Backend RegisterDto matching exact schema provided by user
             const registerDto = {
                 role: selectedRole === 'customer' ? UserRole.CLIENT : (selectedRole === 'driver' ? UserRole.DRIVER : selectedRole),
@@ -403,17 +419,11 @@ export const RegisterPage = () => {
                 city_id: parseInt(data.city),
                 address: data.addressDetail || 'العنوان المسجل في البطاقة', // Correct field: address
                 birth_date: data.birthDate,
+                profile_picture: profile_picture,
             }
 
 
             if (selectedRole === 'driver') {
-                // Documents are now uploaded immediately, so we just check if they are URLs
-                const getDocUrl = (val) => {
-                    if (typeof val === 'string' && val.startsWith('http')) return val;
-                    return "https://example.com/placeholder.jpg";
-                };
-
-                const profile_picture = getDocUrl(data.driverPhoto);
                 const forward_nationalId_doc = getDocUrl(data.nationalIdFront);
                 const back_nationalId_doc = getDocUrl(data.nationalIdBack);
                 const forward_license_doc = getDocUrl(data.licenseFront);
@@ -425,7 +435,6 @@ export const RegisterPage = () => {
 
                 registerDto.driverDetails = { // Correct field: driverDetails
                     national_id: data.nationalId,
-                    profile_picture: profile_picture,
                     forward_nationalId_doc: forward_nationalId_doc, // Mixed case as per user schema
                     back_nationalId_doc: back_nationalId_doc,   // Mixed case as per user schema
                     license_number: data.licenseNumber,
@@ -482,62 +491,16 @@ export const RegisterPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#fffcf8] font-cairo flex flex-col relative overflow-hidden" dir="rtl">
-
-            <div className="flex-1 flex items-center justify-center p-4 lg:p-12 relative">
-                <div className="max-w-[1240px] w-full grid lg:grid-cols-2 gap-16 items-center">
-
-                    {/* Right Visual Panel */}
-                    <div className="hidden lg:flex flex-col items-center justify-center text-center space-y-10">
-                        <motion.div
-                            initial={{ opacity: 0, x: 50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.8 }}
-                            className="w-full flex justify-center"
-                        >
-                            <motion.div
-                                animate={{ y: [0, -15, 0] }}
-                                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                                className="relative"
-                            >
-                                <div className="absolute -bottom-6 -left-6 -right-6 h-24 bg-brand-primary/20 blur-3xl rounded-full"></div>
-                                <div className="relative bg-white p-3 rounded-[3.5rem] shadow-2xl border border-slate-50">
-                                    <img
-                                        src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=800"
-                                        className="w-[500px] h-[380px] object-cover rounded-[2.5rem]"
-                                        alt="Register visual"
-                                    />
-                                </div>
-                            </motion.div>
-                        </motion.div>
-
-                        <div className="space-y-4">
-                            <h2 className="text-[30px] font-bold text-brand-secondary tracking-tight leading-tight">انضم لعائلة شحنتي</h2>
-                            <p className="text-[16px] text-[#57534d]">خطوات بسيطة لبدء تجربة شحن ونقل ذكية</p>
-
-                            <div className="pt-2 flex items-center justify-center gap-6">
-                                <span className="flex items-center gap-1.5 text-xs font-black text-brand-secondary bg-brand-secondary/5 px-3 py-1.5 rounded-full">
-                                    <Shield className="h-3.5 w-3.5" /> آمن
-                                </span>
-                                <span className="flex items-center gap-1.5 text-xs font-black text-brand-secondary bg-brand-secondary/5 px-3 py-1.5 rounded-full">
-                                    <Box className="h-3.5 w-3.5" /> سريع
-                                </span>
-                                <span className="flex items-center gap-1.5 text-xs font-black text-brand-secondary bg-brand-secondary/5 px-3 py-1.5 rounded-full">
-                                    <CheckCircle2 className="h-3.5 w-3.5" /> موثوق
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Left Form Panel */}
+        <div className="flex items-center justify-center min-h-screen p-6 bg-gray-50 font-cairo" dir="rtl">
+            <div className="flex-1 h-full max-w-4xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden p-6 sm:p-12">
+                <div className="w-full">
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
-                        className="w-full max-w-[550px] mx-auto bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 p-8 md:p-12 relative"
                     >
                         <div className="text-center mb-8">
-                            <div className="inline-flex items-center justify-center h-16 w-16 bg-brand-primary rounded-2xl shadow-lg shadow-brand-primary/20 mb-4 text-white rotate-0 group-hover:rotate-4 transition-transform duration-500">
+                            <div className="inline-flex items-center justify-center h-16 w-16 bg-brand-primary rounded-2xl shadow-lg shadow-brand-primary/20 mb-4 text-white rotate-0 hover:rotate-4 transition-transform duration-500">
                                 <Box className="h-9 w-9" />
                             </div>
                             <h2 className="text-[26px] font-bold text-[#1c1919] mb-2">إنشاء حساب جديد</h2>
@@ -548,7 +511,7 @@ export const RegisterPage = () => {
                         </div>
 
                         {/* Step Indicators */}
-                        <div className="flex items-center justify-between mb-12 max-w-[400px] mx-auto relative group">
+                        <div className="flex items-center justify-between mb-12 max-w-[500px] mx-auto relative group">
                             <div className="absolute top-9 left-0 right-0 h-0.5 bg-slate-100 -translate-y-1/2 z-0"></div>
                             {STEPS.map((label, i) => (
                                 <div key={i} className="relative z-10 flex flex-col items-center gap-3">
@@ -579,36 +542,24 @@ export const RegisterPage = () => {
                                     transition={{ duration: 0.3 }}
                                 >
                                     {step === 1 && (
-                                        <div className="space-y-4">
-                                            <RoleCard
-                                                id="customer"
-                                                title="عميل / تاجر"
-                                                description="أقوم بشحن البضائع والمنتجات بشكل دوري"
-                                                icon={User}
-                                                selected={selectedRole === 'customer'}
-                                                onClick={() => setSelectedRole('customer')}
-                                            />
-                                            <RoleCard
-                                                id="driver"
-                                                title="كابتن مستقل"
-                                                description="أمتلك شاحنة وأرغب في زيادة أرباحي"
-                                                icon={Truck}
-                                                selected={selectedRole === 'driver'}
-                                                onClick={() => setSelectedRole('driver')}
-                                            />
-                                            <RoleCard
-                                                id="company"
-                                                title="شركة شحن"
-                                                description="ندير أسطولاً من الشاحنات ونبحث عن عقود"
-                                                icon={Building2}
-                                                disabled={true}
-                                                badge="قريباً"
-                                            />
-                                            <div className="flex items-start gap-2 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50">
-                                                <Info className="h-4 w-4 text-blue-500 mt-0.5" />
-                                                <p className="text-[10px] font-bold text-blue-600/80 leading-relaxed">
-                                                    هذه الميزة تحت التطوير النشط حالياً من قبل فريق منصة شحنتي التقني.
-                                                </p>
+                                        <div className="flex flex-col items-center justify-center space-y-10 py-4 max-w-[600px] mx-auto">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
+                                                <RoleCard
+                                                    id="customer"
+                                                    title="عميل / تاجر"
+                                                    description="أقوم بشحن البضائع والمنتجات بشكل دوري"
+                                                    icon={User}
+                                                    selected={selectedRole === 'customer'}
+                                                    onClick={() => setSelectedRole('customer')}
+                                                />
+                                                <RoleCard
+                                                    id="driver"
+                                                    title="كابتن مستقل"
+                                                    description="أمتلك شاحنة وأرغب في زيادة أرباحي"
+                                                    icon={Truck}
+                                                    selected={selectedRole === 'driver'}
+                                                    onClick={() => setSelectedRole('driver')}
+                                                />
                                             </div>
                                         </div>
                                     )}
@@ -633,6 +584,7 @@ export const RegisterPage = () => {
                                             handleImmediateUpload={handleImmediateUpload}
                                             checkingFields={checkingFields}
                                             handleCheckAvailability={handleCheckAvailability}
+                                            uploadingFields={uploadingFields}
                                         />
                                     )}
 
@@ -652,18 +604,18 @@ export const RegisterPage = () => {
                                             handleImmediateUpload={handleImmediateUpload}
                                             checkingFields={checkingFields}
                                             handleCheckAvailability={handleCheckAvailability}
+                                            uploadingFields={uploadingFields}
                                         />
                                     )}
                                 </motion.div>
                             </AnimatePresence>
 
-
-                            <div className="flex gap-4 mt-10">
+                            <div className="flex gap-4 mt-10 max-w-[600px] mx-auto">
                                 {step > 1 && (
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        className="flex-1 h-14 rounded-2xl font-black text-slate-600 border-2 border-slate-100 hover:bg-slate-50 transition-all"
+                                        className="flex-1 px-4 py-2 text-sm font-medium leading-5 text-center text-gray-700 transition-colors duration-150 border border-gray-300 rounded-lg hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
                                         onClick={prevStep}
                                     >
                                         السابق
@@ -672,13 +624,13 @@ export const RegisterPage = () => {
                                 <Button
                                     type="submit"
                                     className={cn(
-                                        "flex-[2] h-14 rounded-2xl font-black text-white transition-all shadow-xl",
+                                        "flex-[2] px-4 py-2 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 border border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2",
                                         step === 3
-                                            ? "bg-[#064e3b] hover:bg-[#053a2c] shadow-[#064e3b]/20"
-                                            : "bg-brand-primary hover:bg-orange-600 shadow-brand-primary/30",
+                                            ? "bg-[#064e3b] hover:bg-[#053a2c] focus:ring-[#064e3b]"
+                                            : "bg-brand-primary hover:bg-orange-600 active:bg-brand-primary focus:ring-brand-primary",
                                         isLoading && "opacity-80 cursor-not-allowed"
                                     )}
-                                    disabled={isLoading}
+                                    disabled={isLoading || isUploading}
                                 >
                                     {isLoading ? (
                                         <div className="flex items-center justify-center gap-2">
@@ -699,15 +651,15 @@ export const RegisterPage = () => {
                         </form>
                     </motion.div>
                 </div>
-
-                {/* Back Link */}
-                <Link to="/" className="absolute top-8 right-8 flex items-center gap-2 text-xs font-black text-[#57534d] hover:text-brand-primary transition-all group">
-                    <span>العودة للرئيسية</span>
-                    <div className="h-8 w-8 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all">
-                        <ArrowLeft className="h-4 w-4 rotate-180" />
-                    </div>
-                </Link>
             </div>
+
+            {/* Back Link */}
+            <Link to="/" className="absolute top-8 right-8 flex items-center gap-2 text-xs font-black text-[#57534d] hover:text-brand-primary transition-all group z-10">
+                <span>العودة للرئيسية</span>
+                <div className="h-8 w-8 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all">
+                    <ArrowLeft className="h-4 w-4 rotate-180" />
+                </div>
+            </Link>
         </div>
     )
 }
@@ -717,17 +669,17 @@ export const RegisterPage = () => {
 const RoleCard = ({ title, description, icon: Icon, selected, onClick, disabled, badge }) => (
     <div
         className={cn(
-            "relative p-5 rounded-[2rem] border-2 transition-all duration-300",
-            disabled ? "opacity-60 cursor-not-allowed border-slate-100 bg-slate-50/50" :
-                selected ? "border-brand-primary bg-orange-50/30 shadow-lg shadow-brand-primary/5" :
-                    "border-transparent bg-slate-50/50 hover:bg-slate-50 hover:border-slate-100 cursor-pointer"
+            "relative p-5 rounded-lg border transition-all duration-300",
+            disabled ? "opacity-60 cursor-not-allowed border-gray-200 bg-gray-50" :
+                selected ? "border-brand-primary bg-orange-50/30 shadow-md shadow-brand-primary/10" :
+                    "border-gray-200 bg-white hover:border-brand-primary cursor-pointer"
         )}
         onClick={disabled ? undefined : onClick}
     >
         <div className="flex items-center gap-5">
             <div className={cn(
-                "h-14 w-14 rounded-2xl flex items-center justify-center shadow-sm transition-colors",
-                selected ? "bg-brand-primary text-white" : "bg-white text-slate-400"
+                "h-12 w-12 rounded-md flex items-center justify-center shadow-sm transition-colors",
+                selected ? "bg-brand-primary text-white" : "bg-gray-50 border border-gray-200 text-gray-400"
             )}>
                 <Icon className="h-7 w-7" />
             </div>
@@ -740,25 +692,21 @@ const RoleCard = ({ title, description, icon: Icon, selected, onClick, disabled,
                 </div>
                 <p className="text-[11px] font-bold text-[#57534d] mt-0.5">{description}</p>
             </div>
-            {selected && (
-                <div className="h-6 w-6 bg-brand-primary rounded-full flex items-center justify-center">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                </div>
-            )}
         </div>
     </div>
 )
 
-const FileUploader = ({ label, icon: Icon, onFileSelect, onFileChange, preview, className, error }) => {
+const FileUploader = ({ label, icon: Icon, onFileSelect, onFileChange, preview, className, error, isLoading }) => {
     const fileInputRef = useRef(null)
     return (
-        <div className={cn("space-y-2", className)}>
-            {label && <label className="text-[10px] font-black text-slate-400 text-center block">{label}</label>}
+        <div className={cn("space-y-1", className)}>
+            {label && <span className="text-gray-700 block text-sm mb-1">{label}</span>}
             <div
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => !isLoading && fileInputRef.current?.click()}
                 className={cn(
-                    "h-28 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-2 transition-all cursor-pointer group bg-slate-50/30 overflow-hidden relative",
-                    error ? "border-red-500 animate-shake" : "border-slate-100 hover:border-brand-primary"
+                    "h-28 rounded-md border-2 border-dashed flex flex-col items-center justify-center gap-2 transition-all cursor-pointer group bg-gray-50 overflow-hidden relative",
+                    error ? "border-red-500" : "border-gray-300 hover:border-brand-primary",
+                    isLoading && "cursor-wait"
                 )}
             >
                 <input
@@ -778,13 +726,16 @@ const FileUploader = ({ label, icon: Icon, onFileSelect, onFileChange, preview, 
                             }
                         }
                     }}
+                    disabled={isLoading}
                 />
                 {preview ? (
                     <div className="absolute inset-0 w-full h-full">
                         <img src={preview} alt="Preview" className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <Upload className="h-6 w-6 text-white" />
-                        </div>
+                        {!isLoading && (
+                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <Upload className="h-6 w-6 text-white" />
+                             </div>
+                        )}
                     </div>
                 ) : (
                     <>
@@ -792,12 +743,20 @@ const FileUploader = ({ label, icon: Icon, onFileSelect, onFileChange, preview, 
                         <span className="text-[9px] font-black text-slate-400 group-hover:text-brand-primary">اضغط للرفع</span>
                     </>
                 )}
+
+                {/* Loading Overlay */}
+                {isLoading && (
+                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex flex-col items-center justify-center z-10">
+                        <div className="h-8 w-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mb-2"></div>
+                        <span className="text-[10px] font-bold text-white">جاري الرفع...</span>
+                    </div>
+                )}
             </div>
             {error && <p className="text-[9px] text-red-500 font-bold text-center">{error.message}</p>}
         </div>
     )
 }
-const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setShowPassword, showConfirmPassword, setShowConfirmPassword, wasNextAttempted, selectedRole, watch, setValue, control, governorates, cities, isLoadingLocations, handleImmediateUpload, checkingFields, handleCheckAvailability }) => {
+const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setShowPassword, showConfirmPassword, setShowConfirmPassword, wasNextAttempted, selectedRole, watch, setValue, control, governorates, cities, isLoadingLocations, handleImmediateUpload, checkingFields, handleCheckAvailability, uploadingFields }) => {
     const driverPhoto = watch('driverPhoto')
     const licenseFront = watch('licenseFront')
     const licenseBack = watch('licenseBack')
@@ -807,10 +766,11 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
             {selectedRole === 'driver' && (
                 <div className="flex flex-col items-center mb-8">
                     <div
-                        onClick={() => document.getElementById('driver-photo-input').click()}
+                        onClick={() => !uploadingFields['driverPhoto'] && document.getElementById('driver-photo-input').click()}
                         className={cn(
                             "relative group cursor-pointer",
-                            errors.driverPhoto && wasNextAttempted && "animate-shake"
+                            errors.driverPhoto && wasNextAttempted && "animate-shake",
+                            uploadingFields['driverPhoto'] && "cursor-wait"
                         )}
                     >
                         <div className={cn(
@@ -822,6 +782,15 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
                             ) : (
                                 <Upload className="h-8 w-8 text-slate-300 group-hover:text-brand-primary" />
                             )}
+
+                            {/* Profile Photo Loader */}
+                            {uploadingFields['driverPhoto'] && (
+                                <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex flex-col items-center justify-center z-10">
+                                    <div className="h-8 w-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mb-1"></div>
+                                    <span className="text-[8px] font-bold text-white">جاري الرفع...</span>
+                                </div>
+                            )}
+
                             <input
                                 id="driver-photo-input"
                                 type="file"
@@ -833,6 +802,7 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
                                         handleImmediateUpload(file, 'driverPhoto', 'driver')
                                     }
                                 }}
+                                disabled={uploadingFields['driverPhoto']}
                             />
                         </div>
                     </div>
@@ -841,30 +811,53 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
                 </div>
             )}
 
-            <Input
-                label="الاسم بالكامل"
-                {...register('fullName')}
-                placeholder="ادخل اسمك بالكامل (كما في البطاقة)"
-                icon={User}
-                error={errors.fullName}
-                isTouched={touchedFields.fullName}
-                wasNextAttempted={wasNextAttempted}
-            />
-
-            {selectedRole === 'customer' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
-                    label="تاريخ الميلاد"
-                    {...register('birthDate')}
-                    type="date"
-                    icon={CalendarDays}
-                    error={errors.birthDate}
-                    isTouched={touchedFields.birthDate}
+                    label="الاسم بالكامل"
+                    {...register('fullName')}
+                    placeholder="ادخل اسمك بالكامل (كما في البطاقة)"
+                    icon={User}
+                    error={errors.fullName}
+                    isTouched={touchedFields.fullName}
                     wasNextAttempted={wasNextAttempted}
                 />
-            )}
+                <Input
+                    label="البريد الإلكتروني"
+                    {...register('email', {
+                        onBlur: (e) => handleCheckAvailability('email', e.target.value)
+                    })}
+                    placeholder="example@mail.com"
+                    icon={Mail}
+                    error={errors.email}
+                    isTouched={touchedFields.email}
+                    wasNextAttempted={wasNextAttempted}
+                    isLoading={checkingFields.email}
+                />
+            </div>
 
-            {selectedRole === 'driver' && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {selectedRole === 'driver' ? (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <Input
+                        label="رقم الهاتف"
+                        {...register('phone', {
+                            onBlur: (e) => handleCheckAvailability('phone', e.target.value)
+                        })}
+                        placeholder="01012345678"
+                        icon={Phone}
+                        error={errors.phone}
+                        isTouched={touchedFields.phone}
+                        wasNextAttempted={wasNextAttempted}
+                        isLoading={checkingFields.phone}
+                    />
+                    <Input
+                        label="تاريخ الميلاد"
+                        {...register('birthDate')}
+                        type="date"
+                        icon={CalendarDays}
+                        error={errors.birthDate}
+                        isTouched={touchedFields.birthDate}
+                        wasNextAttempted={wasNextAttempted}
+                    />
                     <Input
                         label="الرقم القومي"
                         {...register('nationalId', {
@@ -876,6 +869,21 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
                         isTouched={touchedFields.nationalId}
                         wasNextAttempted={wasNextAttempted}
                         isLoading={checkingFields.nationalId}
+                    />
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Input
+                        label="رقم الهاتف"
+                        {...register('phone', {
+                            onBlur: (e) => handleCheckAvailability('phone', e.target.value)
+                        })}
+                        placeholder="01012345678"
+                        icon={Phone}
+                        error={errors.phone}
+                        isTouched={touchedFields.phone}
+                        wasNextAttempted={wasNextAttempted}
+                        isLoading={checkingFields.phone}
                     />
                     <Input
                         label="تاريخ الميلاد"
@@ -891,96 +899,72 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
 
             {selectedRole === 'driver' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FileUploader
-                        label="صورة البطاقة (وجه)"
-                        icon={CreditCard}
-                        preview={watch('nationalIdFront')}
-                        onFileChange={(file) => handleImmediateUpload(file, 'nationalIdFront', 'driver')}
-                        error={errors.nationalIdFront && wasNextAttempted ? errors.nationalIdFront : null}
-                    />
-                    <FileUploader
-                        label="صورة البطاقة (ظهر)"
-                        icon={CreditCard}
-                        preview={watch('nationalIdBack')}
-                        onFileChange={(file) => handleImmediateUpload(file, 'nationalIdBack', 'driver')}
-                        error={errors.nationalIdBack && wasNextAttempted ? errors.nationalIdBack : null}
-                    />
+                        <FileUploader
+                            label="صورة البطاقة (وجه)"
+                            icon={CreditCard}
+                            preview={watch('nationalIdFront')}
+                            onFileChange={(file) => handleImmediateUpload(file, 'nationalIdFront', 'driver')}
+                            error={errors.nationalIdFront && wasNextAttempted ? errors.nationalIdFront : null}
+                            isLoading={uploadingFields['nationalIdFront']}
+                        />
+                        <FileUploader
+                            label="صورة البطاقة (ظهر)"
+                            icon={CreditCard}
+                            preview={watch('nationalIdBack')}
+                            onFileChange={(file) => handleImmediateUpload(file, 'nationalIdBack', 'driver')}
+                            error={errors.nationalIdBack && wasNextAttempted ? errors.nationalIdBack : null}
+                            isLoading={uploadingFields['nationalIdBack']}
+                        />
                 </div>
             )}
 
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Input
-                    label="البريد الإلكتروني"
-                    {...register('email', {
-                        onBlur: (e) => handleCheckAvailability('email', e.target.value)
-                    })}
-                    placeholder="example@mail.com"
-                    icon={Mail}
-                    error={errors.email}
-                    isTouched={touchedFields.email}
-                    wasNextAttempted={wasNextAttempted}
-                    isLoading={checkingFields.email}
-                />
-                <Input
-                    label="رقم الهاتف"
-                    {...register('phone', {
-                        onBlur: (e) => handleCheckAvailability('phone', e.target.value)
-                    })}
-                    placeholder="01012345678"
-                    icon={Phone}
-                    error={errors.phone}
-                    isTouched={touchedFields.phone}
-                    wasNextAttempted={wasNextAttempted}
-                    isLoading={checkingFields.phone}
-                />
-            </div>
-
-            <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-600 block pr-1">كلمة المرور</label>
-                <div className="relative group">
-                    <input
-                        {...register('password')}
-                        type={showPassword ? "text" : "password"}
-                        placeholder="أدخل 8 أحرف على الأقل"
-                        className={cn(
-                            "w-full h-14 pr-12 pl-12 rounded-2xl border-2 outline-none transition-all font-bold text-sm bg-slate-50/50",
-                            errors.password && (touchedFields.password || wasNextAttempted) ? "border-red-500" : "border-slate-100 focus:border-brand-primary"
-                        )}
-                    />
-                    <Lock className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-brand-primary" />
-                    <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-primary transition-colors"
-                    >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
+                <div className="block text-sm">
+                    <span className="text-gray-700 block mb-1">كلمة المرور</span>
+                    <div className="relative mt-1">
+                        <input
+                            {...register('password')}
+                            type={showPassword ? "text" : "password"}
+                            placeholder="أدخل 8 أحرف على الأقل"
+                            className={cn(
+                                "block w-full text-sm rounded-md border focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary px-3 py-2 pl-10",
+                                errors.password && (touchedFields.password || wasNextAttempted) ? "border-red-500" : "border-gray-300"
+                            )}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-primary transition-colors focus:outline-none"
+                        >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                    </div>
+                    {errors.password && (touchedFields.password || wasNextAttempted) && <span className="text-xs text-red-500 mt-1 block">{errors.password.message}</span>}
                 </div>
-                {errors.password && (touchedFields.password || wasNextAttempted) && <p className="text-xs text-red-500 font-bold pr-1">{errors.password.message}</p>}
-            </div>
 
-            <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-600 block pr-1">تأكيد كلمة المرور</label>
-                <div className="relative group">
-                    <input
-                        {...register('confirmPassword')}
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="أدخل كلمة المرور مرة أخرى"
-                        className={cn(
-                            "w-full h-14 pr-12 pl-12 rounded-2xl border-2 outline-none transition-all font-bold text-sm bg-slate-50/50",
-                            errors.confirmPassword && (touchedFields.confirmPassword || wasNextAttempted) ? "border-red-500" : "border-slate-100 focus:border-brand-primary"
-                        )}
-                    />
-                    <Lock className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-brand-primary" />
-                    <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-primary transition-colors"
-                    >
-                        {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
+                <div className="block text-sm">
+                    <span className="text-gray-700 block mb-1">تأكيد كلمة المرور</span>
+                    <div className="relative mt-1">
+                        <input
+                            {...register('confirmPassword')}
+                            type={showConfirmPassword ? "text" : "password"}
+                            placeholder="أدخل كلمة المرور مرة أخرى"
+                            className={cn(
+                                "block w-full text-sm rounded-md border focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary px-3 py-2 pl-10",
+                                errors.confirmPassword && (touchedFields.confirmPassword || wasNextAttempted) ? "border-red-500" : "border-gray-300"
+                            )}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-primary transition-colors focus:outline-none"
+                        >
+                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                    </div>
+                    {errors.confirmPassword && (touchedFields.confirmPassword || wasNextAttempted) && <span className="text-xs text-red-500 mt-1 block">{errors.confirmPassword.message}</span>}
                 </div>
-                {errors.confirmPassword && (touchedFields.confirmPassword || wasNextAttempted) && <p className="text-xs text-red-500 font-bold pr-1">{errors.confirmPassword.message}</p>}
             </div>
 
             {/* Address Section - Only for Driver here, Customer will have it in step 3 */}
@@ -1062,6 +1046,7 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
                             preview={licenseFront}
                             onFileChange={(file) => handleImmediateUpload(file, 'licenseFront', 'driver')}
                             error={errors.licenseFront && wasNextAttempted ? errors.licenseFront : null}
+                            isLoading={uploadingFields['licenseFront']}
                         />
                         <FileUploader
                             label="صورة الرخصة (ظهر)"
@@ -1069,6 +1054,7 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
                             preview={licenseBack}
                             onFileChange={(file) => handleImmediateUpload(file, 'licenseBack', 'driver')}
                             error={errors.licenseBack && wasNextAttempted ? errors.licenseBack : null}
+                            isLoading={uploadingFields['licenseBack']}
                         />
                     </div>
                 </div>
@@ -1077,7 +1063,7 @@ const PersonalInfoStep = ({ register, errors, touchedFields, showPassword, setSh
     )
 }
 
-const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, wasNextAttempted, watch, setValue, control, governorates, cities, isLoadingLocations, handleImmediateUpload, checkingFields, handleCheckAvailability }) => {
+const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, wasNextAttempted, watch, setValue, control, governorates, cities, isLoadingLocations, handleImmediateUpload, checkingFields, handleCheckAvailability, uploadingFields }) => {
     const vType = watch('vehicleType')
 
     return (
@@ -1127,7 +1113,7 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
                             />
                         )}
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <Input
                                 label="الموديل (مثل 2022)"
                                 {...register('vehicleModel')}
@@ -1144,41 +1130,39 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
                                 isTouched={touchedFields.vehicleColor}
                                 wasNextAttempted={wasNextAttempted}
                             />
+                            <Input
+                                label="رقم اللوحة"
+                                {...register('plateNumber', {
+                                    onBlur: (e) => handleCheckAvailability('plateNumber', e.target.value)
+                                })}
+                                placeholder="مثال: أ ب ج ١ ٢ ٣"
+                                error={errors.plateNumber}
+                                isTouched={touchedFields.plateNumber}
+                                wasNextAttempted={wasNextAttempted}
+                                isLoading={checkingFields.plateNumber}
+                                onChange={(e) => {
+                                    let val = e.target.value;
+                                    // Clean up everything
+                                    let clean = val.replace(/\s+/g, '');
+
+                                    // Separate letters and numbers
+                                    let lettersPart = clean.replace(/\d/g, '');
+                                    let numbersPart = clean.replace(/\D/g, '');
+
+                                    // Format letters with spaces
+                                    let formattedLetters = lettersPart.split('').join(' ');
+
+                                    // Final format: Letters with spaces, then numbers
+                                    let finalVal = formattedLetters;
+                                    if (numbersPart) {
+                                        if (finalVal) finalVal += " ";
+                                        finalVal += numbersPart;
+                                    }
+
+                                    setValue('plateNumber', finalVal, { shouldValidate: true });
+                                }}
+                            />
                         </div>
-
-                        <Input
-                            label="رقم اللوحة"
-                            {...register('plateNumber', {
-                                onBlur: (e) => handleCheckAvailability('plateNumber', e.target.value)
-                            })}
-                            placeholder="مثال: أ ب ج ١ ٢ ٣"
-
-                            error={errors.plateNumber}
-                            isTouched={touchedFields.plateNumber}
-                            wasNextAttempted={wasNextAttempted}
-                            isLoading={checkingFields.plateNumber}
-                            onChange={(e) => {
-                                let val = e.target.value;
-                                // Clean up everything
-                                let clean = val.replace(/\s+/g, '');
-
-                                // Separate letters and numbers
-                                let lettersPart = clean.replace(/\d/g, '');
-                                let numbersPart = clean.replace(/\D/g, '');
-
-                                // Format letters with spaces
-                                let formattedLetters = lettersPart.split('').join(' ');
-
-                                // Final format: Letters with spaces, then numbers
-                                let finalVal = formattedLetters;
-                                if (numbersPart) {
-                                    if (finalVal) finalVal += " ";
-                                    finalVal += numbersPart;
-                                }
-
-                                setValue('plateNumber', finalVal, { shouldValidate: true });
-                            }}
-                        />
                     </div>
 
                     <div className="pt-4 space-y-4 border-t border-slate-50">
@@ -1198,6 +1182,7 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
                                 preview={watch('vehicleLicensePhoto')}
                                 onFileChange={(file) => handleImmediateUpload(file, 'vehicleLicensePhoto', 'vehicle')}
                                 error={errors.vehicleLicensePhoto && wasNextAttempted ? errors.vehicleLicensePhoto : null}
+                                isLoading={uploadingFields['vehicleLicensePhoto']}
                             />
                             <FileUploader
                                 label="صورة رخصة المركبة (ظهر)"
@@ -1205,6 +1190,7 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
                                 preview={watch('vehicleLicensePhotoBack')}
                                 onFileChange={(file) => handleImmediateUpload(file, 'vehicleLicensePhotoBack', 'vehicle')}
                                 error={errors.vehicleLicensePhotoBack && wasNextAttempted ? errors.vehicleLicensePhotoBack : null}
+                                isLoading={uploadingFields['vehicleLicensePhotoBack']}
                             />
                         </div>
                     </div>
@@ -1257,14 +1243,28 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
 
             <div className="space-y-4 pt-4 border-t border-slate-50">
                 <Checkbox
-                    label="أقر بأن جميع البيانات المدخلة صحيحة"
-                    {...register('agreeCorrectInfo')}
-                    error={errors.agreeCorrectInfo}
-                    isTouched={touchedFields.agreeCorrectInfo}
-                    wasNextAttempted={wasNextAttempted}
-                />
-                <Checkbox
-                    label="أوافق على الشروط والأحكام"
+                    label={
+                        <span className="leading-relaxed">
+                            أوافق على{" "}
+                            <Link 
+                                to="/terms" 
+                                target="_blank" 
+                                className="text-brand-primary hover:underline cursor-pointer font-black"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                الشروط والأحكام العامة
+                            </Link>{" "}
+                            و{" "}
+                            <Link 
+                                to="/privacy" 
+                                target="_blank" 
+                                className="text-brand-primary hover:underline cursor-pointer font-black"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                سياسة الاستخدام والخصوصية
+                            </Link>
+                        </span>
+                    }
                     {...register('agreeTerms')}
                     error={errors.agreeTerms}
                     isTouched={touchedFields.agreeTerms}
@@ -1278,26 +1278,27 @@ const AdditionalDetailsStep = ({ register, errors, touchedFields, selectedRole, 
 const Input = forwardRef(({ label, icon: Icon, error, isTouched, wasNextAttempted, className, isLoading, ...props }, ref) => {
     const showError = error && (isTouched || wasNextAttempted)
     return (
-        <div className={cn("space-y-1.5", className)}>
-            {label && <label className="text-[13px] font-bold text-[#57534d] block pr-1">{label}</label>}
-            <div className="relative group">
+        <div className={cn("block text-sm", className)}>
+            {label && <span className="text-gray-700 block mb-1">{label}</span>}
+            <div className="relative">
                 <input
                     ref={ref}
                     className={cn(
-                        "w-full h-13 pr-11 pl-4 rounded-[1.25rem] border-2 outline-none transition-all font-bold text-[13px] bg-slate-50/50 placeholder:text-slate-300",
-                        showError ? "border-red-500" : "border-slate-100 focus:border-brand-primary"
+                        "block w-full text-sm rounded-md border focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary px-3 py-2",
+                        showError ? "border-red-500" : "border-gray-300",
+                        (Icon || isLoading) && "pr-10"
                     )}
                     {...props}
                 />
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none text-gray-400">
                     {isLoading ? (
                         <Loading minimal={true} text="" className="scale-110" />
                     ) : (
-                        Icon && <Icon className="h-4.5 w-4.5 text-slate-400 group-focus-within:text-brand-primary transition-colors" />
+                        Icon && <Icon className="h-4 w-4" />
                     )}
                 </div>
             </div>
-            {showError && <p className="text-[11px] text-red-500 font-bold pr-1">{error.message}</p>}
+            {showError && <span className="text-xs text-red-500 mt-1 block">{error.message}</span>}
         </div>
     )
 })
@@ -1315,8 +1316,8 @@ const Checkbox = forwardRef(({ label, error, isTouched, wasNextAttempted, ...pro
                     <Check className="h-3 w-3 text-white scale-0 transition-transform" />
                 </div>
             </div>
-            <div>
-                <p className="text-[11px] font-bold text-[#57534d] group-hover:text-slate-700 transition-colors whitespace-nowrap">
+            <div className="flex-1">
+                <p className="text-[11px] font-bold text-slate-500 group-hover:text-slate-700 transition-colors">
                     {label}
                 </p>
                 {showError && <p className="text-[10px] text-red-500 font-black mt-0.5">{error.message}</p>}
@@ -1324,4 +1325,3 @@ const Checkbox = forwardRef(({ label, error, isTouched, wasNextAttempted, ...pro
         </label>
     )
 })
-

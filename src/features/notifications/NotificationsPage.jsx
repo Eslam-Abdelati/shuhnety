@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { 
-    Bell, 
-    CheckCircle2, 
-    AlertTriangle, 
-    Info, 
-    X, 
-    Trash2, 
-    Check, 
+import {
+    Bell,
+    CheckCircle2,
+    AlertTriangle,
+    Info,
+    X,
+    Trash2,
+    Check,
     CreditCard,
     Filter
 } from 'lucide-react'
@@ -21,12 +21,12 @@ import { createPortal } from 'react-dom'
 
 export const NotificationsPage = () => {
     const { role } = useAuthStore()
-    const { 
-        notifications, 
-        setNotifications, 
-        markAsRead, 
-        removeNotification, 
-        clearAll 
+    const {
+        notifications,
+        setNotifications,
+        markAsRead,
+        removeNotification,
+        clearAll
     } = useNotificationStore()
 
     const [selectedNotification, setSelectedNotification] = useState(null)
@@ -38,21 +38,24 @@ export const NotificationsPage = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const res = await notificationService.getUserNotifications();
-                const data = res.data || res || [];
-                setNotifications(data);
+                let isReadParam = null;
+                if (filter === 'read') isReadParam = true;
+                if (filter === 'unread') isReadParam = false;
+
+                const res = await notificationService.getUserNotifications(isReadParam);
+                setNotifications(res);
             } catch (err) {
                 console.warn('Failed to fetch notifications:', err);
             }
         };
         fetchNotifications();
-    }, [setNotifications]);
+    }, [setNotifications, filter]);
 
     const filteredList = (notifications ?? [])
         .filter(n => !n.recipientRole || n.recipientRole === role)
         .filter(n => {
-            if (filter === 'unread') return n.active;
-            if (filter === 'read') return !n.active;
+            if (filter === 'unread') return !n.isRead;
+            if (filter === 'read') return n.isRead;
             return true;
         })
         .sort((a, b) => new Date(b.createDateTime || b.createdAt) - new Date(a.createDateTime || a.createdAt));
@@ -61,11 +64,12 @@ export const NotificationsPage = () => {
         setIsDetailModalOpen(true)
         setIsDetailLoading(true)
         try {
-            const res = await notificationService.getNotificationDetail(notif.id)
-            setSelectedNotification(res.data || res || notif)
+            // Use PATCH API to mark as read
+            await notificationService.markAsRead(notif.id)
+            setSelectedNotification(notif)
             markAsRead(notif.id)
         } catch (err) {
-            console.warn('Failed to fetch detail, using local data')
+            console.warn('Failed to mark as read on server:', err)
             setSelectedNotification(notif)
             markAsRead(notif.id)
         } finally {
@@ -74,22 +78,15 @@ export const NotificationsPage = () => {
     }
 
     return (
-        <div className="max-w-5xl mx-auto p-4 md:p-8 font-cairo" dir="rtl">
+        <div className="max-w-5xl mx-auto font-cairo" dir="rtl">
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2">إشعارات النظام</h1>
                     <p className="text-slate-500 font-bold">تابع كل التحديثات والتحركات الخاصة بحسابك في مكان واحد.</p>
                 </div>
-                
+
                 <div className="flex items-center gap-3">
-                    <button 
-                        onClick={() => clearAll(role)}
-                        className="flex items-center gap-2 px-6 h-12 bg-rose-50 dark:bg-rose-500/10 text-rose-500 rounded-2xl font-black text-sm hover:bg-rose-100 transition-all cursor-pointer"
-                    >
-                        <Trash2 className="h-4 w-4" />
-                        مسح الكل
-                    </button>
                 </div>
             </div>
 
@@ -105,8 +102,8 @@ export const NotificationsPage = () => {
                         onClick={() => setFilter(f.id)}
                         className={cn(
                             "px-6 py-2 rounded-xl text-sm font-black transition-all cursor-pointer",
-                            filter === f.id 
-                                ? "bg-white dark:bg-slate-700 text-brand-primary shadow-sm" 
+                            filter === f.id
+                                ? "bg-white dark:bg-slate-700 text-brand-primary shadow-sm"
                                 : "text-slate-500 hover:text-slate-700 dark:text-slate-400"
                         )}
                     >
@@ -127,8 +124,8 @@ export const NotificationsPage = () => {
                             onClick={() => handleNotificationClick(notif)}
                             className={cn(
                                 "group relative bg-white dark:bg-slate-900 border transition-all p-8 rounded-[2rem] cursor-pointer",
-                                notif.active 
-                                    ? "border-brand-primary/20 bg-brand-primary/[0.03] dark:bg-brand-primary/[0.08] border-r-4 border-r-brand-primary" 
+                                !notif.isRead
+                                    ? "border-brand-primary/20 bg-brand-primary/[0.03] dark:bg-brand-primary/[0.08] border-r-4 border-r-brand-primary"
                                     : "border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700"
                             )}
                         >
@@ -137,14 +134,14 @@ export const NotificationsPage = () => {
                                 <div className={cn(
                                     "h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg transition-transform group-hover:scale-110",
                                     (notif.type === 'success' || notif.type === 'offer_accepted') ? "bg-emerald-500/10 text-emerald-500 shadow-emerald-500/10" :
-                                    (notif.type === 'warning' || notif.type === 'alert') ? "bg-amber-500/10 text-amber-500 shadow-amber-500/10" :
-                                    notif.type === 'new_bid' ? "bg-indigo-500/10 text-indigo-500 shadow-indigo-500/10" :
-                                    "bg-blue-500/10 text-blue-500 shadow-blue-500/10"
+                                        (notif.type === 'warning' || notif.type === 'alert') ? "bg-amber-500/10 text-amber-500 shadow-amber-500/10" :
+                                            notif.type === 'new_bid' ? "bg-indigo-500/10 text-indigo-500 shadow-indigo-500/10" :
+                                                "bg-blue-500/10 text-blue-500 shadow-blue-500/10"
                                 )}>
                                     {(notif.type === 'success' || notif.type === 'offer_accepted') ? <CheckCircle2 className="h-7 w-7" /> :
-                                     (notif.type === 'warning' || notif.type === 'alert') ? <AlertTriangle className="h-7 w-7" /> :
-                                     notif.type === 'new_bid' ? <CreditCard className="h-7 w-7" /> :
-                                     <Info className="h-7 w-7" />}
+                                        (notif.type === 'warning' || notif.type === 'alert') ? <AlertTriangle className="h-7 w-7" /> :
+                                            notif.type === 'new_bid' ? <CreditCard className="h-7 w-7" /> :
+                                                <Info className="h-7 w-7" />}
                                 </div>
 
                                 {/* Content */}
@@ -152,7 +149,7 @@ export const NotificationsPage = () => {
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
                                         <h3 className={cn(
                                             "text-lg leading-tight truncate",
-                                            notif.active ? "font-black text-slate-900 dark:text-white" : "font-bold text-slate-600 dark:text-slate-400"
+                                            !notif.isRead ? "font-black text-slate-900 dark:text-white" : "font-bold text-slate-600 dark:text-slate-400"
                                         )}>
                                             {notif.title}
                                         </h3>
@@ -162,26 +159,18 @@ export const NotificationsPage = () => {
                                     </div>
                                     <p className={cn(
                                         "text-sm leading-relaxed line-clamp-2 max-w-3xl",
-                                        notif.active ? "text-slate-600 dark:text-slate-300 font-bold" : "text-slate-500 dark:text-slate-500 font-medium"
+                                        !notif.isRead ? "text-slate-600 dark:text-slate-300 font-bold" : "text-slate-500 dark:text-slate-500 font-medium"
                                     )}>
                                         {notif.body || notif.desc || notif.message}
                                     </p>
                                 </div>
 
-                                {/* Action Buttons */}
                                 <div className="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button 
-                                        onClick={(e) => { e.stopPropagation(); removeNotification(notif.id); }}
-                                        className="h-10 w-10 rounded-xl bg-rose-50 dark:bg-rose-500/10 text-rose-500 flex items-center justify-center hover:bg-rose-100 transition-all"
-                                        title="حذف"
-                                    >
-                                        <X className="h-5 w-5" />
-                                    </button>
                                 </div>
                             </div>
-                            
+
                             {/* Unread indicator */}
-                            {notif.active && (
+                            {!notif.isRead && (
                                 <div className="absolute top-6 left-6 h-3 w-3 bg-brand-primary rounded-full animate-pulse shadow-glow shadow-brand-primary/50"></div>
                             )}
                         </motion.div>
@@ -227,14 +216,14 @@ export const NotificationsPage = () => {
                                         <div className={cn(
                                             "h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg",
                                             (selectedNotification.type === 'success' || selectedNotification.type === 'offer_accepted') ? "bg-emerald-500/10 text-emerald-500 shadow-emerald-500/10" :
-                                            (selectedNotification.type === 'warning' || selectedNotification.type === 'alert') ? "bg-amber-500/10 text-amber-500 shadow-amber-500/10" :
-                                            selectedNotification.type === 'new_bid' ? "bg-indigo-500/10 text-indigo-500 shadow-indigo-500/10" :
-                                            "bg-blue-500/10 text-blue-500 shadow-blue-500/10"
+                                                (selectedNotification.type === 'warning' || selectedNotification.type === 'alert') ? "bg-amber-500/10 text-amber-500 shadow-amber-500/10" :
+                                                    selectedNotification.type === 'new_bid' ? "bg-indigo-500/10 text-indigo-500 shadow-indigo-500/10" :
+                                                        "bg-blue-500/10 text-blue-500 shadow-blue-500/10"
                                         )}>
                                             {(selectedNotification.type === 'success' || selectedNotification.type === 'offer_accepted') ? <CheckCircle2 className="h-7 w-7" /> :
-                                             (selectedNotification.type === 'warning' || selectedNotification.type === 'alert') ? <AlertTriangle className="h-7 w-7" /> :
-                                             selectedNotification.type === 'new_bid' ? <CreditCard className="h-7 w-7" /> :
-                                             <Info className="h-7 w-7" />}
+                                                (selectedNotification.type === 'warning' || selectedNotification.type === 'alert') ? <AlertTriangle className="h-7 w-7" /> :
+                                                    selectedNotification.type === 'new_bid' ? <CreditCard className="h-7 w-7" /> :
+                                                        <Info className="h-7 w-7" />}
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-black text-slate-900 dark:text-white leading-tight">
@@ -265,15 +254,6 @@ export const NotificationsPage = () => {
                                         className="grow bg-brand-primary hover:bg-brand-primary/90 text-white font-black py-4 px-6 rounded-2xl transition-all shadow-lg shadow-brand-primary/20 cursor-pointer"
                                     >
                                         فهمت ذلك
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            removeNotification(selectedNotification.id);
-                                            setIsDetailModalOpen(false);
-                                        }}
-                                        className="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-500 font-bold py-4 px-6 rounded-2xl transition-all cursor-pointer"
-                                    >
-                                        حذف الإشعار
                                     </button>
                                 </div>
                             </div>
