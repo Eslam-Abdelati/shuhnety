@@ -3,10 +3,11 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { Eye, EyeOff, Truck } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useAuthStore } from '@/store/useAuthStore'
 import { cn } from '@/utils/cn'
+import { Logo } from '@/components/ui/Logo'
 import { authService } from '@/services/authService'
 import { toast } from 'react-hot-toast'
 import { Loading } from '@/components/ui/Loading'
@@ -89,13 +90,12 @@ export const LoginPage = () => {
             {/* Form inputs side */}
             <div className="w-full md:w-1/2 h-full flex flex-col justify-between p-6 sm:p-12 md:py-12 md:px-16 lg:py-16 lg:px-24 overflow-y-auto md:overflow-hidden bg-white">
                 {/* Top Logo / Navigation */}
-                <div className="flex items-center justify-between mb-8">
-                    <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity group">
-                        <div className="h-9 w-9 bg-brand-primary rounded-xl flex items-center justify-center text-white shadow-md shadow-brand-primary/25 transition-all duration-300 group-hover:rotate-[10deg] group-hover:scale-105">
-                            <Truck className="h-4 w-4" />
-                        </div>
-                        <span className="text-xl font-black text-brand-secondary tracking-tight">شحنتي</span>
-                    </Link>
+                <div className="mb-8">
+                    <Logo 
+                        boxClassName="h-9 w-9 rounded-xl transition-all duration-300 group-hover:rotate-[10deg] group-hover:scale-105" 
+                        iconClassName="h-4 w-4" 
+                        textClassName="text-xl font-black text-brand-secondary tracking-tight" 
+                    />
                 </div>
 
                 {/* Form Wrapper */}

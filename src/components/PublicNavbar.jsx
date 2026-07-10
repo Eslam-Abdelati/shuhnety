@@ -1,20 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
-import { Truck } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { Logo } from '@/components/ui/Logo';
 
 export const PublicNavbar = () => {
     return (
         <nav className="fixed w-full z-[100] transition-all duration-300 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm">
             <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                 {/* Logo Section */}
-                <Link to="/" className="flex items-center gap-2.5 group cursor-pointer">
-                    <div className="h-10 w-10 bg-brand-primary rounded-[0.9rem] flex items-center justify-center text-white shadow-lg shadow-brand-primary/25 transition-all duration-500 group-hover:rotate-[15deg] group-hover:scale-110">
-                        <Truck className="h-5.5 w-5.5" />
-                    </div>
-                    <span className="text-2xl font-black text-brand-secondary tracking-tight">شحنتي</span>
-                </Link>
+                <Logo 
+                    boxClassName="h-10 w-10 rounded-[0.9rem] transition-all duration-500 group-hover:rotate-[15deg] group-hover:scale-110" 
+                    iconClassName="h-5.5 w-5.5" 
+                />
 
                 {/* Desktop Menu - Floating Style */}
                 <div className="hidden lg:flex items-center bg-slate-50/50 px-8 py-2.5 rounded-full border border-slate-100/50 gap-10 text-[13px] font-bold text-[#57534d] shadow-sm">

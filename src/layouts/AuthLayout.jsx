@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Truck } from 'lucide-react'
+import { LogoIcon } from '@/components/ui/Logo'
 
 export const AuthLayout = ({ children, title, subtitle }) => {
     return (
@@ -10,8 +10,8 @@ export const AuthLayout = ({ children, title, subtitle }) => {
 
             <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
                 <div className="text-center">
-                    <div className="inline-flex items-center justify-center h-24 w-24 bg-gradient-to-br from-brand-primary to-blue-900 text-white rounded-[2.5rem] mb-10 shadow-2xl shadow-brand-primary/20 rotate-3 hover:rotate-0 transition-transform duration-500">
-                        <Truck className="h-12 w-12" />
+                    <div className="inline-flex items-center justify-center h-24 w-24 bg-white border border-slate-100 rounded-[2.5rem] mb-10 shadow-xl rotate-3 hover:rotate-0 transition-transform duration-500 overflow-hidden p-3">
+                        <LogoIcon className="h-full w-full object-contain" />
                     </div>
                     <h2 className="text-5xl font-black text-slate-900 tracking-tight mb-4 drop-shadow-sm">{title}</h2>
                     <p className="text-slate-500 text-xl font-medium max-w-xs mx-auto">{subtitle}</p>
