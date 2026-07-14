@@ -52,8 +52,8 @@ export const LandingPage = () => {
         {/* Background Image & Gradients */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1600"
-            className="w-full h-full object-cover opacity-40 select-none pointer-events-none"
+            src="/hero-bg.jpg"
+            className="w-full h-full object-cover opacity-45 select-none pointer-events-none"
             alt="Modern Logistics Background"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-secondary/50 via-slate-950/75 to-slate-950/95 z-0"></div>
@@ -74,7 +74,7 @@ export const LandingPage = () => {
             </div>
 
             {/* Title */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.3] mb-6 text-white max-w-3xl drop-shadow-md">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black leading-[1.3] mb-6 text-white max-w-3xl drop-shadow-md">
               حلول نقل ذكية وسلسة <br className="hidden sm:inline" />
               <span className="text-brand-primary">لكافة احتياجاتك</span>
             </h1>

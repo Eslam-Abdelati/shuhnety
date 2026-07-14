@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Mail, ArrowLeft, Shield, CheckCircle2, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/cn'
 import { useAuthStore } from '@/store/useAuthStore'
-
+import { Logo } from '@/components/ui/Logo'
 import { authService } from '@/services/authService'
 import { toast } from 'react-hot-toast'
 import { Loading } from '@/components/ui/Loading'
-
 
 export const VerifyEmailPage = () => {
     const [otp, setOtp] = useState(['', '', '', ''])
@@ -21,8 +18,7 @@ export const VerifyEmailPage = () => {
     const location = useLocation()
     const { isAuthenticated, user } = useAuthStore()
 
-
-    const { email, role } = location.state || {}
+    const { email } = location.state || {}
 
     useEffect(() => {
         if (!email) {
@@ -34,7 +30,6 @@ export const VerifyEmailPage = () => {
             navigate('/')
         }
     }, [email, navigate, isAuthenticated, user])
-
 
     useEffect(() => {
         let interval = null
@@ -50,7 +45,6 @@ export const VerifyEmailPage = () => {
 
     const handleChange = (element, index) => {
         if (isNaN(element.value)) return false
-
 
         setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))])
 
@@ -77,14 +71,10 @@ export const VerifyEmailPage = () => {
             return
         }
 
-
         setIsLoading(true)
         try {
             await authService.verifyEmail(email, otpValue)
-
             toast.success('تم تفعيل بريدك الإلكتروني بنجاح! يمكنك الآن تسجيل الدخول.')
-
-
             setTimeout(() => {
                 navigate('/login')
             }, 2000)
@@ -92,7 +82,6 @@ export const VerifyEmailPage = () => {
             const errorMsg = error.message || 'حدث خطأ أثناء التحقق، يرجى المحاولة مرة أخرى';
             toast.error(errorMsg)
         } finally {
-
             setIsLoading(false)
         }
     }
@@ -105,125 +94,116 @@ export const VerifyEmailPage = () => {
             const data = await authService.resendVerificationCode(email)
             setTimer(59)
             toast.success(data.message || 'تم إعادة إرسال رمز التحقق إلي بريدك الإلكتروني بنجاح')
-
         } catch (error) {
             toast.error(error.message || 'فشل إعادة إرسال رمز التحقق')
         } finally {
-
             setIsResending(false)
         }
     }
 
     return (
-        <div className="flex items-center min-h-screen p-6 bg-gray-50 font-cairo" dir="rtl">
-            <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl relative">
-                <div className="flex flex-col overflow-y-auto md:flex-row">
-                    {/* Side Image */}
-                    <div className="h-32 md:h-auto md:w-1/2 relative overflow-hidden">
-                        <img
-                            aria-hidden="true"
-                            className="object-cover w-full h-full"
-                            src="https://images.unsplash.com/photo-1555529902-5261145633bf?auto=format&fit=crop&q=80&w=800"
-                            alt="Verification"
-                        />
-                        <div className="absolute inset-0 bg-brand-primary/5 backdrop-blur-[1px]"></div>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-white text-center">
-                            <motion.div
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                className="bg-white/10 backdrop-blur-md p-5 rounded-2xl mb-4"
-                            >
-                                <Shield className="h-10 w-10 text-white" />
-                            </motion.div>
-                            <h2 className="text-xl font-semibold mb-2">أمان حسابك</h2>
-                            <p className="text-xs font-medium opacity-90">تحقق من بريدك الإلكتروني لضمان أمان معاملاتك</p>
-                        </div>
+        <div className="min-h-screen flex flex-col md:flex-row w-full h-screen overflow-hidden font-cairo bg-white" dir="rtl">
+            {/* Form inputs side */}
+            <div className="w-full md:w-1/2 h-full flex flex-col justify-between p-6 sm:p-12 md:py-12 md:px-16 lg:py-16 lg:px-24 overflow-y-auto md:overflow-hidden bg-white">
+                <div className="mb-8">
+                    <Logo 
+                        boxClassName="h-9 w-9 rounded-xl transition-all duration-300 group-hover:rotate-[10deg] group-hover:scale-105" 
+                        iconClassName="h-4 w-4" 
+                        textClassName="text-xl font-black text-brand-secondary tracking-tight" 
+                    />
+                </div>
+
+                {/* Form Wrapper */}
+                <div className="my-auto max-w-sm w-full mx-auto space-y-8">
+                    <div className="space-y-3">
+                        <h1 className="text-3xl font-black text-slate-900">تأكيد البريد الإلكتروني</h1>
+                        <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                            أدخل الرمز المكون من 4 أرقام المرسل إلى: <br />
+                            <span className="block font-bold text-brand-primary mt-1">{email}</span>
+                        </p>
                     </div>
 
-                    {/* Content Section */}
-                    <div className="flex items-center justify-center p-6 sm:p-12 md:w-1/2 bg-white">
-                        <div className="w-full">
-                            <motion.div
-                                initial={{ x: 10, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                className="space-y-6"
-                            >
-                                <div>
-                                    <h1 className="text-xl font-semibold text-gray-700 mb-2">تأكيد البريد الإلكتروني</h1>
-                                    <p className="text-gray-500 text-sm leading-relaxed">
-                                        أدخل الرمز المكون من 4 أرقام المرسل إلى:
-                                        <span className="block font-semibold text-brand-primary mt-1">{email}</span>
-                                    </p>
-                                </div>
-
-                                <form onSubmit={handleVerify} className="space-y-6">
-                                    <div className="grid grid-cols-4 gap-3" dir="ltr">
-                                        {otp.map((data, index) => (
-                                            <input
-                                                key={index}
-                                                type="text"
-                                                maxLength="1"
-                                                value={data}
-                                                onChange={(e) => handleChange(e.target, index)}
-                                                onKeyDown={(e) => handleKeyDown(e, index)}
-                                                className={cn(
-                                                    "w-full h-12 text-center text-xl font-semibold rounded-md border outline-none transition-all",
-                                                    data ? "border-brand-primary bg-orange-50/20" : "border-gray-300 bg-white focus:border-brand-primary"
-                                                )}
-                                            />
-                                        ))}
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <Button
-                                            type="submit"
-                                            className="w-full h-10 text-sm font-medium rounded-md bg-brand-primary hover:bg-orange-600 text-white shadow-sm transition-colors flex items-center justify-center gap-2"
-                                            disabled={isLoading}
-                                        >
-                                            {isLoading ? (
-                                                <Loading minimal={true} className="text-white" />
-                                            ) : (
-                                                <span>تأكيد الرمز</span>
-                                            )}
-                                        </Button>
-
-                                        <div className="text-center pt-2">
-                                            {timer > 0 ? (
-                                                <p className="text-xs text-gray-400">
-                                                    إعادة إرسال الرمز خلال {timer} ثانية
-                                                </p>
-                                            ) : (
-                                                <button
-                                                    type="button"
-                                                    onClick={handleResend}
-                                                    disabled={isResending}
-                                                    className="text-sm font-medium text-brand-primary hover:underline transition-all"
-                                                >
-                                                    {isResending ? (
-                                                        <Loading minimal={true} size="xs" />
-                                                    ) : "إرسال الرمز مرة أخرى"}
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                </form>
-
-                                <hr className="border-gray-100" />
-
-                                <div className="text-center">
-                                    <button
-                                        onClick={() => navigate('/login')}
-                                        className="text-sm font-medium text-brand-primary hover:underline"
-                                    >
-                                        العودة لتسجيل الدخول
-                                    </button>
-                                </div>
-                            </motion.div>
+                    <form onSubmit={handleVerify} className="space-y-6">
+                        <div className="grid grid-cols-4 gap-4 w-full" dir="ltr">
+                            {otp.map((data, index) => (
+                                <input
+                                    key={index}
+                                    type="text"
+                                    maxLength="1"
+                                    value={data}
+                                    onChange={(e) => handleChange(e.target, index)}
+                                    onKeyDown={(e) => handleKeyDown(e, index)}
+                                    className={cn(
+                                        "w-full h-14 text-center text-xl font-black rounded-xl border focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary transition-all bg-slate-50/50 hover:bg-slate-50",
+                                        data ? "border-brand-primary bg-orange-50/10 text-brand-primary font-black" : "border-slate-200"
+                                    )}
+                                />
+                            ))}
                         </div>
+
+                        <div className="space-y-4">
+                            <Button
+                                type="submit"
+                                className="w-full h-14 rounded-xl text-sm font-black text-white bg-brand-secondary hover:bg-black transition-all shadow-xl shadow-brand-secondary/15 flex items-center justify-center cursor-pointer"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <Loading minimal={true} className="text-white mx-auto" />
+                                ) : (
+                                    <span>تأكيد الرمز</span>
+                                )}
+                            </Button>
+
+                            <div className="text-center pt-2">
+                                {timer > 0 ? (
+                                    <p className="text-xs text-slate-400 font-bold">
+                                        إعادة إرسال الرمز خلال {timer} ثانية
+                                    </p>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={handleResend}
+                                        disabled={isResending}
+                                        className="text-sm font-bold text-brand-primary hover:underline transition-all cursor-pointer"
+                                    >
+                                        إعادة إرسال الرمز
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </form>
+
+                    <div className="text-center pt-2 border-t border-slate-100 mt-6">
+                        <p className="text-sm font-medium text-slate-500">
+                            <Link className="font-bold text-brand-primary hover:underline" to="/login">
+                                العودة لتسجيل الدخول
+                            </Link>
+                        </p>
                     </div>
                 </div>
+
+                {/* Footer Copyright */}
+                <div className="text-center pt-8 text-[11px] text-slate-400 font-bold">
+                    © {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شحنتي
+                </div>
+            </div>
+
+            {/* Split Screen Image side */}
+            <div className="hidden md:block w-1/2 h-full relative bg-slate-900">
+                <img
+                    aria-hidden="true"
+                    className="object-cover w-full h-full opacity-70 select-none pointer-events-none"
+                    src="https://images.unsplash.com/photo-1555529902-5261145633bf?auto=format&fit=crop&q=80&w=1200"
+                    alt="Shahnti Verification split screen image"
+                />
+                {/* Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-brand-secondary/80 to-slate-900/50 mix-blend-multiply"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(235,106,29,0.15)_0%,transparent_60%)]"></div>
             </div>
         </div>
     )
 }
+
+export default VerifyEmailPage
+
 
