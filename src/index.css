@@ -47,6 +47,46 @@
   /* Deep Green - Trust & Growth */
   --color-brand-background: #fffcf8;
   /* Subtle Beige/Off-white */
+
+  /* Custom landing page colors */
+  --color-lp-primary: #eb6a1d;
+  --color-lp-secondary: #27272a;
+  --color-lp-background: #f8f9ff;
+  --color-lp-on-background: #0b1c30;
+  --color-lp-primary-fixed: #ffdbca;
+  --color-lp-surface-variant: #d3e4fe;
+  --color-lp-surface-container-lowest: #ffffff;
+  --color-lp-surface-container-low: #eff4ff;
+  --color-lp-surface-container-high: #dce9ff;
+  --color-lp-surface-container: #e5eeff;
+  --color-lp-on-surface-variant: #584237;
+  --color-lp-on-surface: #0b1c30;
+  --color-lp-on-primary: #ffffff;
+  --color-lp-on-secondary: #ffffff;
+  --color-lp-outline-variant: #e0c0b1;
+  --color-lp-surface: #f8f9ff;
+
+  /* Custom spacing for the landing page */
+  --spacing-lp-margin-mobile: 16px;
+  --spacing-lp-gutter: 24px;
+  --spacing-lp-stack-sm: 12px;
+  --spacing-lp-margin-desktop: 40px;
+  --spacing-lp-stack-lg: 48px;
+  --spacing-lp-unit: 8px;
+  --spacing-lp-container-max: 1280px;
+  --spacing-lp-stack-md: 24px;
+
+  /* Custom font sizes for the landing page */
+  --font-size-lp-display-lg-mobile: 32px;
+  --font-size-lp-display-lg: 48px;
+  --font-size-lp-headline-md: 24px;
+  --font-size-lp-body-lg: 18px;
+  --font-size-lp-label-md: 14px;
+  --font-size-lp-label-sm: 12px;
+  --font-size-lp-body-md: 16px;
+
+  /* Custom border radii */
+  --radius-2xl: 24px;
 }
 
 :root {
@@ -57,9 +97,9 @@
   --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
-  --primary: 221 39% 11%;
-  /* Navy Blue */
-  --primary-foreground: 210 40% 98%;
+  --primary: 22 85% 52%;
+  /* Brand Orange (#eb6a1d) */
+  --primary-foreground: 0 0% 100%;
   --secondary: 174 84% 31%;
   /* Teal */
   --secondary-foreground: 210 40% 98%;
@@ -71,7 +111,7 @@
   --destructive-foreground: 210 40% 98%;
   --border: 214.3 32% 91%;
   --input: 214.3 32% 91%;
-  --ring: 221.2 83.2% 53.3%;
+  --ring: 22 85% 52%;
   --radius: 0.75rem;
 }
 
@@ -83,8 +123,9 @@
   --card-foreground: 210 40% 98%;
   --popover: 222.2 84% 4.9%;
   --popover-foreground: 210 40% 98%;
-  --primary: 210 40% 98%;
-  --primary-foreground: 222.2 47.4% 11.2%;
+  --primary: 22 85% 52%;
+  /* Brand Orange (#eb6a1d) */
+  --primary-foreground: 0 0% 100%;
   --secondary: 174 84% 31%;
   --secondary-foreground: 210 40% 98%;
   --muted: 217.2 32.6% 17.5%;
@@ -95,7 +136,7 @@
   --destructive-foreground: 210 40% 98%;
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
-  --ring: 224.3 76.3% 48%;
+  --ring: 22 85% 52%;
 }
 
 @layer base {
@@ -164,4 +205,45 @@
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+/* Custom styles for the redesigned Landing Page */
+.landing-page-root {
+  font-family: 'Noto Kufi Arabic', 'Cairo', 'Inter', sans-serif;
+  scroll-behavior: smooth;
+}
+
+.landing-page-root .font-display {
+  font-family: 'Noto Kufi Arabic', 'Plus Jakarta Sans', sans-serif;
+}
+
+.landing-page-root .font-label {
+  font-family: 'Noto Kufi Arabic', sans-serif;
+}
+
+.landing-page-root .glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(243, 244, 246, 1);
+}
+
+.landing-page-root .gradient-text {
+  background: linear-gradient(135deg, #eb6a1d 0%, #f97316 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.landing-page-root .step-line::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -50%;
+  width: 100%;
+  height: 2px;
+  background: #e0c0b1;
+  z-index: -1;
+}
+
+@media (max-width: 768px) {
+  .landing-page-root .step-line::after { display: none; }
 }

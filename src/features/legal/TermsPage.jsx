@@ -60,16 +60,16 @@ export const TermsPage = () => {
     ]
 
     return (
-        <div className="min-h-screen bg-[#fcfcf9] font-cairo text-right" dir="rtl">
+        <div className="min-h-screen bg-lp-background font-cairo text-right" dir="rtl">
             <PublicNavbar />
             {/* Header / Hero */}
-            <div className="relative bg-brand-secondary py-24 overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(235,106,29,0.15)_0%,transparent_50%)]"></div>
+            <div className="relative bg-lp-on-background py-24 overflow-hidden">
+                <div className="absolute inset-0 bg-lp-gradient bg-gradient-to-l from-lp-on-background/90 via-lp-on-background/40 to-transparent"></div>
                 <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="inline-flex items-center justify-center h-16 w-16 bg-brand-primary rounded-2xl mb-8 shadow-xl shadow-brand-primary/20"
+                        className="inline-flex items-center justify-center h-16 w-16 bg-lp-primary rounded-2xl mb-8 shadow-xl shadow-lp-primary/20"
                     >
                         <Scale className="h-8 w-8 text-white" />
                     </motion.div>
@@ -77,7 +77,7 @@ export const TermsPage = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.1 }}
-                        className="text-4xl lg:text-5xl font-black text-white mb-6"
+                        className="text-xl lg:text-2xl font-black text-white mb-6"
                     >
                         الشروط والأحكام
                     </motion.h1>
@@ -97,17 +97,17 @@ export const TermsPage = () => {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 p-10 md:p-16 border border-slate-100"
+                    className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 p-10 md:p-16 border border-lp-outline-variant/15"
                 >
                     {/* Meta Details */}
-                    <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-8 border-b border-slate-100 text-slate-500 font-bold text-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-4 mb-10 pb-8 border-b border-lp-outline-variant/15 text-slate-500 font-bold text-sm">
                         <span>الإصدار رقم: 1.0</span>
                         <span>تاريخ السريان والنفاذ: 7 يونيو 2026</span>
                     </div>
 
                     {/* Preamble / Introduction */}
-                    <div className="bg-brand-primary/5 p-8 rounded-3xl border-r-4 border-brand-primary mb-12">
-                        <h4 className="text-lg font-black text-brand-secondary mb-3">تمهيد وتوضيح (طبيعة الاتفاقية)</h4>
+                    <div className="bg-lp-primary/5 p-8 rounded-3xl border-r-4 border-lp-primary mb-12">
+                        <h4 className="text-lg font-black text-lp-on-background mb-3">تمهيد وتوضيح (طبيعة الاتفاقية)</h4>
                         <p className="text-slate-700 font-medium leading-relaxed">
                             تعتبر هذه الشروط والأحكام اتفاقية قانونية إلكترونية ملزمة مبرمة بين منصة "شُحنتي" الإلكترونية (المشار إليها لاحقاً بـ "المنصة" أو "نحن")، وبين أي شخص طبيعي أو اعتباري يقوم بإنشاء حساب أو استخدام خدمات المنصة، سواء كان صاحب شحنة/تاجر (المشار إليه بـ "العميل") أو قائد مركبة/صاحب شاحنة (المشار إليه بـ "الكابتن"). إن مجرد النقر على زر "تسجيل" أو "أوافق"، أو البدء الفعلي في استخدام التطبيق، يُعد موافقة صريحة ونهائية على جميع أحكام هذه الاتفاقية.
                         </p>
@@ -125,10 +125,10 @@ export const TermsPage = () => {
                                 className="group"
                             >
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="h-10 w-10 rounded-xl bg-brand-primary/5 text-brand-primary flex items-center justify-center group-hover:bg-brand-primary group-hover:text-white transition-all duration-300">
+                                    <div className="h-10 w-10 rounded-xl bg-lp-primary/5 text-lp-primary flex items-center justify-center group-hover:bg-lp-primary group-hover:text-white transition-all duration-300">
                                         <section.icon className="h-5 w-5" />
                                     </div>
-                                    <h3 className="text-xl font-black text-brand-secondary">{section.title}</h3>
+                                    <h3 className="text-xl font-black text-lp-on-background">{section.title}</h3>
                                 </div>
                                 <p className="text-slate-500 font-bold leading-relaxed pr-14 whitespace-pre-line">
                                     {section.content}
@@ -138,11 +138,11 @@ export const TermsPage = () => {
                     </div>
 
                     {/* Agreement Footer */}
-                    <div className="mt-20 pt-10 border-t border-slate-100 text-center">
+                    <div className="mt-20 pt-10 border-t border-lp-outline-variant/15 text-center">
                         <p className="text-sm text-slate-400 font-bold mb-8">
                             بإنشائك حساباً في منصة شحنتي، فإنك توافق ضمنياً على كافة البنود المذكورة أعلاه.
                         </p>
-                        <Button asChild size="lg" className="w-full sm:w-auto rounded-2xl px-6 md:px-12 bg-brand-secondary hover:bg-black font-black">
+                        <Button asChild size="lg" className="w-full sm:w-auto rounded-2xl px-6 md:px-12 bg-lp-primary hover:bg-lp-primary/95 text-white font-black h-14 shadow-xl shadow-lp-primary/20 hover:scale-105 duration-300">
                             <Link to="/">العودة إلى الصفحة الرئيسية</Link>
                         </Button>
                     </div>

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Check } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
-export const Select = React.forwardRef(({ options = [], value, onChange, placeholder = "اختر...", label, error, disabled, className, isLoading }, ref) => {
+export const Select = React.forwardRef(({ options = [], value, onChange, placeholder = "اختر...", label, error, disabled, className, isLoading, onClick }, ref) => {
     const [isOpen, setIsOpen] = useState(false)
     const containerRef = useRef(null)
 
@@ -25,7 +25,12 @@ export const Select = React.forwardRef(({ options = [], value, onChange, placeho
             <div className="relative">
                 <button
                     type="button"
-                    onClick={() => !disabled && !isLoading && setIsOpen(!isOpen)}
+                    onClick={(e) => {
+                        if (!disabled && !isLoading) {
+                            setIsOpen(!isOpen)
+                            if (onClick) onClick(e)
+                        }
+                    }}
                     className={cn(
                         "w-full text-sm rounded-md border flex items-center justify-between transition-all px-3 py-2 bg-white",
                         isOpen ? "border-brand-primary ring-1 ring-brand-primary outline-none" : "border-gray-300",

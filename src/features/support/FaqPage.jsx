@@ -60,26 +60,26 @@ export const FaqPage = () => {
     )
 
     return (
-        <div className="min-h-screen bg-[#fcfcf9] font-cairo text-right" dir="rtl">
+        <div className="min-h-screen bg-lp-background font-cairo text-right" dir="rtl">
             <PublicNavbar />
             {/* Header Section */}
-            <div className="relative bg-brand-secondary py-24 overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(235,106,29,0.15)_0%,transparent_50%)]"></div>
+            <div className="relative bg-lp-on-background py-24 overflow-hidden">
+                <div className="absolute inset-0 bg-lp-gradient bg-gradient-to-l from-lp-on-background/90 via-lp-on-background/40 to-transparent"></div>
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <div className="text-center max-w-3xl mx-auto">
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-brand-primary text-[10px] font-black uppercase tracking-widest mb-6 border border-white/5 backdrop-blur-sm"
+                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-lp-primary-fixed text-[10px] font-bold uppercase tracking-widest mb-6 border border-white/5 backdrop-blur-sm"
                         >
-                            <MessageCircle className="h-3 w-3" />
+                            <MessageCircle className="h-3 w-3 text-lp-primary" />
                             مركز المساعدة
                         </motion.div>
                         <motion.h1
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.1 }}
-                            className="text-4xl lg:text-5xl font-black text-white mb-6 leading-tight"
+                            className="text-xl lg:text-2xl font-black text-white mb-6 leading-tight"
                         >
                             الأسئلة الشائعة <br /> وكيفية استخدام المنصة
                         </motion.h1>
@@ -96,9 +96,9 @@ export const FaqPage = () => {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="ابحث عن سؤالك هنا..."
-                                className="w-full h-16 bg-white rounded-2xl px-16 text-lg font-bold shadow-2xl shadow-black/20 outline-none focus:ring-2 ring-brand-primary/50 transition-all text-right"
+                                className="w-full h-16 bg-white rounded-2xl px-16 text-lg font-bold shadow-2xl shadow-black/20 outline-none focus:ring-2 ring-lp-primary/50 transition-all text-right"
                             />
-                            <Search className="absolute right-6 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-300" />
+                            <Search className="absolute right-6 top-1/2 -translate-y-1/2 h-6 w-6 text-lp-on-surface-variant/40" />
                         </motion.div>
                     </div>
                 </div>
@@ -112,7 +112,7 @@ export const FaqPage = () => {
                         onClick={() => setActiveCategory('all')}
                         className={cn(
                             "px-8 h-12 rounded-xl text-sm font-black transition-all border",
-                            activeCategory === 'all' ? "bg-brand-primary border-brand-primary text-white shadow-xl shadow-brand-primary/20" : "bg-white border-slate-100 text-slate-500 hover:bg-slate-50"
+                            activeCategory === 'all' ? "bg-lp-primary border-lp-primary text-lp-on-primary shadow-xl shadow-lp-primary/20 hover:scale-105 duration-300 cursor-pointer" : "bg-white border-lp-outline-variant/15 text-lp-on-surface-variant hover:bg-lp-surface cursor-pointer"
                         )}
                     >
                         الكل
@@ -123,7 +123,7 @@ export const FaqPage = () => {
                             onClick={() => setActiveCategory(cat.id)}
                             className={cn(
                                 "flex items-center gap-2 px-8 h-12 rounded-xl text-sm font-black transition-all border",
-                                activeCategory === cat.id ? "bg-brand-primary border-brand-primary text-white shadow-xl shadow-brand-primary/20" : "bg-white border-slate-100 text-slate-500 hover:bg-slate-50"
+                                activeCategory === cat.id ? "bg-lp-primary border-lp-primary text-lp-on-primary shadow-xl shadow-lp-primary/20 hover:scale-105 duration-300 cursor-pointer" : "bg-white border-lp-outline-variant/15 text-lp-on-surface-variant hover:bg-lp-surface cursor-pointer"
                             )}
                         >
                             <cat.icon className="h-4 w-4" />
@@ -139,21 +139,21 @@ export const FaqPage = () => {
                             <motion.div
                                 key={index}
                                 layout
-                                className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                                className="bg-white rounded-3xl border border-lp-outline-variant/15 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                             >
                                 <button
                                     onClick={() => setOpenIndex(openIndex === index ? -1 : index)}
-                                    className="w-full flex items-center justify-between p-7 text-right outline-none group"
+                                    className="w-full flex items-center justify-between p-7 text-right outline-none group cursor-pointer"
                                 >
                                     <span className={cn(
                                         "text-lg font-black transition-colors",
-                                        openIndex === index ? "text-brand-primary" : "text-brand-secondary group-hover:text-brand-primary"
+                                        openIndex === index ? "text-lp-primary" : "text-lp-on-background group-hover:text-lp-primary"
                                     )}>
                                         {faq.question}
                                     </span>
                                     <div className={cn(
                                         "h-8 w-8 rounded-lg flex items-center justify-center transition-all",
-                                        openIndex === index ? "bg-brand-primary text-white rotate-180" : "bg-slate-50 text-slate-400"
+                                        openIndex === index ? "bg-lp-primary text-white rotate-180" : "bg-lp-surface text-lp-on-surface-variant/70"
                                     )}>
                                         <ChevronDown className="h-5 w-5" />
                                     </div>
@@ -167,8 +167,8 @@ export const FaqPage = () => {
                                             transition={{ duration: 0.3 }}
                                         >
                                             <div className="px-7 pb-8 pt-2">
-                                                <div className="h-px w-10 bg-brand-primary/20 mb-6"></div>
-                                                <p className="text-[#57534d] font-bold leading-relaxed text-lg opacity-80">
+                                                <div className="h-px w-10 bg-lp-primary/20 mb-6"></div>
+                                                <p className="text-lp-on-surface-variant font-bold leading-relaxed opacity-85">
                                                     {faq.answer}
                                                 </p>
                                             </div>
@@ -178,9 +178,9 @@ export const FaqPage = () => {
                             </motion.div>
                         ))
                     ) : (
-                        <div className="text-center py-20 bg-slate-50 rounded-[3rem] border border-dashed border-slate-200">
-                            <HelpCircle className="h-16 w-16 text-slate-300 mx-auto mb-6" />
-                            <h3 className="text-xl font-black text-slate-400">عذراً، لم نجد نتائج لبحثك</h3>
+                        <div className="text-center py-20 bg-lp-surface rounded-[3rem] border border-dashed border-lp-outline-variant/30">
+                            <HelpCircle className="h-16 w-16 text-lp-on-surface-variant/30 mx-auto mb-6" />
+                            <h3 className="text-xl font-black text-lp-on-surface-variant/50">عذراً، لم نجد نتائج لبحثك</h3>
                         </div>
                     )}
                 </div>
@@ -189,28 +189,20 @@ export const FaqPage = () => {
                 <motion.div
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
-                    className="mt-24 p-10 bg-brand-secondary rounded-[3rem] text-center relative overflow-hidden"
+                    className="mt-24 p-10 bg-lp-on-background border border-lp-outline-variant/10 rounded-[3rem] text-center relative overflow-hidden"
                 >
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full -translate-x-10 -translate-y-10"></div>
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-lp-primary/5 rounded-full -translate-x-10 -translate-y-10"></div>
                     <div className="relative z-10">
-                        <ShieldCheck className="h-12 w-12 text-brand-primary mx-auto mb-6" />
+                        <ShieldCheck className="h-12 w-12 text-lp-primary mx-auto mb-6" />
                         <h3 className="text-2xl font-black text-white mb-3">لم تجد إجابة لسؤالك؟</h3>
                         <p className="text-white/60 font-bold mb-8 max-w-md mx-auto">فريق الدعم الفني متواجد دائماً لمساعدتك في أي وقت خلال رحلتك.</p>
-                        <Button asChild size="lg" className="w-full sm:w-auto rounded-2xl px-8 md:px-12 bg-brand-primary hover:bg-orange-600 font-black h-14">
+                        <Button asChild size="lg" className="w-full sm:w-auto rounded-2xl px-8 md:px-12 bg-lp-primary hover:bg-lp-primary/95 text-white font-black h-14 shadow-xl shadow-lp-primary/20 hover:scale-105 duration-300">
                             <Link to="/contact">تواصل معنا الآن</Link>
                         </Button>
                     </div>
                 </motion.div>
 
-                {/* Back Link */}
-                <div className="mt-12 text-center">
-                    <Button asChild variant="ghost" className="rounded-2xl text-[#57534d] font-black hover:bg-slate-100">
-                        <Link to="/" className="flex items-center gap-2">
-                            العودة للرئيسية
-                            <ChevronRight className="h-4 w-4" />
-                        </Link>
-                    </Button>
-                </div>
+               
             </div>
 
             <SimpleFooter />

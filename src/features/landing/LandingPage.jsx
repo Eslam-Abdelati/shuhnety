@@ -1,429 +1,626 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
-import { motion } from "framer-motion";
-import {
-  Truck,
-  ShieldCheck,
-  MapPin,
-  Wallet,
-  Building2,
-  Users,
-  Package,
-  ArrowLeftRight,
-  CheckCircle2,
-  TrendingUp,
-  Info,
-  ChevronLeft,
-  Globe,
-  Clock,
-  Heart,
-  Star,
-  Box,
-  Shield,
-  Zap,
-} from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { GlobalNotification } from "@/components/ui/NotificationProvider";
-import { cn } from "@/lib/utils";
+import { Logo } from "@/components/ui/Logo";
 import { SimpleFooter } from "@/components/SimpleFooter";
 import { PublicNavbar } from "@/components/PublicNavbar";
+import {
+  Rocket,
+  Star,
+  MapPin,
+  CheckCircle,
+  Banknote,
+  PiggyBank,
+  UserCheck,
+  Navigation,
+  ShieldCheck,
+  Shield,
+  Headphones,
+  Clock,
+  MousePointer,
+  TrendingUp,
+  ChevronDown,
+} from "lucide-react";
 
 export const LandingPage = () => {
-  const fadeIn = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    transition: { duration: 0.6 },
-  };
-
   return (
     <div
-      className="min-h-screen bg-brand-background font-cairo overflow-x-hidden selection:bg-brand-primary selection:text-white"
+      className="landing-page-root min-h-screen bg-lp-background text-on-background selection:bg-lp-primary/20 overflow-x-clip"
       dir="rtl"
     >
+      {/* TopNavBar */}
       <PublicNavbar />
 
-      {/* Notification stuck under navbar */}
-      <div className="fixed top-20 left-0 right-0 z-40">
-        <GlobalNotification />
-      </div>
-
-      {/* Premium Hero Section - Full Width Background Image Overlay */}
-      <section className="relative min-h-[85vh] flex items-center justify-center pt-24 pb-20 overflow-hidden bg-slate-900">
-        {/* Background Image & Gradients */}
+      {/* Hero Section */}
+      <section className="relative min-h-[600px] flex items-center overflow-hidden bg-lp-on-background">
+        {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <img
-            src="/hero-bg.jpg"
-            className="w-full h-full object-cover opacity-45 select-none pointer-events-none"
-            alt="Modern Logistics Background"
+            alt="Shihneti Hero"
+            className="w-full h-full object-cover opacity-40 select-none pointer-events-none"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxzCv1pUHGy-vpBAvZ-8zykToIOlJ1ycJFC7uzy8eQ0acfe_zBXZ-pvxxojw5w28-y31XyBS28LuogIEN8EabfwyZ7ZAwC_7Cwu2zPLdOzZLn-wqiDIVzMN9T_qI1eghMzkblrTJmGYVjuDEez6Frqac-VmUeWVuavKmpu2QCU0I9KTqFJRHK2_QZdgRS4vzwXcQsPRrfqdtZX_Td0aBaSZGUjHK_NXFZKH4qEQUMdG2fAznu3CCQ"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-brand-secondary/50 via-slate-950/75 to-slate-950/95 z-0"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(235,106,29,0.15)_0%,transparent_70%)] z-0"></div>
+          <div className="absolute inset-0 bg-lp-gradient bg-gradient-to-l from-lp-on-background/90 via-lp-on-background/40 to-transparent"></div>
         </div>
-
-        <div className="max-w-5xl mx-auto px-6 relative z-10 text-center flex flex-col items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="w-full flex flex-col items-center"
-          >
-            {/* Tag/Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white text-[10px] font-black tracking-widest uppercase mb-8 border border-white/10 backdrop-blur-md">
-              <Zap className="h-3.5 w-3.5 text-brand-primary animate-pulse" />
-              المنصة الرائدة لربط العملاء بمحترفي النقل
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop relative z-10 w-full">
+          <div className="max-w-2xl space-y-8">
+            <div className="inline-flex items-center gap-2 bg-lp-primary/20 text-lp-primary-fixed px-4 py-1.5 rounded-full font-label-md backdrop-blur-sm">
+              <Rocket className="h-4 w-4 text-lp-primary-fixed animate-pulse" />
+              مستقبل الشحن في المنطقة
             </div>
-
-            {/* Title */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black leading-[1.3] mb-6 text-white max-w-3xl drop-shadow-md">
-              حلول نقل ذكية وسلسة <br className="hidden sm:inline" />
-              <span className="text-brand-primary">لكافة احتياجاتك</span>
+            <h1 className="font-display-lg text-lp-display-lg-mobile md:text-lp-display-lg leading-tight text-white font-bold">
+              اشحن أي شيء... ودع الكابتن يتنافسون على{" "}
+              <span className="text-lp-primary-fixed font-bold">أفضل سعر</span>
             </h1>
-
-            {/* Description */}
-            <p className="max-w-2xl text-base sm:text-lg text-slate-200 font-bold leading-relaxed mb-12 drop-shadow-sm opacity-90">
-              سواء كنت تبحث عن وسيلة نقل موثوقة أو تسعى لتعزيز دخلك كشريك محترف،
-              شحنتي هي وجهتك المثالية.
+            <p className="font-body-lg text-lp-body-lg text-lp-surface-variant/80 max-w-lg leading-relaxed">
+              أنشئ شحنتك خلال أقل من دقيقة، واستقبل عروض أسعار من عشرات الكابتن
+              ثم اختر العرض الأنسب حسب السعر والتقييم ووقت الوصول.
             </p>
-
-            {/* Call to Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-              <Button
-                size="lg"
-                asChild
-                className="w-full sm:w-auto rounded-2xl px-12 h-14 text-sm font-black bg-brand-primary hover:bg-[#d95d18] text-white shadow-2xl shadow-brand-primary/30 transition-all duration-300 hover:-translate-y-1 active:scale-95 cursor-pointer"
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Link
+                to="/register"
+                className="bg-lp-primary text-lp-on-primary px-10 py-4 rounded-2xl font-headline-md text-center shadow-xl shadow-lp-primary/20 hover:scale-105 transition-all font-bold"
               >
-                <Link to="/login"> ابدأ الشحن الآن </Link>
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                asChild
-                className="w-full sm:w-auto rounded-2xl px-12 h-14 text-sm font-black border-white/20 text-white bg-white/5 hover:bg-white hover:text-brand-secondary hover:border-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 group cursor-pointer backdrop-blur-sm"
+                ابدأ الآن
+              </Link>
+              <HashLink
+                smooth
+                to="#how"
+                className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-4 rounded-2xl font-headline-md text-center hover:bg-white/20 transition-all font-bold"
               >
-                <Link
-                  to="/register"
-                  className="flex items-center justify-center gap-2"
-                >
-                  سجل الان
-                </Link>
-              </Button>
+                كيف تعمل المنصة؟
+              </HashLink>
             </div>
-
-            {/* Social Proof */}
-            <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-6">
-              <div className="flex -space-x-3 rtl:space-x-reverse">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="h-10 w-10 rounded-full border-2 border-slate-900 bg-slate-200 overflow-hidden shadow-md"
-                  >
-                    <img
-                      src={`https://i.pravatar.cc/150?u=${i + 10}`}
-                      alt="avatar"
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className="text-center sm:text-right">
-                <div className="flex items-center justify-center sm:justify-start gap-1 text-brand-primary mb-1 scale-95 origin-center sm:origin-right">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-current" />
-                  ))}
+            <div className="grid grid-cols-3 gap-12 pt-12 border-t border-white/10">
+              <div>
+                <div className="text-lp-headline-md font-bold text-lp-primary-fixed">
+                  +50k
                 </div>
-                <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest">
-                  انضم إلى آلاف المستخدمين الموثوقين يومياً في مصر
-                </p>
+                <div className="text-lp-label-sm text-lp-surface-variant/70">
+                  شحنة مكتملة
+                </div>
+              </div>
+              <div>
+                <div className="text-lp-headline-md font-bold text-lp-primary-fixed">
+                  +10k
+                </div>
+                <div className="text-lp-label-sm text-lp-surface-variant/70">
+                  كابتن معتمد
+                </div>
+              </div>
+              <div>
+                <div className="text-lp-headline-md font-bold text-lp-primary-fixed">
+                  4.9
+                </div>
+                <div className="flex items-center text-lp-label-sm text-lp-surface-variant/70 gap-1.5">
+                  <span>تقييم العملاء</span>
+                  <Star className="h-3.5 w-3.5 fill-lp-primary-fixed text-lp-primary-fixed" />
+                </div>
               </div>
             </div>
-          </motion.div>
-        </div>
-
-        {/* Decorative Bottom Curve / Fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none z-10"></div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="relative z-20 -mt-10 max-w-7xl mx-auto px-6">
-        <div className="bg-white/80 backdrop-blur-md rounded-[2.5rem] border border-slate-100/80 shadow-[0_30px_60px_-15px_rgba(20,83,45,0.05)] p-8 md:p-10 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x md:divide-x-reverse divide-slate-100">
-          <motion.div
-            className="flex items-center justify-center gap-5 md:px-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="h-14 w-14 rounded-2xl bg-brand-primary/10 flex items-center justify-center shrink-0">
-              <CheckCircle2 className="h-7 w-7 text-brand-primary" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-black text-brand-secondary mb-1 tracking-tight">
-                0
-              </h3>
-              <p className="text-xs text-slate-500 font-semibold">
-                شحنة مكتملة بنجاح
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="flex items-center justify-center gap-5 pt-6 md:pt-0 md:px-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <div className="h-14 w-14 rounded-2xl bg-brand-secondary/10 flex items-center justify-center shrink-0">
-              <Truck className="h-7 w-7 text-brand-secondary" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-black text-brand-secondary mb-1 tracking-tight">
-                0
-              </h3>
-              <p className="text-xs text-slate-500 font-semibold">
-                كابتن معتمد
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="flex items-center justify-center gap-5 pt-6 md:pt-0 md:px-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <div className="h-14 w-14 rounded-2xl bg-brand-primary/10 flex items-center justify-center shrink-0">
-              <TrendingUp className="h-7 w-7 text-brand-primary" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-black text-brand-secondary mb-1 tracking-tight">
-                0%
-              </h3>
-              <p className="text-xs text-slate-500 font-semibold">
-                نسبة نجاح التوصيل
-              </p>
-            </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* About Us Section - Keep as User Liked */}
-      <section id="about" className="py-24 bg-white relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          <div className="order-2 lg:order-1 relative">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4 pt-12">
-                <div className="h-64 bg-slate-50 rounded-[2.5rem] overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=400&h=600&fit=crop"
-                    className="w-full h-full object-cover"
-                    alt=""
-                  />
-                </div>
-                <div className="bg-brand-primary p-8 rounded-[2.5rem] text-white">
-                  <Zap className="h-10 w-10 mb-4 opacity-50" />
-                  <h4 className="text-xl font-black mb-2">
-                    في مرحلة الإنشاء والتطوير
+      {/* How it Works (Timeline) */}
+      <section
+        className="py-lp-stack-lg bg-lp-surface-container-lowest"
+        id="how"
+      >
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop text-center">
+          <h2 className="font-display-lg text-lp-display-lg-mobile md:text-lp-headline-md mb-lp-stack-lg text-xl font-bold">
+            كيف تبدأ رحلة شحنتك؟
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-lp-stack-md relative">
+            {/* Step 1 */}
+            <div className="relative group">
+              <div className="w-16 h-16 bg-lp-primary text-lp-on-primary rounded-full flex items-center justify-center mx-auto mb-4 font-headline-md relative z-10 group-hover:scale-110 transition-transform shadow-lg font-bold">
+                1
+              </div>
+              <h3 className="font-headline-md text-lg mb-2 font-bold">
+                أنشئ الشحنة
+              </h3>
+              <p className="text-lp-label-md text-lp-on-surface-variant font-medium">
+                أضف التفاصيل والموقع
+              </p>
+            </div>
+            {/* Step 2 */}
+            <div className="relative group">
+              <div className="w-16 h-16 bg-lp-primary text-lp-on-primary rounded-full flex items-center justify-center mx-auto mb-4 font-headline-md relative z-10 group-hover:scale-110 transition-transform shadow-lg font-bold">
+                2
+              </div>
+              <h3 className="font-headline-md text-lg mb-2 font-bold">
+                زايد الكابتن
+              </h3>
+              <p className="text-lp-label-md text-lp-on-surface-variant font-medium">
+                تلقى عروض حية وفورية
+              </p>
+            </div>
+            {/* Step 3 */}
+            <div className="relative group">
+              <div className="w-16 h-16 bg-lp-primary text-lp-on-primary rounded-full flex items-center justify-center mx-auto mb-4 font-headline-md relative z-10 group-hover:scale-110 transition-transform shadow-lg font-bold">
+                3
+              </div>
+              <h3 className="font-headline-md text-lg mb-2 font-bold">
+                قارن العروض
+              </h3>
+              <p className="text-lp-label-md text-lp-on-surface-variant font-medium">
+                السعر، التقييم، الوقت
+              </p>
+            </div>
+            {/* Step 4 */}
+            <div className="relative group">
+              <div className="w-16 h-16 bg-lp-primary text-lp-on-primary rounded-full flex items-center justify-center mx-auto mb-4 font-headline-md relative z-10 group-hover:scale-110 transition-transform shadow-lg font-bold">
+                4
+              </div>
+              <h3 className="font-headline-md text-lg mb-2 font-bold">
+                اختر الكابتن
+              </h3>
+              <p className="text-lp-label-md text-lp-on-surface-variant font-medium">
+                بضغطة زر واحدة فقط
+              </p>
+            </div>
+            {/* Step 5 */}
+            <div className="relative group">
+              <div className="w-16 h-16 bg-lp-primary text-lp-on-primary rounded-full flex items-center justify-center mx-auto mb-4 font-headline-md relative z-10 group-hover:scale-110 transition-transform shadow-lg font-bold">
+                5
+              </div>
+              <h3 className="font-headline-md text-lg mb-2 font-bold">
+                تتبع الشحنة
+              </h3>
+              <p className="text-lp-label-md text-lp-on-surface-variant font-medium">
+                متابعة حية حتى الوصول
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Bidding UI Mockup */}
+      <section className="py-lp-stack-lg overflow-hidden bg-lp-background">
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div className="space-y-6">
+            <div className="bg-lp-secondary/10 text-lp-secondary w-fit px-4 py-1 rounded-full font-label-md font-bold">
+              نظام المزايدة الذكي
+            </div>
+            <h2 className="font-display-lg text-lp-display-lg-mobile font-bold">
+              القوة في يدك... تحكم في ميزانيتك
+            </h2>
+            <p className="font-body-lg text-lp-on-surface-variant leading-relaxed">
+              لا أسعار ثابتة مفروضة عليك. في شحنتي، يتنافس الكابتن للفوز بطلبك،
+              مما يضمن لك الحصول على أقل سعر متاح في السوق مع أعلى جودة خدمة.
+            </p>
+            <ul className="space-y-4">
+              <li className="flex items-center gap-3">
+                <CheckCircle className="h-5 w-5 text-lp-secondary fill-lp-secondary/15" />
+                <span className="font-body-md font-medium text-lp-on-surface">
+                  شفافية كاملة في الأسعار
+                </span>
+              </li>
+              <li className="flex items-center gap-3">
+                <CheckCircle className="h-5 w-5 text-lp-secondary fill-lp-secondary/15" />
+                <span className="font-body-md font-medium text-lp-on-surface">
+                  نظام تقييم دقيق لكل كابتن
+                </span>
+              </li>
+            </ul>
+          </div>
+          {/* Mockup Card */}
+          <div className="relative">
+            <div className="bg-white rounded-2xl shadow-xl p-6 border border-lp-outline-variant/30 space-y-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-headline-md text-lg text-lp-on-surface font-bold">
+                    نقل أثاث منزلي
                   </h4>
-                  <p className="text-[10px] font-bold opacity-80 uppercase ">
-                    نعمل الآن على إطلاق المنصة لخدمة قطاع الشحن في الوادي الجديد
+                  <p className="text-lp-label-sm text-lp-on-surface-variant flex items-center gap-1.5 mt-1">
+                    <MapPin className="h-4 w-4 text-lp-on-surface-variant" />{" "}
+                    الداخلة ← بلاط
                   </p>
+                </div>
+                <div className="bg-lp-primary/10 text-lp-primary px-3 py-1 rounded-lg text-sm font-bold">
+                  بانتظار العروض...
                 </div>
               </div>
               <div className="space-y-4">
-                <div className="bg-brand-secondary p-8 rounded-[2.5rem] text-white">
-                  <Globe className="h-10 w-10 mb-4 opacity-50" />
-                  <h4 className="text-xl font-bold leading-relaxed">
-                    نؤمن أن التكنولوجيا هي الحل الأسرع للنمو الاقتصادي
-                  </h4>
+                {/* Bid 1 */}
+                <div className="flex items-center justify-between p-4 bg-lp-surface rounded-xl border border-lp-outline-variant/20 hover:border-lp-primary transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-slate-200">
+                      <img
+                        className="w-full h-full rounded-full object-cover"
+                        alt="خلفية كابتن شحنة أحمد"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZoVprdJZ_aQR335_i7cRSWFOUeRKE9dID-h2TEjU5lViS-wyhBmVYiDAlDs5RrGAlzAcE2wXJlAne2GbSR25vjKRQ1RGm4GC4EJXPu_Lv9oI-7vBRtV_7XcRpPkN4SGaa328cbUaEvmUZYQ0RcapN2cQqhzc5_l99hGgotKjKy1nCNnkos3TUAjbJCvOJIvYQ27bl5ptb3tq-YvACB1BX-6kS64L5xRUooBKqNhI1i2udyjvPDCY"
+                      />
+                    </div>
+                    <div>
+                      <div className="font-bold text-lp-on-surface">
+                        أحمد س.
+                      </div>
+                      <div className="flex items-center gap-1.5 text-xs text-amber-500 mt-0.5">
+                        <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />{" "}
+                        4.9 (120 رحلة)
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <div className="font-display text-lp-primary text-xl font-bold">
+                      450 ج
+                    </div>
+                    <Link
+                      to="/register"
+                      className="text-xs font-bold text-lp-secondary hover:underline"
+                    >
+                      اختيار العرض
+                    </Link>
+                  </div>
                 </div>
-                <div className="h-64 bg-slate-50 rounded-[2.5rem] overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1542435503-956c469947f6?w=400&h=600&fit=crop"
-                    className="w-full h-full object-cover"
-                    alt=""
-                  />
+                {/* Bid 2 */}
+                <div className="flex items-center justify-between p-4 bg-lp-surface rounded-xl border border-lp-outline-variant/20">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-slate-200">
+                      <img
+                        className="w-full h-full rounded-full object-cover"
+                        alt="خلفية كابتن شحنة خالد"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqGoH069RarQnwTDzNuXb7mxZTZea_kv5G3oR_DpaqTjuDf74gWPYeY7gObgGcWBGn9STqMeSx1XLtiTdHR-agZNlZSz6-xBVhQ7ob7W3hDBMI3wqLykHfe4mVwpVhbK6TepRhioySQBO_y0lN4-br6LlL3t7xiNY4TuTfS7l_AImPYtCd1sGzMyQUnMjluS36qQqjXkzXUt7gYwaLSSg7VL-fWvLZbV9pT9SYINASXK3s1d0XSfI"
+                      />
+                    </div>
+                    <div>
+                      <div className="font-bold text-lp-on-surface">
+                        خالد م.
+                      </div>
+                      <div className="flex items-center gap-1.5 text-xs text-amber-500 mt-0.5">
+                        <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />{" "}
+                        4.7 (85 رحلة)
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <div className="font-display text-lp-primary text-xl font-bold">
+                      410 ج
+                    </div>
+                    <Link
+                      to="/register"
+                      className="text-xs font-bold text-lp-secondary hover:underline"
+                    >
+                      اختيار العرض
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="order-1 lg:order-2 space-y-10">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-black text-brand-secondary mb-3">
-                نقل ذكي مباشر وآمن
-              </h2>
-              <div className="h-1.5 w-20 bg-brand-primary rounded-full"></div>
-            </div>
-
-            <div className="space-y-6">
-              <p className="text-base sm:text-lg text-slate-600 font-medium leading-relaxed">
-                شحنتي هي منصة تهدف إلى تطوير قطاع النقل والشحن داخل مصر، من خلال
-                ربط أصحاب الشحنات بالكابتن أصحاب المركبات وشركات النقل في نظام
-                واحد ذكي وسهل الاستخدام.
-              </p>
-              <p className="text-sm sm:text-base text-slate-700 font-medium leading-relaxed bg-brand-primary/5 p-6 rounded-3xl border-r-4 border-brand-primary">
-                نعتمد على نظام <strong>المزايدة الحي</strong>، حيث يمكن للعميل
-                استقبال عدة عروض أسعار من مختلف الكباتن، مع إمكانية{" "}
-                <strong>التفاوض المباشر</strong> للوصول إلى السعر العادل الذي
-                يضمن حقوق جميع الأطراف ويحقق أعلى كفاءة اقتصادية.
-              </p>
-            </div>
-
-            <div className="space-y-6">
-              {[
-                {
-                  title: "الشفافية الكاملة",
-                  desc: "كل معاملة موثقة ومؤمنة بأحدث معايير الأمان.",
-                  icon: ShieldCheck,
-                },
-                {
-                  title: "دعم تقني 24/7",
-                  desc: "فريقنا متاح دائماً لضمان وصول شحنتك بسلام.",
-                  icon: Info,
-                },
-              ].map((item, i) => (
-                <div key={i} className="flex gap-5">
-                  <div className="h-12 w-12 rounded-xl bg-brand-primary/5 flex items-center justify-center shrink-0">
-                    <item.icon className="h-6 w-6 text-brand-primary" />
-                  </div>
-                  <div>
-                    <h5 className="font-black text-slate-900 mb-1">
-                      {item.title}
-                    </h5>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                      {item.desc}
-                    </p>
-                  </div>
+            {/* Floating elements */}
+            <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-lg border border-lp-outline-variant/20 flex items-center gap-3 animate-bounce">
+              <div className="w-10 h-10 bg-lp-secondary rounded-full flex items-center justify-center text-white">
+                <Banknote className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="text-xs font-bold text-lp-on-surface">
+                  توفير 30%
                 </div>
-              ))}
+                <div className="text-[10px] text-lp-on-surface-variant font-medium">
+                  عن شركات الشحن التقليدية
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Added: Solutions Section */}
-      <section id="solutions" className="py-20 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto px-6">
+      {/* Why Shihneti (Features) */}
+      <section
+        className="py-lp-stack-lg bg-lp-surface-container-high/30"
+        id="why"
+      >
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-black text-brand-secondary mb-3">
-              منظومة ذكية تخدم كافة تطلعاتك
+            <h2 className="font-display-lg text-lp-display-lg-mobile mb-4 text-lp-on-surface text-xl font-bold">
+              لماذا يختار الآلاف شحنتي؟
             </h2>
-            <div className="h-1 w-12 bg-brand-primary mx-auto rounded-full"></div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {[
-              {
-                title: "للعملاء",
-                desc: "تحكم كامل في شحناتك مع نظام مزايدة يضمن لك أفضل سعر وأسرع تنفيذ.",
-                icon: Box,
-              },
-              {
-                title: "للكباتن",
-                desc: "فرص عمل يومية مع ضمان التحصيل الفوري.",
-                icon: Truck,
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-white p-8 rounded-3xl border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group text-center"
-              >
-                <div className="h-12 w-12 mx-auto rounded-2xl bg-slate-50 flex items-center justify-center mb-6 group-hover:bg-brand-primary group-hover:text-white transition-colors">
-                  <item.icon className="h-6 w-6" />
-                </div>
-                <h4 className="text-lg font-black text-slate-900 mb-2">
-                  {item.title}
-                </h4>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Problem Section - Enhanced Hover Aesthetics */}
-      <section id="problem" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-3xl font-black text-brand-secondary mb-3">
-              لماذا تختار شحنتي؟
-            </h2>
-            <p className="text-sm sm:text-base text-slate-500 font-semibold leading-relaxed">
-              نهدف إلى معالجة تحديات النقل التقليدية لضمان تجربة أكثر كفاءة
-              وموثوقية.
+            <p className="text-lp-body-lg text-lp-on-surface-variant max-w-2xl mx-auto">
+              نحن لا نقوم فقط بنقل الأشياء، نحن نعيد تعريف تجربة الخدمات
+              اللوجستية في المنطقة.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "غياب الثقة",
-                desc: "صعوبة التحقق من هوية الكابتن أو جودة الخدمة قبل شحنتي",
-                icon: ShieldCheck,
-              },
-              {
-                title: "عشوائية الرسوم",
-                desc: "مفيش نظام واضح لتحديد السعر. وغالبًا بتدفع أكتر من اللازم",
-                icon: Wallet,
-              },
-              {
-                title: "ضياع الشحنات",
-                desc: "انعدام تكنولوجيا التتبع اللحظي مما عرض بضاعتك للخطر.",
-                icon: MapPin,
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="group relative bg-slate-50/20 p-10 rounded-[3rem] border border-slate-100/50 hover:shadow-[0_40px_80px_-20px_rgba(235,106,29,0.12)] hover:-translate-y-2 transition-all duration-500 text-center overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="relative z-10 h-16 w-16 mx-auto rounded-2xl bg-amber-50 flex items-center justify-center mb-8 border border-orange-100 shadow-inner group-hover:bg-brand-primary group-hover:text-white transition-colors duration-500 group-hover:rotate-6">
-                  <item.icon className="h-8 w-8 text-brand-primary group-hover:text-white" />
-                </div>
-                <h4 className="relative z-10 text-xl font-black text-slate-900 mb-4 tracking-wide group-hover:text-brand-primary transition-colors">
-                  {item.title}
-                </h4>
-                <p className="relative z-10 text-sm text-slate-500 font-medium leading-relaxed">
-                  {item.desc}
-                </p>
+            {/* Feature 1 */}
+            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+              <div className="w-14 h-14 bg-lp-primary/10 text-lp-primary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-primary group-hover:text-white transition-colors">
+                <PiggyBank className="h-6 w-6" />
               </div>
-            ))}
+              <h3 className="font-headline-md mb-3 text-lp-on-surface font-bold">
+                وفّر مالك
+              </h3>
+              <p className="text-lp-on-surface-variant leading-relaxed">
+                نظام المزايدة يضمن لك الحصول على السعر الأكثر تنافسية في السوق.
+              </p>
+            </div>
+            {/* Feature 2 */}
+            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+              <div className="w-14 h-14 bg-lp-secondary/10 text-lp-secondary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-secondary group-hover:text-white transition-colors">
+                <UserCheck className="h-6 w-6" />
+              </div>
+              <h3 className="font-headline-md mb-3 text-lp-on-surface font-bold">
+                اختر الأفضل
+              </h3>
+              <p className="text-lp-on-surface-variant leading-relaxed">
+                اطلع على تقييمات الكابتن الحقيقية وصور مركباتهم قبل الموافقة.
+              </p>
+            </div>
+            {/* Feature 3 */}
+            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+              <div className="w-14 h-14 bg-lp-primary/10 text-lp-primary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-primary group-hover:text-white transition-colors">
+                <Navigation className="h-6 w-6" />
+              </div>
+              <h3 className="font-headline-md mb-3 text-lp-on-surface font-bold">
+                تتبع مباشر
+              </h3>
+              <p className="text-lp-on-surface-variant leading-relaxed">
+                شاهد موقع شحنتك لحظة بلحظة على الخريطة التفاعلية.
+              </p>
+            </div>
+            {/* Feature 4 */}
+            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+              <div className="w-14 h-14 bg-lp-secondary/10 text-lp-secondary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-secondary group-hover:text-white transition-colors">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <h3 className="font-headline-md mb-3 text-lp-on-surface font-bold">
+                كباتن موثوقون
+              </h3>
+              <p className="text-lp-on-surface-variant leading-relaxed">
+                جميع الكباتن خاضعون لعملية فحص وتوثيق صارمة للهوية والمركبة.
+              </p>
+            </div>
+            {/* Feature 5 */}
+            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+              <div className="w-14 h-14 bg-lp-primary/10 text-lp-primary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-primary group-hover:text-white transition-colors">
+                <Shield className="h-6 w-6" />
+              </div>
+              <h3 className="font-headline-md mb-3 text-lp-on-surface font-bold">
+                دفع آمن
+              </h3>
+              <p className="text-lp-on-surface-variant leading-relaxed">
+                خيارات دفع متعددة وآمنة تحفظ حقك كمرسل وتضمن حق الكابتن.
+              </p>
+            </div>
+            {/* Feature 6 */}
+            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+              <div className="w-14 h-14 bg-lp-secondary/10 text-lp-secondary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-secondary group-hover:text-white transition-colors">
+                <Headphones className="h-6 w-6" />
+              </div>
+              <h3 className="font-headline-md mb-3 text-lp-on-surface font-bold">
+                دعم فني 24/7
+              </h3>
+              <p className="text-lp-on-surface-variant leading-relaxed">
+                فريقنا معك في كل خطوة لضمان وصول شحنتك بأمان واحترافية.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Workflow Section */}
-      <section id="workflow" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20">
-            <h2 className="text-3xl font-black text-brand-secondary mb-3">
-              آلية عمل ذكية وبسيطة
-            </h2>
-            <div className="h-1.5 w-20 bg-brand-primary rounded-full mx-auto mb-6"></div>
+      {/* Comparison Table */}
+      <section className="py-lp-stack-lg bg-lp-background">
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop">
+          <h2 className="font-display-lg text-lp-display-lg-mobile text-center mb-16 text-lp-on-surface text-xl font-bold">
+            لماذا تختلف شحنتي عن غيرها؟
+          </h2>
+          <div className="overflow-hidden rounded-2xl border border-lp-outline-variant/30 shadow-sm">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-lp-surface-container">
+                  <th className="p-6 text-right font-headline-md border-b border-lp-outline-variant/30 text-lp-on-surface">
+                    الميزة
+                  </th>
+                  <th className="p-6 text-center font-headline-md border-b border-lp-outline-variant/30 text-lp-on-surface-variant">
+                    الشركات التقليدية
+                  </th>
+                  <th className="p-6 text-center font-headline-md border-b border-lp-outline-variant/30 text-lp-primary bg-lp-primary/5">
+                    منصة شحنتي
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white text-sm font-bold">
+                <tr>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-lp-on-surface">
+                    تسعير الخدمة
+                  </td>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-center text-lp-on-surface-variant">
+                    سعر ثابت مرتفع
+                  </td>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-center text-lp-secondary">
+                    نظام مزايدة تنافسي
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-lp-on-surface">
+                    اختيار الكابتن
+                  </td>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-center text-lp-on-surface-variant">
+                    غير متاح
+                  </td>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-center text-lp-secondary">
+                    حرية اختيار كاملة
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-lp-on-surface">
+                    المرونة في المواعيد
+                  </td>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-center text-lp-on-surface-variant">
+                    محدودة جداً
+                  </td>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-center text-lp-secondary">
+                    متاحة على مدار الساعة
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-lp-on-surface">
+                    نظام التقييم
+                  </td>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-center text-lp-on-surface-variant">
+                    داخلي وغير شفاف
+                  </td>
+                  <td className="p-6 border-b border-lp-outline-variant/20 text-center text-lp-secondary">
+                    تقييمات عملاء حقيقية
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-6 text-lp-on-surface">التتبع</td>
+                  <td className="p-6 text-center text-lp-on-surface-variant">
+                    تحديثات متقطعة
+                  </td>
+                  <td className="p-6 text-center text-lp-secondary">
+                    تتبع حي GPS
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-12 relative">
-            <div className="absolute top-10 left-10 right-10 h-0.5 bg-brand-primary/10 hidden md:block"></div>
-            {[
-              { title: "سجل حسابك", icon: Users },
-              { title: "إضافة/استعراض شحنات", icon: Package },
-              { title: "اختر عرضك", icon: TrendingUp },
-              { title: "تابع المسار", icon: MapPin },
-              { title: "التسليم / التحصيل", icon: CheckCircle2 },
-            ].map((step, i) => (
-              <div
-                key={i}
-                className="relative z-10 flex flex-col items-center group"
-              >
-                <div className="h-20 w-20 rounded-[2.5rem] bg-white border-2 border-slate-50 flex items-center justify-center mb-6 group-hover:bg-brand-primary group-hover:text-white group-hover:border-brand-primary group-hover:-translate-y-2 transition-all duration-500 shadow-xl shadow-slate-100 group-hover:shadow-brand-primary/20">
-                  <step.icon className="h-8 w-8" />
+      {/* Driver Recruitment */}
+      <section
+        className="py-lp-stack-lg bg-lp-on-background text-surface-bright relative overflow-hidden"
+        id="drivers"
+      >
+        <div className="absolute inset-0 opacity-10"></div>
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-16 items-center relative z-10">
+          <div className="order-2 md:order-1">
+            <img
+              className="rounded-2xl shadow-2xl w-full h-[450px] object-cover"
+              alt="كباتن شريك نقل شحنتي"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn1AdlhLU87j_ey4fWuEo-Ikos6Ez1tLRqP5jvuNYm1_Y6oXllBmrp2ByFT0o7ku1eLCXU4bizXjyDHDO7WeFR8TicydWWoXN1HCGXExzJfiIVjeDnxynP3K1gQl6t7KgJkiaBYljXfsztLPdAVG146yzBPPpO6lBV6bXWlSDsopHxkaADT0mKLHXIUNGNUZrhwINvo92f8n_dKUfJ75_CaHYr-9CuBdfqrZ7l7xRY17q569yIHaA"
+            />
+          </div>
+          <div className="order-1 md:order-2 space-y-8">
+            <h2 className="font-display-lg text-lp-display-lg-mobile md:text-lp-display-lg text-white font-bold">
+              حول مركبتك إلى{" "}
+              <span className="text-lp-primary font-bold">مصدر دخل</span> حقيقي
+            </h2>
+            <div className="space-y-6">
+              <div className="flex gap-4">
+                <div className="w-12 h-12 bg-lp-primary rounded-full flex shrink-0 items-center justify-center text-lp-secondary">
+                  <Clock className="h-6 w-6" />
                 </div>
-                <h4 className="text-sm font-black text-brand-secondary">
-                  {step.title}
-                </h4>
+                <div>
+                  <h4 className="font-headline-md text-lg mb-1 text-white font-bold">
+                    اعمل في الوقت الذي يناسبك
+                  </h4>
+                  <p className="text-lp-surface-variant/80 leading-relaxed text-sm font-medium">
+                    أنت مدير نفسك، حدد ساعات عملك ومناطق تواجدك بحرية تامة.
+                  </p>
+                </div>
               </div>
-            ))}
+              <div className="flex gap-4">
+                <div className="w-12 h-12 bg-lp-primary rounded-full flex shrink-0 items-center justify-center text-lp-secondary">
+                  <MousePointer className="h-6 w-6" />
+                </div>
+                <div>
+                  <h4 className="font-headline-md text-lg mb-1 text-white font-bold">
+                    اختر الشحنات التي تريدها
+                  </h4>
+                  <p className="text-lp-surface-variant/80 leading-relaxed text-sm font-medium">
+                    اطلع على تفاصيل الشحنة والموقع والسعر المقترح قبل تقديم
+                    عرضك.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="w-12 h-12 bg-lp-primary rounded-full flex shrink-0 items-center justify-center text-lp-secondary">
+                  <TrendingUp className="h-6 w-6" />
+                </div>
+                <div>
+                  <h4 className="font-headline-md text-lg mb-1 text-white font-bold">
+                    ضاعف أرباحك الشهرية
+                  </h4>
+                  <p className="text-lp-surface-variant/80 leading-relaxed text-sm font-medium">
+                    احصل على طلبات شحن مستمرة من منطقتك وزد من عوائد مركبتك.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <Link
+              to="/register"
+              className="inline-block bg-lp-primary text-white px-10 py-5 rounded-2xl font-headline-md hover:scale-105 transition-transform shadow-lg shadow-lp-secondary/20 font-bold"
+            >
+              سجل ككابتن الآن
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-lp-stack-lg max-w-3xl mx-auto px-lp-margin-desktop">
+        <h2 className="font-display-lg text-lp-display-lg-mobile text-center mb-12 text-lp-on-surface text-xl font-bold">
+          الأسئلة الشائعة
+        </h2>
+        <div className="space-y-4 font-bold">
+          <details className="group bg-white rounded-2xl border border-lp-outline-variant/20 overflow-hidden">
+            <summary className="flex justify-between items-center p-6 cursor-pointer list-none text-lp-on-surface">
+              <span>كيف يتم تحديد السعر؟</span>
+              <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="px-6 pb-6 text-lp-on-surface-variant text-sm font-medium leading-relaxed">
+              يتم السعر عبر نظام مزايدة حر؛ يقوم الكباتن بتقديم عروضهم بناءً على
+              تفاصيل شحنتك، ولك كامل الحرية في اختيار العرض الذي يناسب ميزانيتك.
+            </div>
+          </details>
+          <details className="group bg-white rounded-2xl border border-lp-outline-variant/20 overflow-hidden">
+            <summary className="flex justify-between items-center p-6 cursor-pointer list-none text-lp-on-surface">
+              <span>هل يمكنني رفض جميع العروض المقدمة؟</span>
+              <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="px-6 pb-6 text-lp-on-surface-variant text-sm font-medium leading-relaxed">
+              نعم، إذا لم تجد العرض المناسب لك، يمكنك إلغاء الطلب أو الانتظار
+              لمزيد من العروض دون أي التزام مالي.
+            </div>
+          </details>
+          <details className="group bg-white rounded-2xl border border-lp-outline-variant/20 overflow-hidden">
+            <summary className="flex justify-between items-center p-6 cursor-pointer list-none text-lp-on-surface">
+              <span>كيف نضمن موثوقية الكباتن؟</span>
+              <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="px-6 pb-6 text-lp-on-surface-variant text-sm font-medium leading-relaxed">
+              نخضع جميع الكباتن لعملية تحقق شاملة تشمل الهوية الوطنية، رخصة
+              القيادة، واستمارة المركبة، بالإضافة إلى نظام التقييم المستمر من
+              العملاء.
+            </div>
+          </details>
+          <details className="group bg-white rounded-2xl border border-lp-outline-variant/20 overflow-hidden">
+            <summary className="flex justify-between items-center p-6 cursor-pointer list-none text-lp-on-surface">
+              <span>ما هي طرق الدفع المتاحة؟</span>
+              <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="px-6 pb-6 text-lp-on-surface-variant text-sm font-medium leading-relaxed">
+              ndعم كافة وسائل الدفع الإلكتروني الحديثة (مدى، فيزا، ماستركارد،
+              Apple Pay) لضمان سهولة وأمان التعاملات.
+            </div>
+          </details>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-lp-stack-lg">
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop">
+          <div className="bg-lp-primary rounded-[2rem] p-12 text-center text-lp-on-primary relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10"></div>
+            <div className="relative z-10 space-y-8">
+              <h2 className="font-display-lg text-lp-display-lg-mobile md:text-lp-display-lg font-bold">
+                ابدأ أول شحنة الآن
+              </h2>
+              <p className="text-lp-body-lg opacity-90 max-w-xl mx-auto">
+                انضم إلى آلاف المستخدمين الذين يوفرون وقتهم ومالهم مع شحنتي
+                يومياً.
+              </p>
+              <Link
+                to="/register"
+                className="inline-block bg-lp-secondary text-white px-12 py-5 rounded-2xl font-headline-md text-xl shadow-2xl hover:scale-105 transition-all font-bold"
+              >
+                أنشئ شحنتك مجاناً
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -433,5 +630,3 @@ export const LandingPage = () => {
     </div>
   );
 };
-
-export default LandingPage;

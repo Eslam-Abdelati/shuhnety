@@ -39,7 +39,6 @@ export const API_ENDPOINTS = {
     },
     LOCATION: {
         GOVERNORATES: '/governorate/list',
-        CITIES: (governorateId) => `/cities/list/${governorateId}`,
     },
     ROAD_ALERTS: {
         CREATE: '/road-alerts',
