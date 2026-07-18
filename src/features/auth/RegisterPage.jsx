@@ -204,7 +204,6 @@ const driverVehicleSchema = z
 
 // Step 4 Driver (Documents + Terms)
 const driverDocumentsSchema = z.object({
-  licenseNumber: z.string().min(5, "رقم الرخصة غير صالح"),
   licenseExpiry: z.string().min(1, "تاريخ انتهاء الرخصة مطلوب"),
   driverPhoto: z.any().refine((v) => !!v, "صورة الكابتن مطلوبة"),
   licenseFront: z.any().refine((v) => !!v, "صورة وجه الرخصة مطلوبة"),
@@ -243,7 +242,6 @@ export const RegisterPage = () => {
     email: false,
     phone: false,
     nationalId: false,
-    licenseNumber: false,
     plateNumber: false,
   });
 
@@ -284,7 +282,6 @@ export const RegisterPage = () => {
       nationalIdBack: null,
       governorate: "",
       addressDetail: "",
-      licenseNumber: "",
       licenseExpiry: "",
       vehicleType: "ربع نقل",
       vehicleTypeOther: "",
@@ -316,7 +313,6 @@ export const RegisterPage = () => {
         email: AvailabilityField.EMAIL,
         phone: AvailabilityField.PHONE,
         nationalId: AvailabilityField.NATIONAL_ID,
-        licenseNumber: AvailabilityField.LICENSE_NUMBER,
         plateNumber: AvailabilityField.PLATE_NUMBER,
       };
 
@@ -528,7 +524,7 @@ export const RegisterPage = () => {
           national_id: data.nationalId,
           forward_nationalId_doc: forward_nationalId_doc,
           back_nationalId_doc: back_nationalId_doc,
-          license_number: data.licenseNumber,
+          license_number: data.nationalId,
           license_expiry: data.licenseExpiry,
           forward_license_doc: forward_license_doc,
           back_license_doc: back_license_doc,
@@ -666,7 +662,7 @@ export const RegisterPage = () => {
           </div>
 
           {/* Main Content Area */}
-          <div className="flex-1 overflow-y-auto px-6 py-12 md:px-16 flex flex-col justify-between bg-slate-50/50">
+          <div className="flex-1 overflow-y-auto px-4 py-8 sm:px-8 sm:py-10 md:px-16 md:py-12 flex flex-col justify-between bg-slate-50/50">
             <div className="max-w-3xl w-full mx-auto my-auto space-y-8">
               {/* Horizontal stepper inside main content */}
               {step > 1 && selectedRole === "driver" && (
@@ -688,7 +684,7 @@ export const RegisterPage = () => {
                           className={cn(
                             "h-10 w-10 rounded-full flex items-center justify-center font-black text-xs transition-all duration-500 border-4",
                             isCompleted
-                              ? "bg-[#064e3b] border-white text-white shadow-lg"
+                              ? "bg-[#27272a] border-white text-white shadow-lg"
                               : isActive
                                 ? "bg-brand-primary border-white text-white scale-110 shadow-lg shadow-brand-primary/30"
                                 : "bg-[#f8fafc] border-white text-slate-300",
@@ -700,7 +696,7 @@ export const RegisterPage = () => {
                           className={cn(
                             "text-[10px] font-black transition-colors duration-500 whitespace-nowrap",
                             isCompleted
-                              ? "text-[#064e3b]"
+                              ? "text-[#27272a]"
                               : isActive
                                 ? "text-brand-primary"
                                 : "text-slate-300",
@@ -719,7 +715,7 @@ export const RegisterPage = () => {
                 className={cn(
                   "w-full",
                   step > 1 &&
-                    "bg-white rounded-2xl border border-slate-100 p-8 sm:p-12 shadow-sm",
+                    "bg-white rounded-2xl border border-slate-100 p-4 sm:p-8 md:p-10 shadow-sm",
                 )}
               >
                 <motion.div
@@ -1083,8 +1079,8 @@ const PersonalInfoStep = ({
   fetchGovs,
 }) => {
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         <Input
           label="الاسم بالكامل"
           {...register("fullName")}
@@ -1108,7 +1104,7 @@ const PersonalInfoStep = ({
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         <Input
           label="رقم الهاتف"
           {...register("phone", {
@@ -1132,7 +1128,7 @@ const PersonalInfoStep = ({
       </div>
 
       {selectedRole === "driver" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <Input
             label="الرقم القومي"
             {...register("nationalId", {
@@ -1149,7 +1145,7 @@ const PersonalInfoStep = ({
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         <div className="block text-sm">
           <span className="text-gray-700 font-bold block mb-2">
             كلمة المرور
@@ -1228,7 +1224,7 @@ const PersonalInfoStep = ({
         <h3 className="text-md font-bold text-slate-800 flex items-center gap-2 pr-1.5 leading-none">
           بيانات العنوان
         </h3>
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6">
           <Controller
             name="governorate"
             control={control}
@@ -1316,12 +1312,12 @@ const AdditionalDetailsStep = ({
   const vType = watch("vehicleType");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="space-y-4">
         <h3 className="text-md font-bold text-slate-800 flex items-center gap-2 pr-1.5 leading-none">
           البيانات الأساسية للمركبة
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <Controller
             name="vehicleType"
             control={control}
@@ -1365,7 +1361,7 @@ const AdditionalDetailsStep = ({
           />
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
           <Input
             label="الموديل (مثل 2022)"
             {...register("vehicleModel")}
@@ -1422,7 +1418,7 @@ const AdditionalDetailsStep = ({
           isTouched={touchedFields.vehicleLicenseExpiry}
           wasNextAttempted={wasNextAttempted}
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <FileUploader
             label="صورة رخصة المركبة (وجه)"
             icon={Upload}
@@ -1473,8 +1469,8 @@ const DocumentsStep = ({
   const nationalIdBack = watch("nationalIdBack");
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col items-center mb-8">
+    <div className="space-y-4">
+      <div className="flex flex-col items-center mb-6">
         <div
           onClick={() =>
             !uploadingFields["driverPhoto"] &&
@@ -1542,22 +1538,42 @@ const DocumentsStep = ({
         <h3 className="text-md font-bold text-slate-800 flex items-center gap-2 pr-1.5 leading-none">
           بيانات رخصة القيادة
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6">
           <Input
-            label="رقم الرخصة"
-            {...register("licenseNumber")}
-            placeholder="أدخل رقم الرخصة"
-            error={errors.licenseNumber}
-            isTouched={touchedFields.licenseNumber}
-            wasNextAttempted={wasNextAttempted}
-          />
-          <Input
-            label="تاريخ الانتهاء"
+            label="تاريخ انتهاء رخصة القيادة"
             {...register("licenseExpiry")}
             type="date"
             error={errors.licenseExpiry}
             isTouched={touchedFields.licenseExpiry}
             wasNextAttempted={wasNextAttempted}
+          />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <FileUploader
+            label="صورة الرخصة (وجه)"
+            icon={Upload}
+            preview={licenseFront}
+            onFileChange={(file) =>
+              handleImmediateUpload(file, "licenseFront", "driver")
+            }
+            error={
+              errors.licenseFront && wasNextAttempted
+                ? errors.licenseFront
+                : null
+            }
+            isLoading={uploadingFields["licenseFront"]}
+          />
+          <FileUploader
+            label="صورة الرخصة (ظهر)"
+            icon={Upload}
+            preview={licenseBack}
+            onFileChange={(file) =>
+              handleImmediateUpload(file, "licenseBack", "driver")
+            }
+            error={
+              errors.licenseBack && wasNextAttempted ? errors.licenseBack : null
+            }
+            isLoading={uploadingFields["licenseBack"]}
           />
         </div>
       </div>
@@ -1566,7 +1582,7 @@ const DocumentsStep = ({
         <h3 className="text-md font-bold text-slate-800 flex items-center gap-2 pr-1.5 leading-none">
           صور الهوية الوطنية
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <FileUploader
             label="صورة البطاقة (وجه)"
             icon={CreditCard}
@@ -1594,40 +1610,6 @@ const DocumentsStep = ({
                 : null
             }
             isLoading={uploadingFields["nationalIdBack"]}
-          />
-        </div>
-      </div>
-
-      <div className="pt-6 space-y-4 border-t border-slate-100">
-        <h3 className="text-md font-bold text-slate-800 flex items-center gap-2 pr-1.5 leading-none">
-          صور رخصة القيادة
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <FileUploader
-            label="صورة الرخصة (وجه)"
-            icon={Upload}
-            preview={licenseFront}
-            onFileChange={(file) =>
-              handleImmediateUpload(file, "licenseFront", "driver")
-            }
-            error={
-              errors.licenseFront && wasNextAttempted
-                ? errors.licenseFront
-                : null
-            }
-            isLoading={uploadingFields["licenseFront"]}
-          />
-          <FileUploader
-            label="صورة الرخصة (ظهر)"
-            icon={Upload}
-            preview={licenseBack}
-            onFileChange={(file) =>
-              handleImmediateUpload(file, "licenseBack", "driver")
-            }
-            error={
-              errors.licenseBack && wasNextAttempted ? errors.licenseBack : null
-            }
-            isLoading={uploadingFields["licenseBack"]}
           />
         </div>
       </div>
@@ -1728,7 +1710,7 @@ const Checkbox = forwardRef(
               "h-5 w-5 rounded-full border-2 transition-all flex items-center justify-center peer-checked:[&>svg]:scale-100 shrink-0",
               showError
                 ? "border-red-500 bg-red-50"
-                : "border-slate-200 peer-checked:bg-[#064e3b] peer-checked:border-[#064e3b]",
+                : "border-slate-200 peer-checked:bg-[#27272a] peer-checked:border-[#27272a]",
             )}
           >
             <Check className="h-3 w-3 text-white scale-0 transition-transform" />
