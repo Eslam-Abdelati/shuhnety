@@ -21,7 +21,7 @@ export const Select = React.forwardRef(({ options = [], value, onChange, placeho
 
     return (
         <div className={cn("block text-sm", className)} ref={containerRef}>
-            {label && <span className="text-gray-700 block mb-1">{label}</span>}
+            {label && <span className="text-gray-700 font-bold block mb-2">{label}</span>}
             <div className="relative">
                 <button
                     type="button"
@@ -32,9 +32,9 @@ export const Select = React.forwardRef(({ options = [], value, onChange, placeho
                         }
                     }}
                     className={cn(
-                        "w-full text-sm rounded-md border flex items-center justify-between transition-all px-3 py-2 bg-white",
-                        isOpen ? "border-brand-primary ring-1 ring-brand-primary outline-none" : "border-gray-300",
-                        error ? "border-red-500" : "hover:border-brand-primary",
+                        "w-full text-sm rounded-xl border flex items-center justify-between transition-all px-4 py-3 bg-[#f8fafc]",
+                        isOpen ? "border-brand-primary ring-1 ring-brand-primary outline-none" : "border-gray-200",
+                        error ? "border-red-500" : "hover:border-gray-300",
                         (disabled || isLoading) && "opacity-50 cursor-not-allowed bg-gray-50"
                     )}
                 >
@@ -42,7 +42,7 @@ export const Select = React.forwardRef(({ options = [], value, onChange, placeho
                         {isLoading && (
                             <div className="h-3 w-3 border-2 border-brand-primary/30 border-t-brand-primary rounded-full animate-spin" />
                         )}
-                        <span className={cn(selectedOption ? "text-gray-900" : "text-gray-400")}>
+                        <span className={cn(selectedOption ? "text-gray-900" : "text-gray-400/80")}>
                             {selectedOption ? selectedOption.label : placeholder}
                         </span>
                     </div>
@@ -55,9 +55,9 @@ export const Select = React.forwardRef(({ options = [], value, onChange, placeho
                             initial={{ opacity: 0, y: -10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 5, scale: 1 }}
                             exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                            className="absolute z-[100] w-full bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden origin-top mt-1"
+                            className="absolute z-[100] w-full bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden origin-top mt-1.5"
                         >
-                            <div className="max-h-64 overflow-y-auto custom-scrollbar p-1">
+                            <div className="max-h-64 overflow-y-auto custom-scrollbar p-1.5">
                                 {options.length > 0 ? (
                                     options.map((opt) => (
                                         <button
@@ -68,7 +68,7 @@ export const Select = React.forwardRef(({ options = [], value, onChange, placeho
                                                 setIsOpen(false)
                                             }}
                                             className={cn(
-                                                "w-full flex items-center justify-between px-3 py-2 rounded-md text-right text-sm transition-colors duration-150 mb-0.5 last:mb-0",
+                                                "w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-right text-sm transition-colors duration-150 mb-0.5 last:mb-0",
                                                 String(opt.value) === String(value) 
                                                     ? "bg-brand-primary/10 text-brand-primary font-medium" 
                                                     : "text-gray-700 hover:bg-gray-50"
