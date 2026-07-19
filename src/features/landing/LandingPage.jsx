@@ -42,7 +42,7 @@ export const LandingPage = () => {
           />
           <div className="absolute inset-0 bg-lp-gradient bg-gradient-to-l from-lp-on-background/90 via-lp-on-background/40 to-transparent"></div>
         </div>
-        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop relative z-10 w-full">
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop relative z-10 w-full">
           <div className="max-w-2xl space-y-8">
             <div className="inline-flex items-center gap-2 bg-lp-primary/20 text-lp-primary-fixed px-4 py-1.5 rounded-full font-label-md backdrop-blur-sm">
               <Rocket className="h-4 w-4 text-lp-primary-fixed animate-pulse" />
@@ -104,10 +104,10 @@ export const LandingPage = () => {
 
       {/* How it Works (Timeline) */}
       <section
-        className="py-lp-stack-lg bg-lp-surface-container-lowest"
+        className="py-lp-stack-md md:py-lp-stack-lg bg-lp-surface-container-lowest"
         id="how"
       >
-        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop text-center">
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop text-center">
           <h2 className="font-display-lg text-lp-display-lg-mobile md:text-lp-headline-md mb-lp-stack-lg text-xl font-bold">
             كيف تبدأ رحلة شحنتك؟
           </h2>
@@ -177,8 +177,8 @@ export const LandingPage = () => {
       </section>
 
       {/* Bidding UI Mockup */}
-      <section className="py-lp-stack-lg overflow-hidden bg-lp-background">
-        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      <section className="py-lp-stack-md md:py-lp-stack-lg overflow-hidden bg-lp-background">
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
           <div className="space-y-6">
             <div className="bg-lp-secondary/10 text-lp-secondary w-fit px-4 py-1 rounded-full font-label-md font-bold">
               نظام المزايدة الذكي
@@ -309,10 +309,10 @@ export const LandingPage = () => {
 
       {/* Why Shihneti (Features) */}
       <section
-        className="py-lp-stack-lg bg-lp-surface-container-high/30"
+        className="py-lp-stack-md md:py-lp-stack-lg bg-lp-surface-container-high/30"
         id="why"
       >
-        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop">
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop">
           <div className="text-center mb-16">
             <h2 className="font-display-lg text-lp-display-lg-mobile mb-4 text-lp-on-surface text-xl font-bold">
               لماذا يختار الآلاف شحنتي؟
@@ -324,7 +324,7 @@ export const LandingPage = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
               <div className="w-14 h-14 bg-lp-primary/10 text-lp-primary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-primary group-hover:text-white transition-colors">
                 <PiggyBank className="h-6 w-6" />
               </div>
@@ -336,7 +336,7 @@ export const LandingPage = () => {
               </p>
             </div>
             {/* Feature 2 */}
-            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
               <div className="w-14 h-14 bg-lp-secondary/10 text-lp-secondary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-secondary group-hover:text-white transition-colors">
                 <UserCheck className="h-6 w-6" />
               </div>
@@ -348,7 +348,7 @@ export const LandingPage = () => {
               </p>
             </div>
             {/* Feature 3 */}
-            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
               <div className="w-14 h-14 bg-lp-primary/10 text-lp-primary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-primary group-hover:text-white transition-colors">
                 <Navigation className="h-6 w-6" />
               </div>
@@ -360,7 +360,7 @@ export const LandingPage = () => {
               </p>
             </div>
             {/* Feature 4 */}
-            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
               <div className="w-14 h-14 bg-lp-secondary/10 text-lp-secondary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-secondary group-hover:text-white transition-colors">
                 <ShieldCheck className="h-6 w-6" />
               </div>
@@ -372,7 +372,7 @@ export const LandingPage = () => {
               </p>
             </div>
             {/* Feature 5 */}
-            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
               <div className="w-14 h-14 bg-lp-primary/10 text-lp-primary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-primary group-hover:text-white transition-colors">
                 <Shield className="h-6 w-6" />
               </div>
@@ -384,7 +384,7 @@ export const LandingPage = () => {
               </p>
             </div>
             {/* Feature 6 */}
-            <div className="bg-white p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-lp-outline-variant/20 hover:shadow-xl transition-shadow group">
               <div className="w-14 h-14 bg-lp-secondary/10 text-lp-secondary rounded-xl flex items-center justify-center mb-6 group-hover:bg-lp-secondary group-hover:text-white transition-colors">
                 <Headphones className="h-6 w-6" />
               </div>
@@ -400,8 +400,8 @@ export const LandingPage = () => {
       </section>
 
       {/* Comparison Table */}
-      <section className="py-lp-stack-lg bg-lp-background">
-        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop">
+      <section className="py-lp-stack-md md:py-lp-stack-lg bg-lp-background">
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop">
           <h2 className="font-display-lg text-lp-display-lg-mobile text-center mb-16 text-lp-on-surface text-xl font-bold">
             لماذا تختلف شحنتي عن غيرها؟
           </h2>
@@ -482,11 +482,11 @@ export const LandingPage = () => {
 
       {/* Driver Recruitment */}
       <section
-        className="py-lp-stack-lg bg-lp-on-background text-surface-bright relative overflow-hidden"
+        className="py-lp-stack-md md:py-lp-stack-lg bg-lp-on-background text-surface-bright relative overflow-hidden"
         id="drivers"
       >
         <div className="absolute inset-0 opacity-10"></div>
-        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-16 items-center relative z-10">
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center relative z-10">
           <div className="order-2 md:order-1">
             <img
               className="rounded-2xl shadow-2xl w-full h-[450px] object-cover"
@@ -552,7 +552,7 @@ export const LandingPage = () => {
       </section>
 
       {/* FAQ */}
-      <section className="py-lp-stack-lg max-w-3xl mx-auto px-lp-margin-desktop">
+      <section className="py-lp-stack-md md:py-lp-stack-lg max-w-3xl mx-auto px-lp-margin-mobile md:px-lp-margin-desktop">
         <h2 className="font-display-lg text-lp-display-lg-mobile text-center mb-12 text-lp-on-surface text-xl font-bold">
           الأسئلة الشائعة
         </h2>
@@ -602,9 +602,9 @@ export const LandingPage = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-lp-stack-lg">
-        <div className="max-w-lp-container-max mx-auto px-lp-margin-desktop">
-          <div className="bg-lp-primary rounded-[2rem] p-12 text-center text-lp-on-primary relative overflow-hidden">
+      <section className="py-lp-stack-md md:py-lp-stack-lg">
+        <div className="max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop">
+          <div className="bg-lp-primary rounded-[2rem] p-6 sm:p-12 text-center text-lp-on-primary relative overflow-hidden">
             <div className="absolute inset-0 opacity-10"></div>
             <div className="relative z-10 space-y-8">
               <h2 className="font-display-lg text-lp-display-lg-mobile md:text-lp-display-lg font-bold">

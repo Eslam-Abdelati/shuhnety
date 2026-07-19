@@ -108,7 +108,7 @@ export const ContactPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-white/60 text-lg font-medium leading-relaxed"
+              className="text-white/60 text-lg font-normal leading-relaxed"
             >
               نسعى دائماً لتوفير أفضل تجربة ، فريقنا جاهز للرد على استفساراتك
               على مدار الساعة.
@@ -118,7 +118,7 @@ export const ContactPage = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-6 py-20 -mt-10 relative z-20">
+      <div className="max-w-7xl mx-auto px-0 sm:px-6 pt-10 pb-20 sm:pt-20 sm:pb-32 -mt-10 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Cards */}
           <div className="lg:col-span-1 space-y-4">
@@ -128,7 +128,7 @@ export const ContactPage = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white p-8 rounded-[2.5rem] border border-lp-outline-variant/15 shadow-xl shadow-slate-200/40 hover:-translate-y-1 transition-all duration-300 group"
+                className="bg-white p-6 sm:p-8 rounded-none sm:rounded-[2.5rem] border-x-0 sm:border border-lp-outline-variant/15 shadow-none sm:shadow-xl shadow-slate-200/40 hover:-translate-y-1 transition-all duration-300 group"
               >
                 <div
                   className={`h-12 w-12 rounded-2xl ${item.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}
@@ -156,7 +156,7 @@ export const ContactPage = () => {
             ))}
 
             {/* Working Hours Card */}
-            <div className="bg-lp-on-background border border-lp-outline-variant/10 p-8 rounded-[2.5rem] text-white overflow-hidden relative group">
+            <div className="bg-lp-on-background border-x-0 sm:border border-lp-outline-variant/10 p-6 sm:p-8 rounded-none sm:rounded-[2.5rem] text-white overflow-hidden relative group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-lp-primary/10 rounded-full -translate-x-10 -translate-y-10"></div>
               <div className="relative z-10">
                 <Clock className="h-10 w-10 text-lp-primary/50 mb-4" />
@@ -180,13 +180,13 @@ export const ContactPage = () => {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/40 p-10 md:p-16 border border-lp-outline-variant/15 h-full"
+              className="bg-white rounded-none sm:rounded-[3rem] shadow-none sm:shadow-2xl shadow-slate-200/40 p-6 sm:p-10 md:p-16 border-x-0 sm:border border-lp-outline-variant/15 h-full"
             >
               <div className="mb-10">
                 <h2 className="text-2xl font-bold text-lp-on-background mb-3 text-right">
                   أرسل لنا رسالة
                 </h2>
-                <p className="text-lp-on-surface-variant font-medium text-right leading-relaxed">
+                <p className="text-lp-on-surface-variant font-normal text-right leading-relaxed">
                   سنقوم بالرد عليك خلال أقل من 12 ساعة عمل.
                 </p>
               </div>

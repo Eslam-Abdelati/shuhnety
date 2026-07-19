@@ -40,31 +40,31 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
-  /* Shahnti Brand Colors - Updated to Orange & Deep Green per latest request */
+  /* Shahnti Brand Colors - Updated to Orange & Dark Charcoal per latest request */
   --color-brand-primary: #eb6a1d;
   /* Orange - Professional & Active */
-  --color-brand-secondary: #064e3b;
-  /* Deep Green - Trust & Growth */
+  --color-brand-secondary: #27272a;
+  /* Dark Charcoal - Brand Secondary */
   --color-brand-background: #fffcf8;
   /* Subtle Beige/Off-white */
+  --color-white-base: #ffffff;
 
   /* Custom landing page colors */
-  --color-lp-primary: #eb6a1d;
-  --color-lp-secondary: #27272a;
+  --color-lp-primary: var(--color-brand-primary);
+  --color-lp-secondary: var(--color-brand-secondary);
   --color-lp-background: #f8f9ff;
   --color-lp-on-background: #0b1c30;
   --color-lp-primary-fixed: #ffdbca;
   --color-lp-surface-variant: #d3e4fe;
-  --color-lp-surface-container-lowest: #ffffff;
-  --color-lp-surface-container-low: #eff4ff;
+  --color-lp-surface-container-lowest: var(--color-white-base);
   --color-lp-surface-container-high: #dce9ff;
   --color-lp-surface-container: #e5eeff;
   --color-lp-on-surface-variant: #584237;
-  --color-lp-on-surface: #0b1c30;
-  --color-lp-on-primary: #ffffff;
-  --color-lp-on-secondary: #ffffff;
+  --color-lp-on-surface: var(--color-lp-on-background);
+  --color-lp-on-primary: var(--color-white-base);
+  --color-lp-on-secondary: var(--color-white-base);
   --color-lp-outline-variant: #e0c0b1;
-  --color-lp-surface: #f8f9ff;
+  --color-lp-surface: var(--color-lp-background);
 
   /* Custom spacing for the landing page */
   --spacing-lp-margin-mobile: 16px;

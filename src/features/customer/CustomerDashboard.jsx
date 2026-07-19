@@ -98,7 +98,7 @@ export const CustomerDashboard = () => {
                 </div>
 
                 <Link to="/customer/create" className="relative z-10 w-full md:w-auto">
-                    <Button className="w-full md:w-auto bg-[#064e3b] hover:bg-[#053a2c] text-white rounded-2xl gap-3 px-8 h-14 text-sm md:text-md font-black shadow-xl shadow-[#064e3b]/20 hover:-translate-y-1 transition-all cursor-pointer">
+                    <Button className="w-full md:w-auto bg-brand-secondary hover:bg-brand-secondary/90 text-white rounded-2xl gap-3 px-8 h-14 text-sm md:text-md font-black shadow-xl shadow-brand-secondary/20 hover:-translate-y-1 transition-all cursor-pointer">
                         <Plus className="h-6 w-6" />
                         إنشاء شحنة جديدة
                     </Button>
@@ -223,7 +223,7 @@ export const CustomerDashboard = () => {
                                 <Box className="h-9 w-9 sm:h-10 sm:w-10 text-slate-300 mb-4" />
                                 <h4 className="text-sm font-black text-slate-900 dark:text-white mb-2">لا يوجد شحنات منشأة</h4>
                                 <Link to="/customer/create">
-                                    <Button className="bg-[#064e3b] hover:bg-[#053a2c] text-white rounded-xl gap-2 font-black text-xs h-9 px-4 mt-2">
+                                    <Button className="bg-brand-secondary hover:bg-brand-secondary/90 text-white rounded-xl gap-2 font-black text-xs h-9 px-4 mt-2">
                                         <Plus className="h-3 w-3" /> إنشاء أول شحنة
                                     </Button>
                                 </Link>
