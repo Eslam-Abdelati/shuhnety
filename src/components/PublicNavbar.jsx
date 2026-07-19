@@ -5,9 +5,9 @@ import { Logo } from "@/components/ui/Logo";
 
 export const PublicNavbar = () => {
   return (
-    <nav className="bg-lp-surface/80 backdrop-blur-md sticky top-0 z-50 shadow-sm transition-all duration-300 w-full">
+    <nav className="bg-white sticky top-0 z-50 shadow-sm transition-all duration-300 w-full">
       <div
-        className="flex justify-between items-center max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop py-4"
+        className="flex justify-between items-center max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop py-3"
         dir="ltr"
       >
         {/* Left Column: Logo */}
