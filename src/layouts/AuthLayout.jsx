@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { LogoIcon } from '@/components/ui/Logo'
+import { LogoIcon } from '@/components/Logo'
 
 export const AuthLayout = ({ children, title, subtitle }) => {
     return (

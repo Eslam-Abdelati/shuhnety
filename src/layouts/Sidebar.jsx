@@ -21,7 +21,7 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useUIStore } from '@/store/useUIStore'
 import { cn } from '@/utils/cn'
 import { motion } from 'framer-motion'
-import { Logo } from '@/components/ui/Logo'
+import { Logo } from '@/components/Logo'
 
 const navigation = {
     customer: [
@@ -63,6 +63,7 @@ export const Sidebar = () => {
             <div className="flex h-24 items-center px-8 gap-4 mb-2 relative z-10 shrink-0 border-b border-white/5 bg-slate-950/20">
                 <Logo 
                     to={links[0]?.href || '/'} 
+                    variant="white"
                     boxClassName="h-10 w-10 bg-gradient-to-br from-brand-primary to-orange-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-primary/20 group-hover/logo:scale-105 transition-transform" 
                     iconClassName="h-6 w-6"
                     textClassName="text-xl font-black text-white tracking-tight block group-hover/logo:text-brand-primary transition-colors"

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
-import { Logo } from "@/components/ui/Logo";
+import LogoW from "@/components/Logo";
 
 export const PublicNavbar = () => {
   return (
@@ -12,11 +12,7 @@ export const PublicNavbar = () => {
       >
         {/* Left Column: Logo */}
         <div className="flex-1 flex justify-start">
-          <Logo
-            boxClassName="h-9 w-9 rounded-xl transition-all duration-300 group-hover:rotate-[10deg] group-hover:scale-105"
-            iconClassName="h-4.5 w-4.5"
-            textClassName="text-xl font-black text-lp-primary tracking-tight"
-          />
+          <LogoW className="w-40 h-auto" />
         </div>
 
         {/* Middle Column: Page Links */}
@@ -36,7 +32,7 @@ export const PublicNavbar = () => {
             to="/#why"
             className="font-body-md text-lp-body-md font-medium text-lp-on-surface-variant hover:text-lp-primary transition-colors duration-300"
           >
-            لماذا شحنتي؟
+            لماذا شيلة ؟
           </HashLink>
           <HashLink
             smooth

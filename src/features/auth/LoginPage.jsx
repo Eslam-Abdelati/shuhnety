@@ -7,7 +7,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useAuthStore } from "@/store/useAuthStore";
 import { cn } from "@/utils/cn";
-import { Logo } from "@/components/ui/Logo";
+import { Logo } from "@/components/Logo";
 import { authService } from "@/services/authService";
 import { toast } from "react-hot-toast";
 import { Loading } from "@/components/ui/Loading";

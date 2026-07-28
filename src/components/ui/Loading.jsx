@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { LogoIcon } from './Logo';
+import Logo from '@/components/Logo';
 
 /**
  * Loading component used across the Shuhnety platform.
@@ -51,7 +51,7 @@ export const Loading = ({
                         transition={{ duration: 2, repeat: Infinity }}
                         className="h-16 w-16 bg-brand-primary/10 rounded-full flex items-center justify-center"
                     >
-                        <LogoIcon className="h-8 w-8 text-brand-primary" />
+                        <Logo className="h-8 w-8 object-contain" />
                     </motion.div>
                     <motion.div
                         animate={spinnerRotation}
@@ -83,7 +83,7 @@ export const Loading = ({
                         transition={{ duration: 1.5, repeat: Infinity }}
                         className="h-24 w-24 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-[2rem] flex items-center justify-center shadow-2xl shadow-brand-primary/20"
                     >
-                        <LogoIcon className="h-12 w-12 text-white" />
+                        <Logo className="h-12 w-12 object-contain" variant="white" />
                     </motion.div>
                     <motion.div
                         animate={spinnerRotation}

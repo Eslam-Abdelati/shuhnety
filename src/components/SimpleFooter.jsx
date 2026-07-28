@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import { Facebook, Phone, Mail } from "lucide-react";
-import { Logo } from "@/components/ui/Logo";
+import Logo from "@/components/Logo";
 
 export const SimpleFooter = () => {
   return (
@@ -11,14 +11,10 @@ export const SimpleFooter = () => {
         <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-12">
           {/* Brand Column */}
           <div className="space-y-4 max-w-sm">
-            <Logo 
-              noLink={true} 
-              boxClassName="h-10 w-10 rounded-xl bg-white"
-              iconClassName="h-6 w-6"
-              textClassName="text-2xl font-black tracking-tighter text-lp-primary-fixed"
-            />
+            <Logo className="w-40" variant="white" />
             <p className="text-lp-surface-variant/70 text-sm leading-relaxed font-bold">
-              سوق الخدمات اللوجستية الأول في المنطقة الذي يجمع بين سهولة الاستخدام، تنافسية الأسعار، وموثوقية الخدمة.
+              سوق الخدمات اللوجستية الأول في المنطقة الذي يجمع بين سهولة
+              الاستخدام، تنافسية الأسعار، وموثوقية الخدمة.
             </p>
           </div>
 
@@ -28,14 +24,26 @@ export const SimpleFooter = () => {
             <div className="space-y-4">
               <div className="font-bold text-white text-base">الروابط</div>
               <nav className="flex flex-col gap-2.5 text-lp-surface-variant/70 text-sm font-bold">
-                <HashLink smooth to="/#how" className="hover:text-lp-primary transition-colors">
+                <HashLink
+                  smooth
+                  to="/#how"
+                  className="hover:text-lp-primary transition-colors"
+                >
                   كيف يعمل
                 </HashLink>
-                <HashLink smooth to="/#why" className="hover:text-lp-primary transition-colors">
+                <HashLink
+                  smooth
+                  to="/#why"
+                  className="hover:text-lp-primary transition-colors"
+                >
                   لماذا نحن
                 </HashLink>
-                <HashLink smooth to="/#drivers" className="hover:text-lp-primary transition-colors">
-                  الكباتن
+                <HashLink
+                  smooth
+                  to="/#drivers"
+                  className="hover:text-lp-primary transition-colors"
+                >
+                  الكابتن
                 </HashLink>
               </nav>
             </div>
@@ -44,11 +52,17 @@ export const SimpleFooter = () => {
             <div className="space-y-4">
               <div className="font-bold text-white text-base">قانوني</div>
               <nav className="flex flex-col gap-2.5 text-lp-surface-variant/70 text-sm font-bold">
-                <Link to="/privacy" className="hover:text-lp-primary transition-colors">
+                <Link
+                  to="/privacy"
+                  className="hover:text-lp-primary transition-colors"
+                >
                   سياسة الخصوصية
                 </Link>
-                <Link to="/terms" className="hover:text-lp-primary transition-colors">
-                   الشروط والأحكام
+                <Link
+                  to="/terms"
+                  className="hover:text-lp-primary transition-colors"
+                >
+                  الشروط والأحكام
                 </Link>
               </nav>
             </div>
@@ -57,10 +71,16 @@ export const SimpleFooter = () => {
             <div className="space-y-4">
               <div className="font-bold text-white text-base">تواصل</div>
               <nav className="flex flex-col gap-2.5 text-lp-surface-variant/70 text-sm font-bold">
-                <Link to="/faq" className="hover:text-lp-primary transition-colors">
+                <Link
+                  to="/faq"
+                  className="hover:text-lp-primary transition-colors"
+                >
                   مركز المساعدة
                 </Link>
-                <Link to="/contact" className="hover:text-lp-primary transition-colors">
+                <Link
+                  to="/contact"
+                  className="hover:text-lp-primary transition-colors"
+                >
                   اتصل بنا
                 </Link>
               </nav>
@@ -70,8 +90,10 @@ export const SimpleFooter = () => {
 
         {/* Footer Bottom */}
         <div className="pt-8 border-t border-lp-surface-variant/10 flex flex-col md:flex-row justify-between items-center gap-4 text-lp-surface-variant/50 text-xs font-bold">
-          <div>© {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شحنتي.</div>
-          
+          <div>
+            © {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شيلة.
+          </div>
+
           {/* User's Social Links (Preserved!) */}
           <div className="flex gap-4">
             <a

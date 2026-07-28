@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
-import { Logo } from '@/components/ui/Logo'
+import { Logo } from '@/components/Logo'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/utils/cn'
 import { authService } from '@/services/authService'

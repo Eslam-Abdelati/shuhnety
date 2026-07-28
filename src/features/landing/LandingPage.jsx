@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
-import { Logo } from "@/components/ui/Logo";
+import { Logo } from "@/assets/logos";
 import { SimpleFooter } from "@/components/SimpleFooter";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import {
@@ -187,7 +187,7 @@ export const LandingPage = () => {
               القوة في يدك... تحكم في ميزانيتك
             </h2>
             <p className="font-body-lg text-lp-on-surface-variant leading-relaxed">
-              لا أسعار ثابتة مفروضة عليك. في شحنتي، يتنافس الكابتن للفوز بطلبك،
+              لا أسعار ثابتة مفروضة عليك. في شيلة , يتنافس الكابتن للفوز بطلبك،
               مما يضمن لك الحصول على أقل سعر متاح في السوق مع أعلى جودة خدمة.
             </p>
             <ul className="space-y-4">
@@ -315,7 +315,7 @@ export const LandingPage = () => {
         <div className="max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop">
           <div className="text-center mb-16">
             <h2 className="font-display-lg text-lp-display-lg-mobile mb-4 text-lp-on-surface text-xl font-bold">
-              لماذا يختار الآلاف شحنتي؟
+              لماذا يختار الآلاف شيلة ؟
             </h2>
             <p className="text-lp-body-lg text-lp-on-surface-variant max-w-2xl mx-auto">
               نحن لا نقوم فقط بنقل الأشياء، نحن نعيد تعريف تجربة الخدمات
@@ -403,7 +403,7 @@ export const LandingPage = () => {
       <section className="py-lp-stack-md md:py-lp-stack-lg bg-lp-background">
         <div className="max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop">
           <h2 className="font-display-lg text-lp-display-lg-mobile text-center mb-16 text-lp-on-surface text-xl font-bold">
-            لماذا تختلف شحنتي عن غيرها؟
+            لماذا تختلف شيلة عن غيرها؟
           </h2>
           <div className="overflow-hidden rounded-2xl border border-lp-outline-variant/30 shadow-sm">
             <table className="w-full border-collapse">
@@ -416,7 +416,7 @@ export const LandingPage = () => {
                     الشركات التقليدية
                   </th>
                   <th className="p-6 text-center font-headline-md border-b border-lp-outline-variant/30 text-lp-primary bg-lp-primary/5">
-                    منصة شحنتي
+                    منصة شيلة
                   </th>
                 </tr>
               </thead>
@@ -490,7 +490,7 @@ export const LandingPage = () => {
           <div className="order-2 md:order-1">
             <img
               className="rounded-2xl shadow-2xl w-full h-[450px] object-cover"
-              alt="كباتن شريك نقل شحنتي"
+              alt="كباتن شريك نقل شيلة"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn1AdlhLU87j_ey4fWuEo-Ikos6Ez1tLRqP5jvuNYm1_Y6oXllBmrp2ByFT0o7ku1eLCXU4bizXjyDHDO7WeFR8TicydWWoXN1HCGXExzJfiIVjeDnxynP3K1gQl6t7KgJkiaBYljXfsztLPdAVG146yzBPPpO6lBV6bXWlSDsopHxkaADT0mKLHXIUNGNUZrhwINvo92f8n_dKUfJ75_CaHYr-9CuBdfqrZ7l7xRY17q569yIHaA"
             />
           </div>
@@ -611,7 +611,7 @@ export const LandingPage = () => {
                 ابدأ أول شحنة الآن
               </h2>
               <p className="text-lp-body-lg opacity-90 max-w-xl mx-auto">
-                انضم إلى آلاف المستخدمين الذين يوفرون وقتهم ومالهم مع شحنتي
+                انضم إلى آلاف المستخدمين الذين يوفرون وقتهم ومالهم مع شيلة
                 يومياً.
               </p>
               <Link
