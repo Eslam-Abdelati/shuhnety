@@ -320,7 +320,7 @@ export const ForgotPasswordPage = () => {
 
                 {/* Footer Copyright */}
                 <div className="text-center pt-8 text-[11px] text-slate-400 font-bold">
-                    © {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شحنتي
+                    © {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شيلة
                 </div>
             </div>
 
@@ -330,7 +330,7 @@ export const ForgotPasswordPage = () => {
                     aria-hidden="true"
                     className="object-cover w-full h-full opacity-70 select-none pointer-events-none"
                     src="https://images.unsplash.com/photo-1555529902-5261145633bf?auto=format&fit=crop&q=80&w=1200"
-                    alt="Shahnti Logistics split screen image"
+                    alt="Shila Logistics split screen image"
                 />
                 {/* Overlays */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-brand-secondary/80 to-slate-900/50 mix-blend-multiply"></div>

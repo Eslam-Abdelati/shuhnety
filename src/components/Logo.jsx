@@ -26,7 +26,7 @@ export function LogoIconOnly({ className = "", variant = "default", src = "" }) 
     return (
       <img
         src={src}
-        alt="SHEELA Icon"
+        alt="Shila Icon"
         className={cn("object-contain w-full h-full", className)}
       />
     );

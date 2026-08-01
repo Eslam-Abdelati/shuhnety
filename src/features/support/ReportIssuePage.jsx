@@ -289,7 +289,7 @@ export const ReportIssuePage = () => {
                             <h3 className="text-xl font-black text-brand-primary">لماذا نقدم البلاغ؟</h3>
                         </div>
                         <p className="text-slate-600 font-bold leading-relaxed text-sm">
-                            منصة شحنتي تضمن حقوقك سواء كنت تاجراً أو كابتناً. نأخذ كل بلاغ على محمل الجد لضمان بيئة عمل عادلة وآمنة.
+                            منصة شيلة تضمن حقوقك سواء كنت تاجراً أو كابتناً. نأخذ كل بلاغ على محمل الجد لضمان بيئة عمل عادلة وآمنة.
                         </p>
                         <ul className="space-y-3 pt-2">
                             {[

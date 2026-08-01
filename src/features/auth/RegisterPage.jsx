@@ -914,7 +914,7 @@ export const RegisterPage = () => {
             اتصل بنا
           </Link>
         </div>
-        <div>© {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شحنتي</div>
+        <div>© {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شيلة</div>
       </div>
     </div>
   );

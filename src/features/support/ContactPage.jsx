@@ -102,7 +102,7 @@ export const ContactPage = () => {
               transition={{ delay: 0.1 }}
               className="text-xl lg:text-2xl font-black text-white mb-6 leading-tight"
             >
-              تواصل مع فريق شحنتي
+              تواصل مع فريق شيلة
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}
@@ -204,7 +204,7 @@ export const ContactPage = () => {
                     تم الإرسال بنجاح!
                   </h3>
                   <p className="text-emerald-700 font-bold">
-                    شكراً لتواصلك مع شحنتي، سنرد عليك في أقرب وقت ممكن.
+                    شكراً لتواصلك مع شيلة، سنرد عليك في أقرب وقت ممكن.
                   </p>
                 </motion.div>
               ) : (

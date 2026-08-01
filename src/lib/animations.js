@@ -1,4 +1,4 @@
-﻿// Framer Motion Animation Presets for Shahnti Platform
+// Framer Motion Animation Presets for Shila Platform
 
 export const fadeIn = {
     initial: { opacity: 0 },

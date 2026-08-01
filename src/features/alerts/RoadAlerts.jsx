@@ -203,7 +203,7 @@ export const RoadAlerts = () => {
                                                     <span>{alert.reliabilityScore || alert.reliability || 100}% موثوقية</span>
                                                 </div>
                                                 <p className="text-xs font-bold text-brand-primary">
-                                                    بواسطة: {typeof alert.reporter === 'object' ? (alert.reporter?.full_name || 'نظام شحنتي') : (alert.reporter || 'نظام شحنتي')}
+                                                    بواسطة: {typeof alert.reporter === 'object' ? (alert.reporter?.full_name || 'نظام شيلة') : (alert.reporter || 'نظام شيلة')}
                                                 </p>
                                             </div>
                                             <div className="flex gap-2">

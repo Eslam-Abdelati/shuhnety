@@ -1,4 +1,4 @@
-# 🚚 شحنتي - Shahnti Logistics Platform
+# 🚚 شيلة - Shila Logistics Platform
 
 منصة لوجستية ذكية ومتكاملة لإدارة الشحنات والخدمات اللوجستية في مصر، مع تحصيل الرسوم إلكترونياً وتتبع جميع الشحنات لحظياً.
 
@@ -14,7 +14,7 @@
 
 ## 📋 نظرة عامة
 
-**شحنتي** هي منصة SaaS حديثة تربط بين:
+**شيلة** هي منصة SaaS حديثة تربط بين:
 - 🛒 **العميل/التاجر** - لشحن بضائعهم بأمان
 - 🚛 **السائقين** - للحصول على رحلات مضمونة
 - 🏢 **شركات الشحن** - لإدارة الأساطيل
@@ -82,8 +82,8 @@ src/
 
 ```bash
 # 1. استنساخ المشروع
-git clone https://github.com/your-username/shahnti.git
-cd shahnti
+git clone https://github.com/your-username/shila.git
+cd shila
 
 # 2. تثبيت التبعيات
 npm install
@@ -342,14 +342,14 @@ const useThemeStore = create((set) => ({
 
 ## 👨‍💻 المطور
 
-تم تطوير هذا المشروع بواسطة فريق شحنتي
+تم تطوير هذا المشروع بواسطة فريق شيلة
 
 ---
 
 ## 📞 التواصل
 
-- 🌐 الموقع: [shahnti.com](https://shahnti.com)
-- 📧 البريد: info@shahnti.com
+- 🌐 الموقع: [shila.com](https://shila.com)
+- 📧 البريد: info@shila.com
 - 📱 الهاتف: +20 XXX XXX XXXX
 
 ---
@@ -367,5 +367,5 @@ const useThemeStore = create((set) => ({
 <div align="center">
   <strong>صُنع بـ ❤️ في مصر</strong>
   <br>
-  <sub>© 2026 شحنتي - جميع الحقوق محفوظة</sub>
+  <sub>© 2026 شيلة - جميع الحقوق محفوظة</sub>
 </div>

@@ -231,7 +231,7 @@ export const ProfilePage = () => {
                                 {user?.full_name || 'مستخدم النظام'}
                             </h2>
                             <p className="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-widest">
-                                {role === 'driver' ? 'كابتن شحنتي' : 'حساب عميل'}
+                                {role === 'driver' ? 'كابتن شيلة' : 'حساب عميل'}
                             </p>
                         </div>
 

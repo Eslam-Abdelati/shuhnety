@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import Logo from '@/components/Logo';
 
 /**
- * Loading component used across the Shuhnety platform.
+ * Loading component used across the Shila platform.
  * Supports different variants: fullScreen, section, and minimal.
  * 
  * @param {string} text - Optional text to display below the loader.

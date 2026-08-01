@@ -1,4 +1,4 @@
-# 🚀 Shahnti Platform - Next-Gen UI Upgrade
+# 🚀 Shila Platform - Next-Gen UI Upgrade
 
 ## ✅ ما تم إنجازه
 
@@ -59,7 +59,7 @@
 #### ✅ ملف `tailwind.config.js`
 - دمج shadcn/ui design tokens
 - إضافة animations جاهزة
-- الحفاظ على ألوان Shahnti الأصلية
+- الحفاظ على ألوان Shila الأصلية
 - دعم Dark mode
 
 #### ✅ ملف `src/index.css`
@@ -376,7 +376,7 @@ npm run preview
 ## 📝 ملاحظات مهمة
 
 1. **الحفاظ على Brand Identity:**
-   - تم الحفاظ على ألوان Shahnti الأصلية (#eb6a1d, #14532d)
+   - تم الحفاظ على ألوان Shila الأصلية (#eb6a1d, #14532d)
    - خط Cairo مازال مستخدماً
    - RTL support كامل
 
@@ -417,5 +417,5 @@ npm run preview
 <div align="center">
   <strong>🚀 جاهز للانطلاق نحو الجيل التالي!</strong>
   <br>
-  <sub>Shahnti Platform - Premium Logistics Experience</sub>
+  <sub>Shila Platform - Premium Logistics Experience</sub>
 </div>

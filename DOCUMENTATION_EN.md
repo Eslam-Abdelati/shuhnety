@@ -1,4 +1,4 @@
-# 🚚 Shahnti Logistics Platform - Documentation
+# 🚚 Shila Logistics Platform - Documentation
 
 ![Version](https://img.shields.io/badge/version-1.0.0-orange?style=for-the-badge)
 ![React](https://img.shields.io/badge/React-19.2.4-blue?style=for-the-badge)
@@ -8,7 +8,7 @@
 ---
 
 ## 📖 1. Project Overview
-**Shahnti** is a sophisticated logistics platform designed to modernize the freight and shipping industry in Egypt. It serves as a comprehensive digital ecosystem connecting Merchants (Cargo Owners), Drivers (Vehicle Owners), and Logistics Companies, while integration administrative oversight for Governorates and System Administrators.
+**Shila** is a sophisticated logistics platform designed to modernize the freight and shipping industry in Egypt. It serves as a comprehensive digital ecosystem connecting Merchants (Cargo Owners), Drivers (Vehicle Owners), and Logistics Companies, while integration administrative oversight for Governorates and System Administrators.
 
 The platform emphasizes a **Premium Digital Experience**, leveraging modern web technologies to ensure speed, security, and transparency in high-stakes logistics operations.
 
@@ -59,7 +59,7 @@ The platform emphasizes a **Premium Digital Experience**, leveraging modern web 
 
 ## 🛠️ 5. Technical Stack
 
-Shahnti is built on a modern, scalable stack:
+Shila is built on a modern, scalable stack:
 
 - **Frontend**: `React 19` with `Vite` for ultra-fast development and build cycles.
 - **Styling**: `Tailwind CSS 4` for a utility-first, performant design system.
@@ -114,7 +114,7 @@ src/
 ---
 
 <div align="center">
-  <strong>This documentation is Part of the Technical Handover for the Shahnti Project</strong>
+  <strong>This documentation is Part of the Technical Handover for the Shila Project</strong>
   <br>
-  <sub>© 2026 Shahnti Dev Team - All Rights Reserved</sub>
+  <sub>© 2026 Shila Dev Team - All Rights Reserved</sub>
 </div>

@@ -42,7 +42,7 @@ const Placeholder = ({ title }) => (
             <span className="text-5xl drop-shadow-sm">🏗️</span>
         </div>
         <h2 className="text-3xl font-black text-slate-900 mb-3 tracking-tight">{title}</h2>
-        <p className="text-slate-500 font-bold max-w-xs leading-relaxed">هذه الميزة تحت التطوير النشط حالياً من قبل فريق منصة شحنتي التقني.</p>
+        <p className="text-slate-500 font-bold max-w-xs leading-relaxed">هذه الميزة تحت التطوير النشط حالياً من قبل فريق منصة شيلة التقني.</p>
     </div>
 )
 
