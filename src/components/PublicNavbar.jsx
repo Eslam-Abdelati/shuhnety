@@ -15,13 +15,13 @@ export const PublicNavbar = () => {
         <div className="flex items-center justify-end gap-4 flex-1" dir="rtl">
           <Link
             to="/login"
-            className="hidden md:block font-body-md text-lp-body-md font-medium text-lp-on-surface-variant"
+            className="bg-lp-primary text-lp-on-primary px-6 py-2.5 rounded-full font-body-md font-bold scale-95 active:scale-90 transition-transform shadow-md"
           >
             تسجيل الدخول
           </Link>
           <Link
             to="/register"
-            className="bg-lp-primary text-lp-on-primary px-6 py-2.5 rounded-full font-body-md font-bold scale-95 active:scale-90 transition-transform shadow-md"
+            className="hidden md:block font-body-md text-lp-body-md font-medium text-lp-on-surface-variant"
           >
             ابدأ الآن
           </Link>

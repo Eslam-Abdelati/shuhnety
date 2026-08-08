@@ -89,14 +89,14 @@ export const LoginPage = () => {
       dir="rtl"
     >
       {/* Form inputs side */}
-      <div className="w-full md:w-1/2 h-full flex flex-col justify-between p-6 sm:p-12 md:py-12 md:px-16 lg:py-16 lg:px-24 overflow-y-auto md:overflow-hidden bg-white">
+      <div className="w-full md:w-1/2 h-full flex flex-col justify-start md:justify-between p-6 sm:p-12 md:py-12 md:px-16 lg:py-16 lg:px-24 overflow-y-auto md:overflow-hidden bg-white">
         {/* Top Logo / Navigation */}
         <div className="mb-4 flex items-center justify-center gap-4">
           <Logo className="w-40" />
         </div>
 
         {/* Form Wrapper */}
-        <div className="my-auto max-w-sm w-full mx-auto space-y-8 ">
+        <div className="mt-2 mb-8 md:my-auto max-w-sm w-full mx-auto space-y-8">
           <div className="space-y-3 flex flex-col items-center justify-center">
             <h1 className="text-2xl font-semibold text-slate-900">
               تسجيل الدخول
@@ -195,7 +195,7 @@ export const LoginPage = () => {
         </div>
 
         {/* Footer Copyright */}
-        <div className="text-center pt-8 text-[11px] text-slate-900 font-semibold">
+        <div className="mt-auto pt-8 text-center text-[11px] text-slate-900 font-semibold">
           © {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شيلة
         </div>
       </div>

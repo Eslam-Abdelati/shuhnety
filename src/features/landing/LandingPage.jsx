@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import coverImage from "@/assets/cover.jpg";
 import { HashLink } from "react-router-hash-link";
 import { SimpleFooter } from "@/components/SimpleFooter";
 import { PublicNavbar } from "@/components/PublicNavbar";
@@ -37,7 +38,7 @@ export const LandingPage = () => {
           <img
             alt="Shihneti Hero"
             className="w-full h-full object-cover opacity-40 select-none pointer-events-none"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxzCv1pUHGy-vpBAvZ-8zykToIOlJ1ycJFC7uzy8eQ0acfe_zBXZ-pvxxojw5w28-y31XyBS28LuogIEN8EabfwyZ7ZAwC_7Cwu2zPLdOzZLn-wqiDIVzMN9T_qI1eghMzkblrTJmGYVjuDEez6Frqac-VmUeWVuavKmpu2QCU0I9KTqFJRHK2_QZdgRS4vzwXcQsPRrfqdtZX_Td0aBaSZGUjHK_NXFZKH4qEQUMdG2fAznu3CCQ"
+            src={coverImage}
           />
           <div className="absolute inset-0 bg-lp-gradient bg-gradient-to-l from-lp-on-background/90 via-lp-on-background/40 to-transparent"></div>
         </div>
