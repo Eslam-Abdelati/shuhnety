@@ -330,7 +330,7 @@ export const ForgotPasswordPage = () => {
                     aria-hidden="true"
                     className="object-cover w-full h-full opacity-70 select-none pointer-events-none"
                     src="https://images.unsplash.com/photo-1555529902-5261145633bf?auto=format&fit=crop&q=80&w=1200"
-                    alt="Shila Logistics split screen image"
+                    alt="Sheela Logistics split screen image"
                 />
                 {/* Overlays */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-brand-secondary/80 to-slate-900/50 mix-blend-multiply"></div>

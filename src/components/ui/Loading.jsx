@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import Logo from '@/components/Logo';
 
 /**
- * Loading component used across the Shila platform.
+ * Loading component used across the Sheela platform.
  * Supports different variants: fullScreen, section, and minimal.
  * 
  * @param {string} text - Optional text to display below the loader.

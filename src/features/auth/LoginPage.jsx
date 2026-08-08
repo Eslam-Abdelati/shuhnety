@@ -7,7 +7,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useAuthStore } from "@/store/useAuthStore";
 import { cn } from "@/utils/cn";
-import { Logo } from "@/components/Logo";
+import Logo from "@/components/Logo";
 import { authService } from "@/services/authService";
 import { toast } from "react-hot-toast";
 import { Loading } from "@/components/ui/Loading";
@@ -90,18 +90,16 @@ export const LoginPage = () => {
       {/* Form inputs side */}
       <div className="w-full md:w-1/2 h-full flex flex-col justify-between p-6 sm:p-12 md:py-12 md:px-16 lg:py-16 lg:px-24 overflow-y-auto md:overflow-hidden bg-white">
         {/* Top Logo / Navigation */}
-        <div className="mb-8">
-          <Logo
-            boxClassName="h-9 w-9 rounded-xl transition-all duration-300 group-hover:rotate-[10deg] group-hover:scale-105"
-            iconClassName="h-4 w-4"
-            textClassName="text-xl font-black text-brand-secondary tracking-tight"
-          />
+        <div className="mb-8 flex items-center justify-center gap-4">
+          <Logo className="w-40" />
         </div>
 
         {/* Form Wrapper */}
-        <div className="my-auto max-w-sm w-full mx-auto space-y-8">
-          <div className="space-y-3">
-            <h1 className="text-2xl font-bold text-slate-900">تسجيل الدخول</h1>
+        <div className="my-auto max-w-sm w-full mx-auto space-y-8 ">
+          <div className="space-y-3 flex flex-col items-center justify-center">
+            <h1 className="text-2xl font-semibold text-slate-900">
+              تسجيل الدخول
+            </h1>
             <p className="text-sm font-medium">
               مرحباً بك مجدداً ! يرجى إدخال بياناتك للدخول لحسابك.
             </p>
@@ -109,7 +107,7 @@ export const LoginPage = () => {
 
           <form onSubmit={handleSubmit(onLoginSubmit)} className="space-y-5">
             <div className="space-y-1.5 text-sm">
-              <span className="text-slate-700 font-bold block">
+              <span className="text-slate-900 font-semibold block">
                 البريد الإلكتروني
               </span>
               <input
@@ -128,7 +126,7 @@ export const LoginPage = () => {
             </div>
 
             <div className="space-y-1.5 text-sm relative">
-              <span className="text-slate-700 font-bold block">
+              <span className="text-slate-900 font-semibold block">
                 كلمة المرور
               </span>
               <div className="relative">
@@ -162,7 +160,7 @@ export const LoginPage = () => {
 
             <div className="text-left">
               <Link
-                className="text-xs font-bold text-brand-primary hover:underline"
+                className="text-xs font-semibold text-brand-primary hover:underline"
                 to="/forgot-password"
               >
                 نسيت كلمة المرور؟
@@ -172,7 +170,7 @@ export const LoginPage = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-14 rounded-xl text-sm font-black text-white bg-brand-primary transition-all shadow-xl shadow-brand-secondary/15 flex items-center justify-center cursor-pointer"
+              className="w-full h-14 rounded-xl text-sm font-bold text-white bg-brand-primary transition-all shadow-xl shadow-brand-secondary/15 flex items-center justify-center cursor-pointer"
             >
               {isLoading ? (
                 <Loading minimal={true} className="text-white mx-auto" />
@@ -183,10 +181,10 @@ export const LoginPage = () => {
           </form>
 
           <div className="text-center pt-2">
-            <p className="text-sm font-medium text-slate-500">
+            <p className="text-sm font-medium text-slate-900">
               ليس لديك حساب؟{" "}
               <Link
-                className="font-bold text-brand-primary hover:underline"
+                className="font-semibold text-brand-primary hover:underline"
                 to="/register"
               >
                 إنشاء حساب جديد
@@ -196,7 +194,7 @@ export const LoginPage = () => {
         </div>
 
         {/* Footer Copyright */}
-        <div className="text-center pt-8 text-[11px] text-slate-400 font-bold">
+        <div className="text-center pt-8 text-[11px] text-slate-900 font-semibold">
           © {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شيلة
         </div>
       </div>
@@ -207,7 +205,7 @@ export const LoginPage = () => {
           aria-hidden="true"
           className="object-cover w-full h-full opacity-70 select-none pointer-events-none"
           src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1200"
-          alt="Shila Logistics split screen image"
+          alt="Sheela Logistics split screen image"
         />
         {/* Overlays */}
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-secondary/80 to-slate-900/50 mix-blend-multiply"></div>

@@ -11,7 +11,7 @@ export const SimpleFooter = () => {
         <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-12">
           {/* Brand Column */}
           <div className="space-y-4 max-w-sm">
-            <Logo className="w-40" variant="white" />
+            <Logo className="w-30" variant="white" />
             <p className="text-lp-surface-variant/70 text-sm leading-relaxed font-bold">
               سوق الخدمات اللوجستية الأول في المنطقة الذي يجمع بين سهولة
               الاستخدام، تنافسية الأسعار، وموثوقية الخدمة.
@@ -90,9 +90,7 @@ export const SimpleFooter = () => {
 
         {/* Footer Bottom */}
         <div className="pt-8 border-t border-lp-surface-variant/10 flex flex-col md:flex-row justify-between items-center gap-4 text-lp-surface-variant/50 text-xs font-bold">
-          <div>
-            © {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شيلة.
-          </div>
+          <div>© {new Date().getFullYear()} جميع الحقوق محفوظة لمنصة شيلة.</div>
 
           {/* User's Social Links (Preserved!) */}
           <div className="flex gap-4">

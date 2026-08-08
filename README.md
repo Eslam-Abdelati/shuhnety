@@ -1,4 +1,4 @@
-# 🚚 شيلة - Shila Logistics Platform
+# 🚚 شيلة - Sheela Logistics Platform
 
 منصة لوجستية ذكية ومتكاملة لإدارة الشحنات والخدمات اللوجستية في مصر، مع تحصيل الرسوم إلكترونياً وتتبع جميع الشحنات لحظياً.
 
@@ -82,8 +82,8 @@ src/
 
 ```bash
 # 1. استنساخ المشروع
-git clone https://github.com/your-username/shila.git
-cd shila
+git clone https://github.com/your-username/sheela.git
+cd sheela
 
 # 2. تثبيت التبعيات
 npm install
@@ -348,8 +348,8 @@ const useThemeStore = create((set) => ({
 
 ## 📞 التواصل
 
-- 🌐 الموقع: [shila.com](https://shila.com)
-- 📧 البريد: info@shila.com
+- 🌐 الموقع: [sheela.com](https://sheela.com)
+- 📧 البريد: info@sheela.com
 - 📱 الهاتف: +20 XXX XXX XXXX
 
 ---

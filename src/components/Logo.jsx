@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/utils/cn";
-import { Logo as logoDefault, LogoW as logoWhite } from "../assets/logos";
+import { LogoDefault ,logoWhite } from "../assets/logos";
 
 // ==========================================
 // 💡 إعدادات الشعارات (يمكنك تغييرها بسهولة من هنا)
@@ -10,23 +10,27 @@ import { Logo as logoDefault, LogoW as logoWhite } from "../assets/logos";
 export const BRAND_NAME = "شيلة";
 
 export const LOGO_SOURCES = {
-  default: logoDefault,  // الشعار الافتراضي الملون (logo.svg)
-  colored: logoDefault,  // الشعار الملون
-  white: logoWhite,      // الشعار الأبيض (logo w.svg)
-  dark: logoDefault,     // الشعار الداكن
+  default: LogoDefault, // الشعار الافتراضي الملون (logo.svg)
+  colored: LogoDefault, // الشعار الملون
+  white: logoWhite, // الشعار الأبيض (logo w.svg)
+  dark: LogoDefault, // الشعار الداكن
 };
 
 /**
  * مكون أيقونة الشعار فقط (بدون نص)
  * Logo Icon-only component (without text)
  */
-export function LogoIconOnly({ className = "", variant = "default", src = "" }) {
+export function LogoIconOnly({
+  className = "",
+  variant = "default",
+  src = "",
+}) {
   // إذا تم تمرير مسار صورة مخصصة للأيقونة، يتم عرضها مباشرة
   if (src) {
     return (
       <img
         src={src}
-        alt="Shila Icon"
+        alt="Sheela Icon"
         className={cn("object-contain w-full h-full", className)}
       />
     );
@@ -71,12 +75,13 @@ export function Logo({
   to = "/",
   withText = true,
   showText = true,
-  src = "",      // لتمرير صورة مخصصة للشعار بالكامل مباشرة
-  iconSrc = "",  // لتمرير صورة مخصصة للأيقونة فقط مباشرة
+  src = "", // لتمرير صورة مخصصة للشعار بالكامل مباشرة
+  iconSrc = "", // لتمرير صورة مخصصة للأيقونة فقط مباشرة
   brandName = BRAND_NAME,
 }) {
   const isWhite = variant === "white" || variant === "w";
-  const selectedLogo = src || (isWhite ? LOGO_SOURCES.white : LOGO_SOURCES.default);
+  const selectedLogo =
+    src || (isWhite ? LOGO_SOURCES.white : LOGO_SOURCES.default);
 
   // تحديد ما إذا كان المكون يجب أن يُعرض كأيقونة مربعة + نص (نمط الشريط الجانبي وصفحات الدخول)
   // أو كصورة كاملة عريضة (نمط الهيدر والفوتر)
@@ -92,7 +97,7 @@ export function Logo({
         <div
           className={cn(
             "bg-white border border-slate-100 shadow-sm rounded-xl overflow-hidden flex items-center justify-center shrink-0",
-            boxClassName
+            boxClassName,
           )}
         >
           <LogoIconOnly
@@ -125,7 +130,10 @@ export function Logo({
   }
 
   return (
-    <Link to={to} className="hover:opacity-95 transition-opacity inline-block group">
+    <Link
+      to={to}
+      className="hover:opacity-95 transition-opacity inline-block group"
+    >
       {innerContent}
     </Link>
   );
@@ -135,13 +143,7 @@ export function Logo({
  * مكون أيقونة الشعار (LogoIcon) كاسم مستعار أو نسخة مبسطة
  */
 export function LogoIcon({ className = "", variant = "default", src = "" }) {
-  return (
-    <LogoIconOnly
-      className={className}
-      variant={variant}
-      src={src}
-    />
-  );
+  return <LogoIconOnly className={className} variant={variant} src={src} />;
 }
 
 export default Logo;

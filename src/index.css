@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -40,30 +40,33 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
-  /* Shila Brand Colors - Updated to Orange & Dark Charcoal per latest request */
-  --color-brand-primary: #eb6a1d;
-  /* Orange - Professional & Active */
-  --color-brand-secondary: #27272a;
-  /* Dark Charcoal - Brand Secondary */
-  --color-brand-background: #fffcf8;
-  /* Subtle Beige/Off-white */
-  --color-white-base: #ffffff;
+  /* Custom Brand variables defined once */
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-background: var(--brand-background);
+  --color-white-base: var(--white-base);
 
-  /* Custom landing page colors */
-  --color-lp-primary: var(--color-brand-primary);
-  --color-lp-secondary: var(--color-brand-secondary);
-  --color-lp-background: #f8f9ff;
-  --color-lp-on-background: #0b1c30;
-  --color-lp-primary-fixed: #ffdbca;
-  --color-lp-surface-variant: #d3e4fe;
-  --color-lp-surface-container-lowest: var(--color-white-base);
-  --color-lp-surface-container-high: #dce9ff;
-  --color-lp-surface-container: #e5eeff;
-  --color-lp-on-surface-variant: #584237;
-  --color-lp-on-surface: var(--color-lp-on-background);
-  --color-lp-on-primary: var(--color-white-base);
-  --color-lp-on-secondary: var(--color-white-base);
-  --color-lp-outline-variant: #e0c0b1;
+  /* Semantic UI Colors mapped from root variables */
+  --color-ui-success: var(--success);
+  --color-ui-warning: var(--warning);
+  --color-ui-error: var(--error);
+  --color-ui-info: var(--info);
+
+  /* Landing Page Colors mapped from root variables */
+  --color-lp-primary: var(--brand-primary);
+  --color-lp-secondary: var(--brand-secondary);
+  --color-lp-background: var(--brand-background);
+  --color-lp-on-background: var(--brand-secondary);
+  --color-lp-primary-fixed: var(--brand-primary);
+  --color-lp-surface-variant: #e4e4e7;
+  --color-lp-surface-container-lowest: var(--white-base);
+  --color-lp-surface-container-high: #e4e4e7;
+  --color-lp-surface-container: #f4f4f5;
+  --color-lp-on-surface-variant: #71717a;
+  --color-lp-on-surface: var(--brand-secondary);
+  --color-lp-on-primary: var(--white-base);
+  --color-lp-on-secondary: var(--white-base);
+  --color-lp-outline-variant: #d4d4d8;
   --color-lp-surface: var(--color-lp-background);
 
   /* Custom spacing for the landing page */
@@ -90,52 +93,60 @@
 }
 
 :root {
+  /* Brand colors defined once in HEX */
+  --brand-primary: #fd5202;
+  --brand-secondary: #27272a;
+  --brand-background: #fffcf8;
+  --white-base: #ffffff;
+
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #0ea5e9;
+
   /* shadcn/ui Design Tokens - Light Mode */
-  --background: 210 40% 98%;
-  --foreground: 222 47% 11%;
+  --background: 37 100% 98%;
+  --foreground: 240 5.9% 10%;
   --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
+  --card-foreground: 240 5.9% 10%;
   --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
+  --popover-foreground: 240 5.9% 10%;
   --primary: 22 85% 52%;
-  /* Brand Orange (#eb6a1d) */
   --primary-foreground: 0 0% 100%;
-  --secondary: 174 84% 31%;
-  /* Teal */
-  --secondary-foreground: 210 40% 98%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
+  --secondary: 240 5.9% 16%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
   --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 32% 91%;
-  --input: 214.3 32% 91%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
   --ring: 22 85% 52%;
   --radius: 0.75rem;
 }
 
 .dark {
   /* shadcn/ui Design Tokens - Dark Mode */
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
   --primary: 22 85% 52%;
-  /* Brand Orange (#eb6a1d) */
   --primary-foreground: 0 0% 100%;
-  --secondary: 174 84% 31%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
+  --secondary: 240 5.9% 16%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
   --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
   --ring: 22 85% 52%;
 }
 
@@ -166,7 +177,6 @@
 }
 
 @keyframes shake {
-
   0%,
   100% {
     transform: translateX(0);
@@ -209,16 +219,16 @@
 
 /* Custom styles for the redesigned Landing Page */
 .landing-page-root {
-  font-family: 'Noto Kufi Arabic', 'Cairo', 'Inter', sans-serif;
+  font-family: "Noto Kufi Arabic", "Cairo", "Inter", sans-serif;
   scroll-behavior: smooth;
 }
 
 .landing-page-root .font-display {
-  font-family: 'Noto Kufi Arabic', 'Plus Jakarta Sans', sans-serif;
+  font-family: "Noto Kufi Arabic", "Plus Jakarta Sans", sans-serif;
 }
 
 .landing-page-root .font-label {
-  font-family: 'Noto Kufi Arabic', sans-serif;
+  font-family: "Noto Kufi Arabic", sans-serif;
 }
 
 .landing-page-root .glass-card {
@@ -228,13 +238,13 @@
 }
 
 .landing-page-root .gradient-text {
-  background: linear-gradient(135deg, #eb6a1d 0%, #f97316 100%);
+  background: linear-gradient(135deg, #fd5202 0%, #fd5202 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .landing-page-root .step-line::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: -50%;
@@ -245,5 +255,7 @@
 }
 
 @media (max-width: 768px) {
-  .landing-page-root .step-line::after { display: none; }
+  .landing-page-root .step-line::after {
+    display: none;
+  }
 }

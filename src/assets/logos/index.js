@@ -1,4 +1,4 @@
-import Logo from "./logo.svg";
-import LogoW from "./logo w.svg";
+import LogoDefault from "./logo.svg";
+import logoWhite from "./logoWhite.svg";
 
-export { Logo, LogoW };
+export { LogoDefault, logoWhite };

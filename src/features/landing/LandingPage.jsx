@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
-import { Logo } from "@/assets/logos";
 import { SimpleFooter } from "@/components/SimpleFooter";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import {

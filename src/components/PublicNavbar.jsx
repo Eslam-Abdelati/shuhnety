@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
-import LogoW from "@/components/Logo";
+import Logo from "@/components/Logo";
 
 export const PublicNavbar = () => {
   return (
@@ -10,9 +10,21 @@ export const PublicNavbar = () => {
         className="flex justify-between items-center max-w-lp-container-max mx-auto px-lp-margin-mobile md:px-lp-margin-desktop py-3"
         dir="ltr"
       >
-        {/* Left Column: Logo */}
-        <div className="flex-1 flex justify-start">
-          <LogoW className="w-40 h-auto" />
+        {/* Left Column: Auth Buttons */}
+
+        <div className="flex items-center justify-end gap-4 flex-1" dir="rtl">
+          <Link
+            to="/login"
+            className="hidden md:block font-body-md text-lp-body-md font-medium text-lp-on-surface-variant"
+          >
+            تسجيل الدخول
+          </Link>
+          <Link
+            to="/register"
+            className="bg-lp-primary text-lp-on-primary px-6 py-2.5 rounded-full font-body-md font-bold scale-95 active:scale-90 transition-transform shadow-md"
+          >
+            ابدأ الآن
+          </Link>
         </div>
 
         {/* Middle Column: Page Links */}
@@ -43,20 +55,9 @@ export const PublicNavbar = () => {
           </HashLink>
         </div>
 
-        {/* Right Column: Auth Buttons */}
-        <div className="flex items-center gap-4 flex-1" dir="rtl">
-          <Link
-            to="/login"
-            className="hidden md:block font-body-md text-lp-body-md font-medium text-lp-on-surface-variant"
-          >
-            تسجيل الدخول
-          </Link>
-          <Link
-            to="/register"
-            className="bg-lp-primary text-lp-on-primary px-6 py-2.5 rounded-full font-body-md font-bold scale-95 active:scale-90 transition-transform shadow-md"
-          >
-            ابدأ الآن
-          </Link>
+        {/* Right Column: Logo */}
+        <div className="flex-1 flex justify-end">
+          <Logo className="w-30 h-auto" />
         </div>
       </div>
     </nav>

@@ -1,4 +1,4 @@
-// Framer Motion Animation Presets for Shila Platform
+// Framer Motion Animation Presets for Sheela Platform
 
 export const fadeIn = {
     initial: { opacity: 0 },
