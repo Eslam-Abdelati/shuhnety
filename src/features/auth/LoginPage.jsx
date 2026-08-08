@@ -11,6 +11,7 @@ import Logo from "@/components/Logo";
 import { authService } from "@/services/authService";
 import { toast } from "react-hot-toast";
 import { Loading } from "@/components/ui/Loading";
+import coverImage from "@/assets/cover.jpg";
 
 const loginSchema = z.object({
   email: z.string().trim().email("بريد إلكتروني غير صالح"),
@@ -90,7 +91,7 @@ export const LoginPage = () => {
       {/* Form inputs side */}
       <div className="w-full md:w-1/2 h-full flex flex-col justify-between p-6 sm:p-12 md:py-12 md:px-16 lg:py-16 lg:px-24 overflow-y-auto md:overflow-hidden bg-white">
         {/* Top Logo / Navigation */}
-        <div className="mb-8 flex items-center justify-center gap-4">
+        <div className="mb-4 flex items-center justify-center gap-4">
           <Logo className="w-40" />
         </div>
 
@@ -204,7 +205,7 @@ export const LoginPage = () => {
         <img
           aria-hidden="true"
           className="object-cover w-full h-full opacity-70 select-none pointer-events-none"
-          src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1200"
+          src={coverImage}
           alt="Sheela Logistics split screen image"
         />
         {/* Overlays */}

@@ -39,6 +39,7 @@ import { locationService } from "@/services/locationService";
 import { API_BASE_URL } from "@/api/axiosClient";
 // import { StatusAlert } from '@/components/ui/StatusAlert'
 import { Loading } from "@/components/ui/Loading";
+import Logo from "@/components/Logo";
 
 // --- Backend Enums ---
 export const AvailabilityField = {
@@ -541,10 +542,16 @@ export const RegisterPage = () => {
                   : data.vehicleType === "تروسيكل"
                     ? VehicleType.CARGO_TRIKE
                     : VehicleType.OTHER,
-          other_vehicle_type:
-            ["ربع نقل", "نصف نقل", "سوزوكي/فان", "تروسيكل"].includes(data.vehicleType)
-              ? "string"
-              : (data.vehicleType === "أخرى" ? data.vehicleTypeOther : data.vehicleType),
+          other_vehicle_type: [
+            "ربع نقل",
+            "نصف نقل",
+            "سوزوكي/فان",
+            "تروسيكل",
+          ].includes(data.vehicleType)
+            ? "string"
+            : data.vehicleType === "أخرى"
+              ? data.vehicleTypeOther
+              : data.vehicleType,
           vehicle_brand: data.vehicleBrand,
           model: data.vehicleModel,
           manufacture_year: parseInt(data.vehicleModel) || 2022,
@@ -604,10 +611,10 @@ export const RegisterPage = () => {
           <div className="hidden lg:flex flex-col justify-between w-80 bg-[#f4f6fc]/50 border-l border-slate-100 p-8 shrink-0">
             <div className="space-y-8">
               <div className="space-y-2">
-                <h1 className="text-xl font-black text-slate-800 leading-none">
+                <h1 className="text-xl font-bold text-slate-800 leading-none">
                   {selectedRole === "driver" ? "تسجيل السائق" : "تسجيل العميل"}
                 </h1>
-                <p className="text-[11px] text-slate-400 font-bold leading-none">
+                <p className="text-[11px] text-slate-600 font-semibold leading-none">
                   أكمل خطوات التسجيل للبدء
                 </p>
               </div>
@@ -639,7 +646,7 @@ export const RegisterPage = () => {
                           isActive ? "text-white" : "text-slate-400",
                         )}
                       />
-                      <span className="text-xs font-black">{s.label}</span>
+                      <span className="text-xs font-bold">{s.label}</span>
                     </div>
                   );
                 })}
@@ -653,12 +660,7 @@ export const RegisterPage = () => {
           {/* Top Logo / Navigation Section */}
           <div className="w-full px-6 py-6 sm:px-12 md:px-16 flex justify-between items-center border-b border-slate-50 shrink-0 bg-white z-20">
             <div></div>
-            <Link
-              to="/"
-              className="text-xl font-black text-brand-primary tracking-tight"
-            >
-              مسار
-            </Link>
+            <Logo className="w-30" />
           </div>
 
           {/* Main Content Area */}
@@ -724,7 +726,7 @@ export const RegisterPage = () => {
                   transition={{ duration: 0.6 }}
                 >
                   <div className="text-center mb-8">
-                    <h2 className="text-[24px] font-bold text-[#1c1919] mb-2">
+                    <h2 className="text-2xl font-semibold text-slate-900 mb-2">
                       {step === 1
                         ? "إنشاء حساب جديد"
                         : step === 2
@@ -735,7 +737,7 @@ export const RegisterPage = () => {
                             ? "بيانات المركبة"
                             : "رفع المستندات الرسمية"}
                     </h2>
-                    <p className="text-[#57534d] text-sm tracking-tight">
+                    <p className="text-sm font-medium">
                       {step === 1
                         ? "اختر نوع الحساب الذي يناسب احتياجاتك"
                         : step === 2
@@ -874,11 +876,11 @@ export const RegisterPage = () => {
                     </div>
 
                     <div className="pt-6 text-center">
-                      <p className="text-sm font-bold text-[#57534d]">
+                      <p className="text-sm font-medium text-slate-900">
                         لديك حساب بالفعل؟{" "}
                         <Link
                           to="/login"
-                          className="text-brand-primary hover:text-orange-600 font-extrabold transition-colors"
+                          className="font-semibold text-brand-primary hover:underline"
                         >
                           سجل دخولك
                         </Link>
@@ -893,7 +895,7 @@ export const RegisterPage = () => {
       </div>
 
       {/* Bottom Footer Links (Full width across the page) */}
-      <div className="w-full bg-white border-t border-slate-200/60 py-4 px-6 sm:px-12 md:px-16 lg:px-24 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-bold text-slate-400 shrink-0 z-20">
+      <div className="w-full bg-white border-t border-slate-200/60 py-4 px-6 sm:px-12 md:px-16 lg:px-24 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-semibold text-slate-900 shrink-0 z-20">
         <div className="flex items-center gap-6">
           <Link
             to="/terms"
@@ -1147,7 +1149,7 @@ const PersonalInfoStep = ({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         <div className="block text-sm">
-          <span className="text-gray-700 font-bold block mb-2">
+          <span className="text-slate-900 font-semibold block mb-2">
             كلمة المرور
           </span>
           <div className="relative">
@@ -1175,14 +1177,14 @@ const PersonalInfoStep = ({
             </button>
           </div>
           {errors.password && (touchedFields.password || wasNextAttempted) && (
-            <span className="text-xs text-red-500 mt-1 block font-bold">
+            <span className="text-xs text-red-500 mt-1 block font-semibold">
               {errors.password.message}
             </span>
           )}
         </div>
 
         <div className="block text-sm">
-          <span className="text-gray-700 font-bold block mb-2">
+          <span className="text-slate-900 font-semibold block mb-2">
             تأكيد كلمة المرور
           </span>
           <div className="relative">
@@ -1212,7 +1214,7 @@ const PersonalInfoStep = ({
           </div>
           {errors.confirmPassword &&
             (touchedFields.confirmPassword || wasNextAttempted) && (
-              <span className="text-xs text-red-500 mt-1 block font-bold">
+              <span className="text-xs text-red-500 mt-1 block font-semibold">
                 {errors.confirmPassword.message}
               </span>
             )}
@@ -1269,7 +1271,7 @@ const PersonalInfoStep = ({
                 <Link
                   to="/terms"
                   target="_blank"
-                  className="text-brand-primary hover:underline cursor-pointer font-black"
+                  className="text-brand-primary hover:underline cursor-pointer font-semibold"
                   onClick={(e) => e.stopPropagation()}
                 >
                   الشروط والأحكام
@@ -1278,7 +1280,7 @@ const PersonalInfoStep = ({
                 <Link
                   to="/privacy"
                   target="_blank"
-                  className="text-brand-primary hover:underline cursor-pointer font-black"
+                  className="text-brand-primary hover:underline cursor-pointer font-semibold"
                   onClick={(e) => e.stopPropagation()}
                 >
                   سياسة الاستخدام والخصوصية
@@ -1622,7 +1624,7 @@ const DocumentsStep = ({
               <Link
                 to="/terms"
                 target="_blank"
-                className="text-brand-primary hover:underline cursor-pointer font-black"
+                className="text-brand-primary hover:underline cursor-pointer font-semibold"
                 onClick={(e) => e.stopPropagation()}
               >
                 الشروط والأحكام العامة
@@ -1631,7 +1633,7 @@ const DocumentsStep = ({
               <Link
                 to="/privacy"
                 target="_blank"
-                className="text-brand-primary hover:underline cursor-pointer font-black"
+                className="text-brand-primary hover:underline cursor-pointer font-semibold"
                 onClick={(e) => e.stopPropagation()}
               >
                 سياسة الاستخدام والخصوصية
@@ -1666,7 +1668,9 @@ const Input = forwardRef(
     return (
       <div className={cn("block text-sm", className)}>
         {label && (
-          <span className="text-gray-700 font-bold block mb-2">{label}</span>
+          <span className="text-slate-900 font-semibold block mb-2">
+            {label}
+          </span>
         )}
         <div className="relative">
           <input
@@ -1689,7 +1693,7 @@ const Input = forwardRef(
           </div>
         </div>
         {showError && (
-          <span className="text-xs text-red-500 mt-1.5 block font-bold">
+          <span className="text-xs text-red-500 mt-1 block font-semibold">
             {error.message}
           </span>
         )}
