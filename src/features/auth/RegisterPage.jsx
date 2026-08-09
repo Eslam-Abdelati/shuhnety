@@ -1549,7 +1549,7 @@ const WebcamCaptureDialog = ({ isOpen, onClose, onCapture }) => {
       <DialogContent className="sm:max-w-[480px] p-6 text-right rounded-2xl border-none shadow-2xl" dir="rtl">
         <DialogHeader className="text-right">
           <DialogTitle className="text-lg font-bold text-slate-800">
-            التقاط صورة باستخدام الكاميرا (Webcam)
+            التقاط صورة باستخدام (Webcam)
           </DialogTitle>
         </DialogHeader>
         
@@ -1712,7 +1712,6 @@ const DriverPhotoUploader = ({
                 onClick={handleCameraClick}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-brand-primary font-bold text-xs transition-all shadow-sm active:scale-[0.98] cursor-pointer"
               >
-                <Camera className="h-4 w-4 text-slate-500 group-hover:text-brand-primary" />
                 <span>📷 {isMobile ? "التقاط صورة بالكاميرا" : "التقاط صورة باستخدام Webcam"}</span>
               </button>
               
@@ -1721,7 +1720,6 @@ const DriverPhotoUploader = ({
                 onClick={handleGalleryClick}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-brand-primary font-bold text-xs transition-all shadow-sm active:scale-[0.98] cursor-pointer"
               >
-                <ImageIcon className="h-4 w-4 text-slate-500 group-hover:text-brand-primary" />
                 <span>🖼️ {isMobile ? "اختيار من المعرض" : "اختيار صورة من الجهاز"}</span>
               </button>
             </div>
