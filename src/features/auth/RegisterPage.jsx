@@ -267,6 +267,7 @@ export const RegisterPage = () => {
     setError,
     clearErrors,
     control,
+    getValues,
     formState: { errors, touchedFields, isSubmitted },
   } = useForm({
     resolver: zodResolver(
@@ -546,7 +547,8 @@ export const RegisterPage = () => {
     setStep((s) => s - 1);
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (submittedData) => {
+    const data = { ...getValues(), ...submittedData };
     setIsLoading(true);
     try {
       const getDocUrl = (val) => {
