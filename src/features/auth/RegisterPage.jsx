@@ -339,18 +339,78 @@ export const RegisterPage = () => {
     }
   };
 
+  const compressImage = (file, maxWidth = 1024, maxHeight = 1024, quality = 0.75) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name || "compressed_image.jpg", {
+                  type: "image/jpeg",
+                  lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+              } else {
+                resolve(file);
+              }
+            },
+            "image/jpeg",
+            quality
+          );
+        };
+        img.onerror = () => resolve(file);
+      };
+      reader.onerror = () => resolve(file);
+    });
+  };
+
   const handleImmediateUpload = async (file, fieldName, prefix) => {
     if (!file) return;
 
-    const previewUrl = URL.createObjectURL(file);
+    setUploadingFields((prev) => ({ ...prev, [fieldName]: true }));
+
+    let fileToUpload = file;
+    if (file.type && file.type.startsWith("image/")) {
+      try {
+        fileToUpload = await compressImage(file);
+      } catch (err) {
+        console.error("Compression failed, using original file:", err);
+      }
+    }
+
+    const previewUrl = URL.createObjectURL(fileToUpload);
     setValue(fieldName, previewUrl, { shouldValidate: true });
 
     const formData = new FormData();
     formData.append("key", fieldName);
     formData.append("prefix", prefix);
-    formData.append("file", file);
-
-    setUploadingFields((prev) => ({ ...prev, [fieldName]: true }));
+    formData.append("file", fileToUpload);
 
     try {
       const res = await authService.uploadImage(formData);
@@ -1712,7 +1772,8 @@ const DriverPhotoUploader = ({
                 onClick={handleCameraClick}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-brand-primary font-bold text-xs transition-all shadow-sm active:scale-[0.98] cursor-pointer"
               >
-                <span>📷 {isMobile ? "التقاط صورة بالكاميرا" : "التقاط صورة باستخدام Webcam"}</span>
+                <Camera className="h-4 w-4 text-slate-500 group-hover:text-brand-primary" />
+                <span>{isMobile ? "التقاط صورة بالكاميرا" : "التقاط صورة باستخدام Webcam"}</span>
               </button>
               
               <button
@@ -1720,7 +1781,8 @@ const DriverPhotoUploader = ({
                 onClick={handleGalleryClick}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-brand-primary font-bold text-xs transition-all shadow-sm active:scale-[0.98] cursor-pointer"
               >
-                <span>🖼️ {isMobile ? "اختيار من المعرض" : "اختيار صورة من الجهاز"}</span>
+                <ImageIcon className="h-4 w-4 text-slate-500 group-hover:text-brand-primary" />
+                <span>{isMobile ? "اختيار من المعرض" : "اختيار صورة من الجهاز"}</span>
               </button>
             </div>
           </div>
