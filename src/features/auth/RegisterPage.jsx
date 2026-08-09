@@ -25,6 +25,9 @@ import {
   Upload,
   CreditCard,
   CalendarDays,
+  Camera,
+  Image as ImageIcon,
+  Trash2,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -32,6 +35,13 @@ import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { cn } from "@/utils/cn";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/Dialog";
 
 // Services
 import { authService } from "@/services/authService";
@@ -826,6 +836,7 @@ export const RegisterPage = () => {
                             watch={watch}
                             handleImmediateUpload={handleImmediateUpload}
                             uploadingFields={uploadingFields}
+                            setValue={setValue}
                           />
                         )}
                       </motion.div>
@@ -1455,6 +1466,286 @@ const AdditionalDetailsStep = ({
   );
 };
 
+const WebcamCaptureDialog = ({ isOpen, onClose, onCapture }) => {
+  const videoRef = useRef(null);
+  const [stream, setStream] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      setLoading(true);
+      setError(null);
+      navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } }
+      })
+        .then((mediaStream) => {
+          setStream(mediaStream);
+          if (videoRef.current) {
+            videoRef.current.srcObject = mediaStream;
+          }
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error accessing webcam:", err);
+          setError("لم نتمكن من الوصول إلى الكاميرا. يرجى التأكد من إعطاء صلاحية الكاميرا للمتصفح.");
+          setLoading(false);
+        });
+    } else {
+      stopStream();
+    }
+
+    return () => {
+      stopStream();
+    };
+  }, [isOpen]);
+
+  const stopStream = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+  };
+
+  const handleCapture = () => {
+    if (!videoRef.current) return;
+    const video = videoRef.current;
+    
+    const videoWidth = video.videoWidth || 640;
+    const videoHeight = video.videoHeight || 480;
+    const size = Math.min(videoWidth, videoHeight);
+    
+    const sx = (videoWidth - size) / 2;
+    const sy = (videoHeight - size) / 2;
+    
+    const canvas = document.createElement("canvas");
+    canvas.width = 400;
+    canvas.height = 400;
+    const ctx = canvas.getContext("2d");
+    
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    
+    ctx.drawImage(
+      video,
+      sx, sy, size, size,
+      0, 0, canvas.width, canvas.height
+    );
+    
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], "driver_photo.jpg", { type: "image/jpeg" });
+        onCapture(file);
+        stopStream();
+        onClose();
+      }
+    }, "image/jpeg", 0.9);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && (stopStream(), onClose())}>
+      <DialogContent className="sm:max-w-[480px] p-6 text-right rounded-2xl border-none shadow-2xl" dir="rtl">
+        <DialogHeader className="text-right">
+          <DialogTitle className="text-lg font-bold text-slate-800">
+            التقاط صورة باستخدام الكاميرا (Webcam)
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="relative mt-4 bg-slate-950 aspect-square w-full max-w-[280px] mx-auto rounded-full overflow-hidden border-4 border-slate-200 shadow-inner flex items-center justify-center">
+          {loading && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-slate-900/90 z-10">
+              <div className="h-10 w-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mb-3"></div>
+              <span className="text-sm font-bold">جاري تشغيل الكاميرا...</span>
+            </div>
+          )}
+          
+          {error ? (
+            <div className="p-6 text-center text-red-400 font-bold text-sm">
+              {error}
+            </div>
+          ) : (
+            <>
+              <video 
+                ref={videoRef} 
+                autoPlay 
+                playsInline 
+                muted 
+                className="w-full h-full object-cover -scale-x-100"
+              />
+              
+              <div className="absolute inset-0 border-2 border-dashed border-white/20 rounded-full pointer-events-none flex items-center justify-center">
+                <div className="w-[85%] h-[85%] border-2 border-dashed border-brand-primary/60 rounded-full bg-transparent"></div>
+              </div>
+            </>
+          )}
+        </div>
+
+        <DialogFooter className="mt-6 flex gap-3 justify-end">
+          <Button 
+            variant="outline" 
+            onClick={() => { stopStream(); onClose(); }}
+            className="flex-1 sm:flex-initial"
+          >
+            إلغاء
+          </Button>
+          {!error && !loading && (
+            <Button 
+              onClick={handleCapture}
+              className="bg-brand-primary text-white hover:bg-brand-primary/90 flex-1 sm:flex-initial"
+            >
+              التقاط الصورة
+            </Button>
+          )}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const DriverPhotoUploader = ({
+  driverPhoto,
+  onFileChange,
+  isLoading,
+  error,
+  setValue,
+}) => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isWebcamOpen, setIsWebcamOpen] = useState(false);
+  
+  const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const matchesAgent = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+      const matchesWidth = window.matchMedia("(max-width: 768px)").matches;
+      setIsMobile(matchesAgent || matchesWidth);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const handleCameraClick = () => {
+    if (isMobile) {
+      cameraInputRef.current?.click();
+    } else {
+      setIsWebcamOpen(true);
+    }
+  };
+
+  const handleGalleryClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      onFileChange(file);
+    }
+  };
+
+  return (
+    <div className="w-full space-y-2">
+      <div
+        className={cn(
+          "w-full rounded-2xl border-2 border-dashed p-6 bg-slate-50/50 hover:bg-slate-50 transition-all flex flex-col items-center justify-center min-h-[220px] relative overflow-hidden",
+          error ? "border-red-500 bg-red-50/10" : "border-slate-300 hover:border-brand-primary",
+          isLoading && "cursor-wait"
+        )}
+      >
+        <input
+          type="file"
+          ref={cameraInputRef}
+          className="hidden"
+          accept="image/*"
+          capture="user"
+          onChange={handleFileChange}
+          disabled={isLoading}
+        />
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept="image/*"
+          onChange={handleFileChange}
+          disabled={isLoading}
+        />
+
+        {isLoading && (
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex flex-col items-center justify-center z-10">
+            <div className="h-10 w-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mb-2"></div>
+            <span className="text-xs font-bold text-white">جاري الرفع...</span>
+          </div>
+        )}
+
+        {driverPhoto ? (
+          <div className="flex flex-col items-center gap-4 py-2">
+            <div className="relative group h-28 w-28 rounded-full overflow-hidden border-2 border-brand-primary shadow-md">
+              <img
+                src={driverPhoto}
+                alt="Driver Preview"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => setValue("driverPhoto", null, { shouldValidate: true })}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold transition-all active:scale-95 cursor-pointer"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              إزالة الصورة وتغييرها
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center w-full max-w-[280px] text-center space-y-4">
+            <span className="text-md font-bold text-slate-800 leading-none">
+              صورة السائق
+            </span>
+            
+            <div className="w-full flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={handleCameraClick}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-brand-primary font-bold text-xs transition-all shadow-sm active:scale-[0.98] cursor-pointer"
+              >
+                <Camera className="h-4 w-4 text-slate-500 group-hover:text-brand-primary" />
+                <span>📷 {isMobile ? "التقاط صورة بالكاميرا" : "التقاط صورة باستخدام Webcam"}</span>
+              </button>
+              
+              <button
+                type="button"
+                onClick={handleGalleryClick}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-brand-primary font-bold text-xs transition-all shadow-sm active:scale-[0.98] cursor-pointer"
+              >
+                <ImageIcon className="h-4 w-4 text-slate-500 group-hover:text-brand-primary" />
+                <span>🖼️ {isMobile ? "اختيار من المعرض" : "اختيار صورة من الجهاز"}</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {error && (
+        <p className="text-xs text-red-500 font-bold mt-1 text-center">
+          {error.message}
+        </p>
+      )}
+
+      {!isMobile && (
+        <WebcamCaptureDialog
+          isOpen={isWebcamOpen}
+          onClose={() => setIsWebcamOpen(false)}
+          onCapture={(file) => onFileChange(file)}
+        />
+      )}
+    </div>
+  );
+};
+
 const DocumentsStep = ({
   register,
   errors,
@@ -1463,6 +1754,7 @@ const DocumentsStep = ({
   watch,
   handleImmediateUpload,
   uploadingFields,
+  setValue,
 }) => {
   const driverPhoto = watch("driverPhoto");
   const licenseFront = watch("licenseFront");
@@ -1473,67 +1765,13 @@ const DocumentsStep = ({
   return (
     <div className="space-y-4">
       <div className="flex flex-col items-center mb-6">
-        <div
-          onClick={() =>
-            !uploadingFields["driverPhoto"] &&
-            document.getElementById("driver-photo-input").click()
-          }
-          className={cn(
-            "relative group cursor-pointer",
-            errors.driverPhoto && wasNextAttempted && "animate-shake",
-            uploadingFields["driverPhoto"] && "cursor-wait",
-          )}
-        >
-          <div
-            className={cn(
-              "h-24 w-24 rounded-full bg-slate-50 border-2 border-dashed flex items-center justify-center overflow-hidden transition-all group-hover:border-brand-primary relative",
-              errors.driverPhoto && wasNextAttempted
-                ? "border-red-500"
-                : "border-slate-200",
-            )}
-          >
-            {driverPhoto ? (
-              <img
-                src={driverPhoto}
-                className="h-full w-full object-cover"
-                alt="Driver"
-              />
-            ) : (
-              <Upload className="h-8 w-8 text-slate-300 group-hover:text-brand-primary" />
-            )}
-
-            {uploadingFields["driverPhoto"] && (
-              <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex flex-col items-center justify-center z-10">
-                <div className="h-8 w-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mb-1"></div>
-                <span className="text-[8px] font-bold text-white">
-                  جاري الرفع...
-                </span>
-              </div>
-            )}
-
-            <input
-              id="driver-photo-input"
-              type="file"
-              className="hidden"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) {
-                  handleImmediateUpload(file, "driverPhoto", "driver");
-                }
-              }}
-              disabled={uploadingFields["driverPhoto"]}
-            />
-          </div>
-        </div>
-        <span className="text-xs font-bold text-slate-500 mt-2">
-          صورة الكابتن الشخصية
-        </span>
-        {errors.driverPhoto && wasNextAttempted && (
-          <p className="text-[10px] text-red-500 font-bold mt-1 text-center">
-            {errors.driverPhoto.message}
-          </p>
-        )}
+        <DriverPhotoUploader
+          driverPhoto={driverPhoto}
+          onFileChange={(file) => handleImmediateUpload(file, "driverPhoto", "driver")}
+          isLoading={uploadingFields["driverPhoto"]}
+          error={errors.driverPhoto && wasNextAttempted ? errors.driverPhoto : null}
+          setValue={setValue}
+        />
       </div>
 
       <div className="space-y-4">
